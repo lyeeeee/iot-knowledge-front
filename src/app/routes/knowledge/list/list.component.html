@@ -1,9 +1,67 @@
 <page-header [action]="phActionTpl">
   <ng-template #phActionTpl>
-    <button (click)="add()" nz-button nzType="primary">新建</button>
+    <button (click)="add()" nz-button nzType="primary">导入新知识</button>
   </ng-template>
 </page-header>
 <nz-card>
-  <sf mode="search" [schema]="searchSchema" (formSubmit)="st.reset($event)" (formReset)="st.reset($event)"></sf>
-  <st #st [data]="url" [columns]="columns"></st>
+  <sf mode="search" [schema]="searchSchema" (formSubmit)="queryList($event)" (formReset)="st.reset($event)"></sf>
+  <st #st [data]="list" [columns]="columns"></st>
 </nz-card>
+<nz-modal
+  [(nzVisible)]="isVisible"
+  nzTitle="新增知识"
+  (nzOnCancel)="handleCancel()"
+  nzFooter=" "
+>
+  <form nz-form [formGroup]="form" se-container="1">
+    <se label="所属元目录" error="请选择所属元目录" required>
+      <nz-select formControlName="selectMeta" [nzPlaceHolder]="'请选择所属元目录'" [nzShowSearch]="true">
+        <nz-option *ngFor="let i of MetaList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+      </nz-select>
+    </se>
+    <se label="知识名称" error="请输入知识名称" required>
+      <input nz-input formControlName="name" placeholder="请输入知识名称"/>
+    </se>
+    <se label="知识图名称" error="请输入知识图名称" required>
+      http://<input nz-input formControlName="graphName" placeholder="请输入知识图名称" style="width: 87%;"/>
+    </se>
+    <se label="知识简介" error="请输入知识简介">
+      <input nz-input formControlName="knowledgeSynopsis" placeholder="请输入知识简介"/>
+    </se>
+    <se label="上传知识" required>
+      <nz-upload [(nzFileList)]="fileList" [nzBeforeUpload]="beforeUpload">
+        <button nz-button><i nz-icon nzType="upload"></i><span>点击选择</span></button>
+      </nz-upload>
+    </se>
+    <se>
+      <button nz-button nzType="primary"
+              [nzLoading]="uploading"
+              [disabled]="fileList.length == 0"
+              (click)="submit()">提交
+      </button>
+    </se>
+  </form>
+</nz-modal>
+<nz-modal
+  [(nzVisible)]="sparqlVisible"
+  nzTitle="sparQL查询"
+  (nzOnCancel)="handleCancel()"
+  nzFooter=" "
+  nzWidth="1300px"
+>
+  <sf [schema]="sparql" (formSubmit)="submitSparql($event)" style="width: 96%;"></sf>
+  <div *ngIf="displayResult" style="margin:3%;overflow:auto;height: 500px;">
+    <table border="1">
+      <tr>
+        <th style="width:400px">s</th>
+        <th style="width:400px">p</th>
+        <th style="width:400px">o</th>
+      </tr>
+      <tr *ngFor="let index of resultTable">
+        <td>{{index.s}}</td>
+        <td>{{index.p}}</td>
+        <td>{{index.o}}</td>
+      </tr>
+    </table>
+  </div>
+</nz-modal>

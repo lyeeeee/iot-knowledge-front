@@ -61,6 +61,8 @@ export class StartupService {
         this.menuService.add(res.menu);
         // 设置页面标题的后缀
         this.titleService.suffix = res.app.name;
+
+        this.viaMock(resolve, reject);//调用加载模拟数据
       },
       () => {
       },
@@ -133,6 +135,19 @@ export class StartupService {
             children:[{
               text: '知识管理列表',
               link:'/knowledge/list'
+            },{
+              text: '目录管理',
+              icon: {type: 'icon', value: 'book'},
+              children:[{
+                text: '领域管理',
+                link:'/knowledge/fieldList'
+              },{
+                text: '部门管理',
+                link:'/knowledge/departmentList'
+              },{
+                text: '元知识管理',
+                link:'/knowledge/metaCatalogueList'
+              }]
             }]
           }
         ]
@@ -149,9 +164,9 @@ export class StartupService {
     // https://github.com/angular/angular/issues/15088
     return new Promise((resolve, reject) => {
       // http
-      // this.viaHttp(resolve, reject);
+      this.viaHttp(resolve, reject);
       // mock：请勿在生产环境中这么使用，viaMock 单纯只是为了模拟一些数据使脚手架一开始能正常运行
-      this.viaMockI18n(resolve, reject);
+      // this.viaMockI18n(resolve, reject);
 
     });
   }

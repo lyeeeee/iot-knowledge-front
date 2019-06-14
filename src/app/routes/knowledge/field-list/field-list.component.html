@@ -1,0 +1,29 @@
+<page-header [action]="phActionTpl">
+  <ng-template #phActionTpl>
+    <button (click)="add()" nz-button nzType="primary">新建领域</button>
+  </ng-template>
+</page-header>
+<nz-card>
+  <sf mode="search" [schema]="searchSchema" (formSubmit)="queryList($event)" (formReset)="st.reset($event)"></sf>
+  <st #st [data]="list" [columns]="columns"></st>
+</nz-card>
+<!--新增弹出框-->
+<nz-modal
+  [(nzVisible)]="isVisible"
+  nzTitle="新增领域"
+  (nzOnCancel)="handleCancel()"
+  nzFooter=" "
+>
+  <form nz-form [formGroup]="form" (ngSubmit)="submit()" se-container="1">
+    <se label="领域名称" error="请输入领域名称" required>
+      <input nz-input formControlName="name" placeholder="请输入领域名称"/>
+    </se>
+    <se>
+      <button nz-button nzType="primary" [disabled]="form.invalid" type="submit">提交</button>
+    </se>
+  </form>
+</nz-modal>
+<!--删除确认弹出框-->
+<nz-modal [(nzVisible)]="deleteIsVisible" nzTitle="提示" (nzOnCancel)="handleCancel()" (nzOnOk)="deleteSubmit()">
+  确定要删除此领域吗？
+</nz-modal>

@@ -101,7 +101,7 @@ export const USERS = {
   'POST /login/account': (req: MockRequest) => {
     const data = req.body;
     if (!(data.userName === 'admin' || data.userName === 'user') || data.password !== '123456') {
-      return { msg: `Invalid username or password（admin/123456）` };
+      return { msg: `Invalid username or password（admin）` };
     }
     return {
       msg: 'ok',

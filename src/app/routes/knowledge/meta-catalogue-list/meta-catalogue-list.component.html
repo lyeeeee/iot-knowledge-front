@@ -1,0 +1,33 @@
+<page-header [action]="phActionTpl">
+  <ng-template #phActionTpl>
+    <button (click)="add()" nz-button nzType="primary">新建元目录</button>
+  </ng-template>
+</page-header>
+<nz-card>
+  <sf mode="search" [schema]="searchSchema" (formSubmit)="queryList($event)" (formReset)="st.reset($event)"></sf>
+  <st #st [data]="list" [columns]="columns"></st>
+</nz-card>
+<!--新增弹出框-->
+<nz-modal
+  [(nzVisible)]="isVisible"
+  nzTitle="新增元目录"
+  (nzOnCancel)="handleCancel()"
+  nzFooter=" "
+>
+  <form nz-form [formGroup]="form" (ngSubmit)="submit()" se-container="1">
+    <span style="margin-left: 14em;color: red;font-size: 12px;">*若领域内无部门则无法选择！</span>
+    <se label="所属领域及部门" error="请选择所属领域及部门" required>
+      <nz-cascader formControlName="selectField" [nzOptions]="fieldList" [(ngModel)]="values"> </nz-cascader>
+    </se>
+    <se label="元目录名称" error="请输入元目录名称" required>
+      <input nz-input formControlName="name" placeholder="请输入元目录名称"/>
+    </se>
+    <se>
+      <button nz-button nzType="primary" [disabled]="form.invalid" type="submit">提交</button>
+    </se>
+  </form>
+</nz-modal>
+<!--删除确认弹出框-->
+<nz-modal [(nzVisible)]="deleteIsVisible" nzTitle="提示" (nzOnCancel)="handleCancel()" (nzOnOk)="deleteSubmit()">
+  确定要删除此元目录吗？
+</nz-modal>
