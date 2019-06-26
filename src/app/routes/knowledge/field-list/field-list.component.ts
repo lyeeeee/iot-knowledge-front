@@ -100,7 +100,7 @@ export class KnowledgeFieldListComponent implements OnInit {
     this.isVisible = false;//新增弹出框
     this.deleteIsVisible = false;//删除确认弹出框
     this.deleteId = '';//删除id设置为空
-    // this.form.value.name = null;
+    // this.metaEventForm.value.name = null;
     this.form = this.fb.group({//表单内容
       name: [null, [Validators.required]],
     });

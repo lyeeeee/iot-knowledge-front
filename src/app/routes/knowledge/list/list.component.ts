@@ -153,7 +153,7 @@ export class KnowledgeListComponent implements OnInit {
 //点击取消按钮
   handleCancel(): void {
     this.isVisible = false;//新增弹出框
-    // this.form.value.name = null;
+    // this.metaEventForm.value.name = null;
     this.form = this.fb.group({//表单内容
       name: [null, [Validators.required]],
       selectMeta: [null, [Validators.required]],

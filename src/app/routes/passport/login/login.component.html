@@ -24,31 +24,31 @@
       </nz-form-item>
     </nz-tab>
     <!--<nz-tab [nzTitle]="'app.login.tab-login-mobile' | translate">-->
-      <!--<nz-form-item>-->
-        <!--<nz-form-control>-->
+      <!--<nz-metaEventForm-item>-->
+        <!--<nz-metaEventForm-control>-->
           <!--<nz-input-group nzSize="large" nzPrefixIcon="user">-->
             <!--<input nz-input formControlName="mobile" placeholder="mobile number" />-->
           <!--</nz-input-group>-->
-          <!--<nz-form-explain *ngIf="mobile.dirty && mobile.errors">-->
+          <!--<nz-metaEventForm-explain *ngIf="mobile.dirty && mobile.errors">-->
             <!--<ng-container *ngIf="mobile.errors.required">-->
               <!--{{ 'validation.phone-number.required' | translate }}-->
             <!--</ng-container>-->
             <!--<ng-container *ngIf="mobile.errors.pattern">-->
               <!--{{ 'validation.phone-number.wrong-format' | translate }}-->
             <!--</ng-container>-->
-          <!--</nz-form-explain>-->
-        <!--</nz-form-control>-->
-      <!--</nz-form-item>-->
-      <!--<nz-form-item>-->
-        <!--<nz-form-control>-->
+          <!--</nz-metaEventForm-explain>-->
+        <!--</nz-metaEventForm-control>-->
+      <!--</nz-metaEventForm-item>-->
+      <!--<nz-metaEventForm-item>-->
+        <!--<nz-metaEventForm-control>-->
           <!--<nz-row [nzGutter]="8">-->
             <!--<nz-col [nzSpan]="16">-->
               <!--<nz-input-group nzSize="large" nzPrefixIcon="mail">-->
                 <!--<input nz-input formControlName="captcha" placeholder="captcha" />-->
               <!--</nz-input-group>-->
-              <!--<nz-form-explain *ngIf="captcha.dirty && captcha.errors">-->
+              <!--<nz-metaEventForm-explain *ngIf="captcha.dirty && captcha.errors">-->
                 <!--{{ 'validation.verification-code.required' | translate }}-->
-              <!--</nz-form-explain>-->
+              <!--</nz-metaEventForm-explain>-->
             <!--</nz-col>-->
             <!--<nz-col [nzSpan]="8">-->
               <!--<button-->
@@ -64,8 +64,8 @@
               <!--</button>-->
             <!--</nz-col>-->
           <!--</nz-row>-->
-        <!--</nz-form-control>-->
-      <!--</nz-form-item>-->
+        <!--</nz-metaEventForm-control>-->
+      <!--</nz-metaEventForm-item>-->
     <!--</nz-tab>-->
   </nz-tabset>
   <nz-form-item>

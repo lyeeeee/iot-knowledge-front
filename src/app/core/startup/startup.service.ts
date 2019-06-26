@@ -149,6 +149,18 @@ export class StartupService {
                 link:'/knowledge/metaCatalogueList'
               }]
             }]
+          },{
+            text: '事件管理',
+            icon: {type: 'icon', value: 'book'},
+            shortcutRoot: true,
+            children:[{
+              text: '原子事件管理',
+              link:'/event/meta-event-list'
+            },
+              {
+                text: '复杂事件管理',
+                link:'/event/complex-event-list'
+              }]
           }
         ]
       }

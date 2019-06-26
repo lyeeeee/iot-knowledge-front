@@ -49,7 +49,7 @@ const I18NSERVICE_PROVIDES = [
 ];
 // #region
 
-// #region JSON Schema form (using @delon/form)
+// #region JSON Schema metaEventForm (using @delon/metaEventForm)
 import { JsonSchemaModule } from '@shared/json-schema/json-schema.module';
 const FORM_MODULES = [ JsonSchemaModule ];
 // #endregion
