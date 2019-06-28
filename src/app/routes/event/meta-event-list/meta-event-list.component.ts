@@ -335,6 +335,7 @@ export class EventMetaEventListComponent implements OnInit {
       this.systemList = data;
     })
   }
+
 //当选择的系统改变时，去后台拉取对应的子站
   systemChange(e) {
     this.checkedIot_system = e;
@@ -344,6 +345,7 @@ export class EventMetaEventListComponent implements OnInit {
       this.subsitesList = data;
     })
   }
+
   //当选择的子站改变时，去后台拉取对应的子系统
   subsitesChange(e) {
     this.checkedSubsites = e;
@@ -353,6 +355,7 @@ export class EventMetaEventListComponent implements OnInit {
       this.subsystemList = data;
     })
   }
+
   //当选择的子系统改变时，去后台拉取对应的设备
   subsystemChange(e) {
     this.checkedSubsystem = e;
@@ -362,6 +365,7 @@ export class EventMetaEventListComponent implements OnInit {
       this.equipmentList = data;
     })
   }
+
   //当选择的设备改变时，去后台拉取对应的属性
   equipmentChange(e) {
     this.checkedEquipment = e;
@@ -371,22 +375,10 @@ export class EventMetaEventListComponent implements OnInit {
       this.attributeList = data;
     })
   }
+
   attributeChange(e) {
     this.checkedAttribute = e;
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }
