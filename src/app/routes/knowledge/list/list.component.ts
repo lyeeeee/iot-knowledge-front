@@ -20,7 +20,7 @@ export class KnowledgeListComponent implements OnInit {
 
   isVisible = false;//是否显示新增弹出框
   sparqlVisible = false;//是否显示sparql弹出框
-  resultTable = [{s:'请输入sparQL查询 ',p:' ',o:' '}];//sparql查询结果
+  resultTable = [{s: '请输入sparQL查询 ', p: ' ', o: ' '}];//sparql查询结果
   displayResult = false;//sparql查询结果是否显示
 
 
@@ -162,7 +162,7 @@ export class KnowledgeListComponent implements OnInit {
     });
 
     this.sparqlVisible = false;
-    this.resultTable = [{s:'请输入sparQL查询',p:' ',o:' '}];
+    this.resultTable = [{s: '请输入sparQL查询', p: ' ', o: ' '}];
     this.displayResult = false;//sparql查询结果是否显示
   }
 
@@ -209,7 +209,7 @@ export class KnowledgeListComponent implements OnInit {
     this.http.get('api/knowledge/infoList/sparqlSelect', {
       sparql: e.remark,
     }).subscribe(data => {
-      this.resultTable = []
+      this.resultTable = [];
       this.resultTable = data;
       this.displayResult = true;
     })
