@@ -28,7 +28,7 @@ export class EventComplexEventListComponent implements OnInit {
       title: '',
       buttons: [
         // { text: '查看', click: (item: any) => `/metaEventForm/${item.id}` },
-        // { text: '编辑', type: 'static', component: FormEditComponent, click: 'reload' },
+        // {text: '编辑', type: 'static', component: FormEditComponent, click: 'reload' },
       ]
     }
   ];
@@ -43,6 +43,7 @@ export class EventComplexEventListComponent implements OnInit {
   }
   createNotification(type: string): void {
     this.notification.create(
+      //error，warning,info
       type,
       '报警',
       '这是一个报警，这是一个报警，这是一个报警，这是一个报警，这是一个报警，这是一个报警'
