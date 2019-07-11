@@ -1,9 +1,130 @@
 <page-header [action]="phActionTpl">
   <ng-template #phActionTpl>
-    <button (click)="createNotification('error')()" nz-button nzType="primary">新建</button>
+    <button (click)="addComplexEvent()" nz-button nzType="primary">新增复杂事件</button>
   </ng-template>
 </page-header>
 <nz-card>
-  <sf mode="search" [schema]="searchSchema" (formSubmit)="st.reset($event)" (formReset)="st.reset($event)"></sf>
-  <st #st [data]="url" [columns]="columns"></st>
+  <sf mode="search" [schema]="searchSchema" (formSubmit)="queryList($event)" (formReset)="st.reset($event)"></sf>
+  <st #st [data]="list" [columns]="columns"></st>
 </nz-card>
+<!--新增复杂事件弹出框-->
+<nz-modal
+  [(nzVisible)]="insertComplexEventIsVisible"
+  nzTitle="新增复杂事件"
+  (nzOnCancel)="handleCancel()"
+  nzFooter=" "
+  nzWidth="800px"
+>
+  <form nz-form [formGroup]="complexEventForm" (ngSubmit)="submitComplexEvent()" se-container="1">
+    <se label="复杂事件名称" error="请输入复杂事件名称" required>
+      <input nz-input formControlName="name" placeholder="请输入复杂事件名称"/>
+    </se>
+    <se label="复杂事件简介" error="请输入复杂事件简介" required>
+      <input nz-input formControlName="synopsis" placeholder="请输入复杂事件简介"/>
+    </se>
+    <se label="原子事件范围单位" error="请选择原子事件范围单位" required>
+      <nz-select formControlName="selectCompany" [nzPlaceHolder]="'原子事件范围单位'" [nzShowSearch]="true"
+                 (ngModelChange)="metaEventCompanyChange($event)">
+        <nz-option *ngFor="let i of metaEventCompanyList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+      </nz-select>
+    </se>
+    <se label="请选择原子事件范围" error="请选择原子事件范围" required>
+      <nz-select formControlName="selectRange" [nzPlaceHolder]="'请选择原子事件范围'" [nzShowSearch]="true"
+                 (ngModelChange)="metaEventRangeChange($event)" >
+        <nz-option *ngFor="let i of metaEventRangeList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+      </nz-select>
+    </se>
+    <se>
+      <button nz-button nzType="primary" [disabled]="complexEventForm.invalid" type="submit">提交</button>
+    </se>
+  </form>
+</nz-modal>
+<!--删除确认弹出框-->
+<nz-modal [(nzVisible)]="deleteComplexEventIsVisible" nzTitle="提示" (nzOnCancel)="handleCancel()"
+          (nzOnOk)="deleteComplexEventSubmit()">
+  确定要删除此复杂事件吗？
+</nz-modal>
+
+
+<!--所选原子事件弹出框-->
+<nz-modal [(nzVisible)]="addMetaIsVisible"
+          nzTitle="所选原子事件" (nzOnCancel)="addMetaHandleCancel()"
+          nzFooter=" " nzWidth="1200px">
+  <button (click)="addMeta()" nz-button nzType="primary" style="margin: 0 20px 20px;">新增原子事件</button>
+  <nz-card>
+    <st #metast [data]="metaList" [columns]="metaColumns"></st>
+  </nz-card>
+</nz-modal>
+<!--新增原子事件弹出框-->
+<nz-modal
+  [(nzVisible)]="saveMetaIsVisible"
+  nzTitle="新增原子事件"
+  (nzOnCancel)="saveMetaHandleCancel()"
+  nzFooter=" "
+  nzWidth="800px"
+>
+  <form nz-form [formGroup]="metaForm" (ngSubmit)="submitMeta()" se-container="1">
+
+    <se label="请选择原子事件" error="请选择原子事件" required>
+      <nz-select formControlName="selectMeta" [nzPlaceHolder]="'请选择原子事件'" [nzShowSearch]="true"
+                 (ngModelChange)="metaChange($event)">
+        <nz-option *ngFor="let i of allMetaList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+      </nz-select>
+    </se>
+    <se>
+      <button nz-button nzType="primary" [disabled]="metaForm.invalid" type="submit">提交</button>
+    </se>
+  </form>
+</nz-modal>
+<nz-modal [(nzVisible)]="deleteMetaIsVisible" nzTitle="提示" (nzOnCancel)="deleteMetaHandleCancel()"
+          (nzOnOk)="deleteMetaSubmit()">
+  确定要删除此原子事件吗？
+</nz-modal>
+
+
+<!--所选对应关系弹出框-->
+<nz-modal [(nzVisible)]="addAttributeIsVisible"
+          nzTitle="编辑属性与目标" (nzOnCancel)="addAttributeHandleCancel()"
+          nzFooter=" " nzWidth="1200px">
+  <button (click)="addAttribute()" nz-button nzType="primary" style="margin: 0 20px 20px;">新增属性或目标</button>
+  <nz-card>
+    <st #attributest [data]="attributeList" [columns]="attributeColumns"></st>
+  </nz-card>
+</nz-modal>
+<!--新增对应关系弹出框-->
+<nz-modal
+  [(nzVisible)]="saveAttributeIsVisible"
+  nzTitle="新增属性或目标"
+  (nzOnCancel)="saveAttributeHandleCancel()"
+  nzFooter=" "
+  nzWidth="800px"
+>
+  <form nz-form [formGroup]="attributeForm" (ngSubmit)="submitAttribute()" se-container="1">
+
+    <se label="请选择类型" error="请选择类型" required>
+      <nz-select formControlName="selectType" [nzPlaceHolder]="'请选择类型'" [nzShowSearch]="true"
+                 (ngModelChange)="typeChange($event)">
+        <nz-option *ngFor="let i of typeList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+      </nz-select>
+    </se>
+    <se label="名称" error="请输入名称" required>
+      <input nz-input formControlName="attributeName" placeholder="请输入名称"/>
+    </se>
+    <se label="请选择对应关系" error="请选择对应关系" required>
+      <nz-select formControlName="attributeRelation" [nzPlaceHolder]="'请选择对应关系'" [nzShowSearch]="true"
+                 (ngModelChange)="relationChange($event)">
+        <nz-option *ngFor="let i of relationList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+      </nz-select>
+    </se>
+    <se label="值" error="请输入值" required>
+      <input nz-input formControlName="attributeValue" placeholder="请输入值"/>
+    </se>
+    <se>
+      <button nz-button nzType="primary" [disabled]="attributeForm.invalid" type="submit">提交</button>
+    </se>
+  </form>
+</nz-modal>
+<nz-modal [(nzVisible)]="deleteAttributeIsVisible" nzTitle="提示" (nzOnCancel)="deleteAttributeHandleCancel()"
+          (nzOnOk)="deleteAttributeSubmit()">
+  确定要删除此属性或目标吗？
+</nz-modal>
