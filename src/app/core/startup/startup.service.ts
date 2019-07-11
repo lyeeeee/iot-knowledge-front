@@ -1,9 +1,8 @@
-import {Injectable, Injector, Inject} from '@angular/core';
-import {Router} from '@angular/router';
+import {Inject, Injectable, Injector} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {zip} from 'rxjs';
 import {catchError} from 'rxjs/operators';
-import {MenuService, SettingsService, TitleService, ALAIN_I18N_TOKEN} from '@delon/theme';
+import {ALAIN_I18N_TOKEN, MenuService, SettingsService, TitleService} from '@delon/theme';
 import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
 import {ACLService} from '@delon/acl';
 import {TranslateService} from '@ngx-translate/core';
@@ -32,6 +31,18 @@ export class StartupService {
     private injector: Injector
   ) {
     iconSrv.addIcon(...ICONS_AUTO, ...ICONS);
+  }
+
+  load(): Promise<any> {
+    // only works with promises
+    // https://github.com/angular/angular/issues/15088
+    return new Promise((resolve, reject) => {
+      // http
+      this.viaHttp(resolve, reject);
+      // mock：请勿在生产环境中这么使用，viaMock 单纯只是为了模拟一些数据使脚手架一开始能正常运行
+      // this.viaMockI18n(resolve, reject);
+
+    });
   }
 
   private viaHttp(resolve: any, reject: any) {
@@ -124,7 +135,7 @@ export class StartupService {
           // },
           {
             text: '首页',
-            link:'/dashboard',    //首页路径
+            link: '/dashboard',    //首页路径
             icon: {type: 'icon', value: 'home'},
             shortcutRoot: true
           },
@@ -132,34 +143,38 @@ export class StartupService {
             text: '知识管理',
             icon: {type: 'icon', value: 'book'},
             shortcutRoot: true,
-            children:[{
+            children: [{
               text: '知识管理列表',
-              link:'/knowledge/list'
-            },{
+              link: '/knowledge/list'
+            }, {
               text: '目录管理',
               icon: {type: 'icon', value: 'book'},
-              children:[{
+              children: [{
                 text: '领域管理',
-                link:'/knowledge/fieldList'
-              },{
+                link: '/knowledge/fieldList'
+              }, {
                 text: '部门管理',
-                link:'/knowledge/departmentList'
-              },{
+                link: '/knowledge/departmentList'
+              }, {
                 text: '元知识管理',
-                link:'/knowledge/metaCatalogueList'
+                link: '/knowledge/metaCatalogueList'
               }]
             }]
-          },{
+          }, {
             text: '事件管理',
             icon: {type: 'icon', value: 'book'},
             shortcutRoot: true,
-            children:[{
+            children: [{
               text: '原子事件管理',
-              link:'/event/meta-event-list'
+              link: '/event/meta-event-list'
             },
               {
                 text: '复杂事件管理',
-                link:'/event/complex-event-list'
+                link: '/event/complex-event-list'
+              },
+              {
+                text: '报警测试',
+                link: '/event/test'
               }]
           }
         ]
@@ -169,17 +184,5 @@ export class StartupService {
     this.titleService.suffix = app.name;
 
     resolve({});
-  }
-
-  load(): Promise<any> {
-    // only works with promises
-    // https://github.com/angular/angular/issues/15088
-    return new Promise((resolve, reject) => {
-      // http
-      this.viaHttp(resolve, reject);
-      // mock：请勿在生产环境中这么使用，viaMock 单纯只是为了模拟一些数据使脚手架一开始能正常运行
-      // this.viaMockI18n(resolve, reject);
-
-    });
   }
 }

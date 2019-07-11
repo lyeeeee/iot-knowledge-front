@@ -3,10 +3,12 @@ import { SharedModule } from '@shared';
 import { EventRoutingModule } from './event-routing.module';
 import { EventMetaEventListComponent } from './meta-event-list/meta-event-list.component';
 import { EventComplexEventListComponent } from './complex-event-list/complex-event-list.component';
+import { EventTestComponent } from './test/test.component';
 
 const COMPONENTS = [
   EventMetaEventListComponent,
-  EventComplexEventListComponent];
+  EventComplexEventListComponent,
+  EventTestComponent];
 const COMPONENTS_NOROUNT = [];
 
 @NgModule({
