@@ -35,6 +35,7 @@ export class EventComplexEventListComponent implements OnInit {
   deleteMetaId = '';//要删除的原子事件的id
   deleteAttributeId = '';//要删除的属性关系的id
   attributeRelationInfo = '';//属性关系展示信息
+  metaEventCompany = '';//原子事件范围单位展示信息
   relationList: any[] = [{value: 0, label: "小于"}, {value: 1, label: "小于等于"}, {value: 2, label: "等于"},
     {value: 3, label: "大于等于"}, {value: 4, label: "大于"},];
   metaEventCompanyList: any[] = [{value: "subsites", label: "子站"}, {value: "subsystem", label: "子系统"},
@@ -64,13 +65,13 @@ export class EventComplexEventListComponent implements OnInit {
     {title: 'id', index: 'id', iif: () => false},
     {title: '复杂事件名称', index: 'name'},
     {title: '复杂事件简介', index: 'synopsis'},
-    {title: '原子事件范围单位', index: 'metaEventCompany'},
-    {title: '原子事件范围', index: 'metaEventRange'},
+    // {title: '原子事件范围单位', index: 'metaEventCompany'},
+    // {title: '原子事件范围', index: 'metaEventRange'},
     {title: '创建时间', index: 'insertTime'},
     {
       title: '操作',
       buttons: [
-        // {text: '选择原子事件', click: (item: any) => this.addOrUpdateMeta(item)},
+        {text: '选择原子事件', click: (item: any) => this.addOrUpdateMeta(item)},
         {text: '编辑属性与目标', click: (item: any) => this.addOrUpdateAttribute(item)},
         {text: '修改', click: (item: any) => this.updateComplexEvent(item)},
         {text: '删除', click: (item: any) => this.deleteComplexEvent(item)},
@@ -82,8 +83,9 @@ export class EventComplexEventListComponent implements OnInit {
   metaColumns: STColumn[] = [
     {title: '序号', type: 'no'},
     {title: 'id', index: 'id', iif: () => false},
-    {title: '原子事件名称', index: 'name'},
-    {title: '原子事件简介', index: 'synopsis'},
+    {title: '原子事件范围单位', index: 'attributeName'},
+    {title: '关系', index: 'attributeRelation'},
+    {title: '值', index: 'attributeValue'},
     {
       title: '操作',
       buttons: [
@@ -119,11 +121,13 @@ export class EventComplexEventListComponent implements OnInit {
     this.complexEventForm = this.fb.group({
       name: [null, [Validators.required]],
       synopsis: [null, [Validators.required]],
-      selectCompany: [null, [Validators.required]],
-      selectRange: [null, [Validators.required]],
+      // selectCompany: [null, [Validators.required]],
+      // selectRange: [null, [Validators.required]],
     });
     this.metaForm = this.fb.group({
       selectMeta: [null, [Validators.required]],
+      metaEventRelation: [null, [Validators.required]],
+      metaEventValue: [null, [Validators.required]],
     });
     this.attributeForm = this.fb.group({
       selectType: [null, [Validators.required]],
@@ -146,8 +150,8 @@ export class EventComplexEventListComponent implements OnInit {
           return {
             name: data[idx].name,
             synopsis: data[idx].synopsis,
-            metaEventCompany: data[idx].metaEventCompany,
-            metaEventRange: data[idx].metaEventRange,
+            // metaEventCompany: data[idx].metaEventCompany,
+            // metaEventRange: data[idx].metaEventRange,
             insertTime: data[idx].insertTime,
             id: data[idx].id,
           }
@@ -187,8 +191,8 @@ export class EventComplexEventListComponent implements OnInit {
     this.complexEventForm = this.fb.group({
       name: [null, [Validators.required]],
       synopsis: [null, [Validators.required]],
-      selectCompany: [null, [Validators.required]],
-      selectRange: [null, [Validators.required]],
+      // selectCompany: [null, [Validators.required]],
+      // selectRange: [null, [Validators.required]],
     });
   }
 
@@ -210,8 +214,8 @@ export class EventComplexEventListComponent implements OnInit {
     this.http.post('api/complexEvent/infoList/insertComplexEvent', {
       name: this.complexEventForm.value.name,
       synopsis: this.complexEventForm.value.synopsis,
-      metaEventCompany: this.complexEventForm.value.selectCompany,
-      metaEventRange: this.complexEventForm.value.selectRange,
+      // metaEventCompany: this.complexEventForm.value.selectCompany,
+      // metaEventRange: this.complexEventForm.value.selectRange,
       id: this.complexEventUpdateId,
     }).subscribe(data => {
       this.insertComplexEventIsVisible = false;
@@ -236,20 +240,20 @@ export class EventComplexEventListComponent implements OnInit {
     this.complexEventForm = this.fb.group({
       name: [item.name, [Validators.required]],
       synopsis: [item.synopsis, [Validators.required]],
-      selectCompany: [item.metaEventCompany, [Validators.required]],
-      selectRange: [item.metaEventRange, [Validators.required]],
+      // selectCompany: [item.metaEventCompany, [Validators.required]],
+      // selectRange: [item.metaEventRange, [Validators.required]],
     });
     this.complexEventUpdateId = item.id;
   }
 
   //当选择属性范围时，去后台拉取对应的数据
   metaEventCompanyChange(e) {
-    this.checkCompany = e;
-    this.http.get('api/complexEvent/infoList/getMetaEventRange', {
-      type: this.checkCompany
-    }).subscribe(data => {
-      this.metaEventRangeList = data;
-    })
+    // this.checkCompany = e;
+    // this.http.get('api/complexEvent/infoList/getMetaEventRange', {
+    //   type: this.checkCompany
+    // }).subscribe(data => {
+    //   this.metaEventRangeList = data;
+    // })
   }
 
   metaEventRangeChange(e) {
@@ -263,7 +267,7 @@ export class EventComplexEventListComponent implements OnInit {
     this.addMetaIsVisible = true;
     this.complexId = item.id;
     this.getMetaList();//获取对应关系列表
-    this.getAllMetaList();//获取所有原子事件
+    // this.getAllMetaList();//获取所有原子事件
   }
 
   //获取所选原子事件列表
@@ -271,17 +275,40 @@ export class EventComplexEventListComponent implements OnInit {
     this.http.get('api/complexEvent/infoList/getMetaList', {
       complexId: this.complexId
     }).subscribe(data => {
+      console.log(data)
       this.metaList = Array(data.length)
         .fill({}).map((item: any, idx: number) => {
+          if (data[idx].attributeRelation === '0') {
+            this.attributeRelationInfo = "小于"
+          } else if (data[idx].attributeRelation === '1') {
+            this.attributeRelationInfo = "小于等于"
+          } else if (data[idx].attributeRelation === '2') {
+            this.attributeRelationInfo = "等于"
+          } else if (data[idx].attributeRelation === '3') {
+            this.attributeRelationInfo = "大于等于"
+          } else if (data[idx].attributeRelation === '4') {
+            this.attributeRelationInfo = "大于"
+          }
+          if(data[idx].attributeName === 'equipment'){
+            this.metaEventCompany = "设备";
+          } else if(data[idx].attributeName === 'attribute'){
+            this.metaEventCompany = "属性";
+          } else if(data[idx].attributeName === 'subsites'){
+            this.metaEventCompany = "子站";
+          } else if(data[idx].attributeName === 'subsystem'){
+            this.metaEventCompany = "子系统";
+          }
           return {
             id: data[idx].id,
-            name: data[idx].name,
-            synopsis: data[idx].synopsis,
+            attributeName: this.metaEventCompany,
+            attributeRelation: this.attributeRelationInfo,
+            attributeValue: data[idx].attributeValue,
           }
         })
     })
   }
 
+  //获取所有原子事件
   getAllMetaList() {
     this.http.get('api/complexEvent/infoList/getAllMetaList', {}).subscribe(data => {
       this.allMetaList = data;
@@ -305,6 +332,8 @@ export class EventComplexEventListComponent implements OnInit {
     this.saveMetaIsVisible = false;
     this.metaForm = this.fb.group({
       selectMeta: [null, [Validators.required]],
+      metaEventRelation: [null, [Validators.required]],
+      metaEventValue: [null, [Validators.required]],
     });
   }
 
@@ -317,8 +346,11 @@ export class EventComplexEventListComponent implements OnInit {
   submitMeta() {
     this.http.post('api/complexEvent/infoList/addMeta', {
       type: '0',
-      metaEventId: this.checkMeta,
+      // metaEventId: this.checkMeta,
       complexEventId: this.complexId,
+      attributeName: this.metaForm.value.selectMeta,
+      attributeRelation: this.metaForm.value.metaEventRelation,
+      attributeValue: this.metaForm.value.metaEventValue,
     }).subscribe(data => {
       this.saveMetaHandleCancel();
       this.getMetaList();
@@ -469,11 +501,11 @@ export class EventComplexEventListComponent implements OnInit {
     this.notification.create(
       //error，warning,info
       type,
-      '站点报警',
-      '<table border="1"><tr><td>1</td><td>2</td></tr><tr><td>3</td><td>4</td></tr></table>',
+      '站点报警',//标题
+      '<table border="1"><tr><td>系统</td><td>子站</td><td>子系统</td><td>设备</td></tr><tr><td>1111111</td><td>222222222222</td><td>3333</td><td>444444</td></tr></table>',//在这里写表格内容
       {
-        nzStyle: {width:'470px',marginLeft: '-100px',color:'red'},
-        nzDuration: 0,
+        nzStyle: {width:'470px',marginLeft: '-100px',color:'red'},//弹出框的样式，分别是宽度，左距离，颜色
+        nzDuration: 0,//显示时间，单位是毫秒，0为一直显示，不自动关闭
       }
     );
   }//nzDuration是毫秒

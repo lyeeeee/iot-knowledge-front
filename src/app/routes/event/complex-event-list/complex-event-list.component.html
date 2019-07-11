@@ -22,18 +22,6 @@
     <se label="复杂事件简介" error="请输入复杂事件简介" required>
       <input nz-input formControlName="synopsis" placeholder="请输入复杂事件简介"/>
     </se>
-    <se label="原子事件范围单位" error="请选择原子事件范围单位" required>
-      <nz-select formControlName="selectCompany" [nzPlaceHolder]="'原子事件范围单位'" [nzShowSearch]="true"
-                 (ngModelChange)="metaEventCompanyChange($event)">
-        <nz-option *ngFor="let i of metaEventCompanyList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
-      </nz-select>
-    </se>
-    <se label="请选择原子事件范围" error="请选择原子事件范围" required>
-      <nz-select formControlName="selectRange" [nzPlaceHolder]="'请选择原子事件范围'" [nzShowSearch]="true"
-                 (ngModelChange)="metaEventRangeChange($event)" >
-        <nz-option *ngFor="let i of metaEventRangeList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
-      </nz-select>
-    </se>
     <se>
       <button nz-button nzType="primary" [disabled]="complexEventForm.invalid" type="submit">提交</button>
     </se>
@@ -48,9 +36,9 @@
 
 <!--所选原子事件弹出框-->
 <nz-modal [(nzVisible)]="addMetaIsVisible"
-          nzTitle="所选原子事件" (nzOnCancel)="addMetaHandleCancel()"
+          nzTitle="所选原子事件范围" (nzOnCancel)="addMetaHandleCancel()"
           nzFooter=" " nzWidth="1200px">
-  <button (click)="addMeta()" nz-button nzType="primary" style="margin: 0 20px 20px;">新增原子事件</button>
+  <button (click)="addMeta()" nz-button nzType="primary" style="margin: 0 20px 20px;">新增原子事件范围</button>
   <nz-card>
     <st #metast [data]="metaList" [columns]="metaColumns"></st>
   </nz-card>
@@ -58,18 +46,32 @@
 <!--新增原子事件弹出框-->
 <nz-modal
   [(nzVisible)]="saveMetaIsVisible"
-  nzTitle="新增原子事件"
+  nzTitle="新增原子事件范围"
   (nzOnCancel)="saveMetaHandleCancel()"
   nzFooter=" "
   nzWidth="800px"
 >
   <form nz-form [formGroup]="metaForm" (ngSubmit)="submitMeta()" se-container="1">
 
-    <se label="请选择原子事件" error="请选择原子事件" required>
-      <nz-select formControlName="selectMeta" [nzPlaceHolder]="'请选择原子事件'" [nzShowSearch]="true"
-                 (ngModelChange)="metaChange($event)">
-        <nz-option *ngFor="let i of allMetaList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+    <!--<se label="请选择原子事件范围" error="请选择原子事件范围" required>-->
+      <!--<nz-select formControlName="selectMeta" [nzPlaceHolder]="'请选择原子事件范围'" [nzShowSearch]="true"-->
+                 <!--(ngModelChange)="metaChange($event)">-->
+        <!--<nz-option *ngFor="let i of allMetaList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>-->
+      <!--</nz-select>-->
+    <!--</se>-->
+    <se label="原子事件范围单位" error="请选择原子事件范围单位" required>
+      <nz-select formControlName="selectMeta" [nzPlaceHolder]="'原子事件范围单位'" [nzShowSearch]="true"
+                 (ngModelChange)="metaEventCompanyChange($event)">
+        <nz-option *ngFor="let i of metaEventCompanyList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
       </nz-select>
+    </se>
+    <se label="请选择对应关系" error="请选择对应关系" required>
+      <nz-select formControlName="metaEventRelation" [nzPlaceHolder]="'请选择对应关系'" [nzShowSearch]="true">
+        <nz-option *ngFor="let i of relationList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+      </nz-select>
+    </se>
+    <se label="值" error="请输入值" required>
+      <input nz-input formControlName="metaEventValue" placeholder="请输入值"/>
     </se>
     <se>
       <button nz-button nzType="primary" [disabled]="metaForm.invalid" type="submit">提交</button>
@@ -78,7 +80,7 @@
 </nz-modal>
 <nz-modal [(nzVisible)]="deleteMetaIsVisible" nzTitle="提示" (nzOnCancel)="deleteMetaHandleCancel()"
           (nzOnOk)="deleteMetaSubmit()">
-  确定要删除此原子事件吗？
+  确定要删除此原子事件范围吗？
 </nz-modal>
 
 
