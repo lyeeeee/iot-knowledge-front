@@ -70,7 +70,7 @@
         <nz-option *ngFor="let i of relationList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
       </nz-select>
     </se>
-    <se label="值" error="请输入值" required>
+    <se label="值(设备号)" error="请输入值" required>
       <input nz-input formControlName="metaEventValue" placeholder="请输入值"/>
     </se>
     <se>
@@ -86,9 +86,9 @@
 
 <!--所选对应关系弹出框-->
 <nz-modal [(nzVisible)]="addAttributeIsVisible"
-          nzTitle="编辑属性与目标" (nzOnCancel)="addAttributeHandleCancel()"
+          nzTitle="编辑属性" (nzOnCancel)="addAttributeHandleCancel()"
           nzFooter=" " nzWidth="1200px">
-  <button (click)="addAttribute()" nz-button nzType="primary" style="margin: 0 20px 20px;">新增属性或目标</button>
+  <button (click)="addAttribute()" nz-button nzType="primary" style="margin: 0 20px 20px;">新增属性</button>
   <nz-card>
     <st #attributest [data]="attributeList" [columns]="attributeColumns"></st>
   </nz-card>
@@ -96,7 +96,7 @@
 <!--新增对应关系弹出框-->
 <nz-modal
   [(nzVisible)]="saveAttributeIsVisible"
-  nzTitle="新增属性或目标"
+  nzTitle="新增属性"
   (nzOnCancel)="saveAttributeHandleCancel()"
   nzFooter=" "
   nzWidth="800px"
@@ -128,5 +128,5 @@
 </nz-modal>
 <nz-modal [(nzVisible)]="deleteAttributeIsVisible" nzTitle="提示" (nzOnCancel)="deleteAttributeHandleCancel()"
           (nzOnOk)="deleteAttributeSubmit()">
-  确定要删除此属性或目标吗？
+  确定要删除此属性吗？
 </nz-modal>

@@ -42,7 +42,8 @@ export class EventTestComponent implements OnInit {
       //error，warning,info三种状态
       'error',
       '站点报警',//标题
-      '<table border="1"><tr><td>系统</td><td>子站</td><td>子系统</td><td>设备</td></tr><tr><td>1111111</td><td>222222222222</td><td>3333</td><td>444444</td></tr></table>',//在这里写表格内容
+      '<table border="1"><tr><td>系统</td><td>子站</td><td>子系统</td><td>设备</td></tr>' +
+      '<tr><td>授时系统</td><td>西安站</td><td>3333</td><td>444444</td></tr></table>',//在这里写表格内容
       {
         nzStyle: {width:'470px',marginLeft: '-100px',color:'red'},//弹出框的样式，分别是宽度，左距离，颜色
         nzDuration: 0,//显示时间，单位是毫秒，0为一直显示，不自动关闭

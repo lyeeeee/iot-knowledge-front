@@ -72,10 +72,10 @@ export class EventComplexEventListComponent implements OnInit {
       title: '操作',
       buttons: [
         {text: '选择原子事件', click: (item: any) => this.addOrUpdateMeta(item)},
-        {text: '编辑属性与目标', click: (item: any) => this.addOrUpdateAttribute(item)},
+        {text: '编辑属性', click: (item: any) => this.addOrUpdateAttribute(item)},
         {text: '修改', click: (item: any) => this.updateComplexEvent(item)},
         {text: '删除', click: (item: any) => this.deleteComplexEvent(item)},
-        {text: '报警', click: (item: any) => this.createNotification("error")},
+        // {text: '报警', click: (item: any) => this.createNotification("error")},
       ]
     }
   ];
@@ -85,7 +85,7 @@ export class EventComplexEventListComponent implements OnInit {
     {title: 'id', index: 'id', iif: () => false},
     {title: '原子事件范围单位', index: 'attributeName'},
     {title: '关系', index: 'attributeRelation'},
-    {title: '值', index: 'attributeValue'},
+    {title: '值(设备号)', index: 'attributeValue'},
     {
       title: '操作',
       buttons: [
@@ -97,7 +97,7 @@ export class EventComplexEventListComponent implements OnInit {
   attributeColumns: STColumn[] = [
     {title: '序号', type: 'no'},
     {title: 'id', index: 'id', iif: () => false},
-    {title: '类型', index: 'type'},
+    // {title: '类型', index: 'type'},
     {title: '名称', index: 'attributeName'},
     {title: '关系', index: 'attributeRelation'},
     {title: '值', index: 'attributeValue'},
@@ -455,7 +455,8 @@ export class EventComplexEventListComponent implements OnInit {
   //提交保存所选属性关系
   submitAttribute() {
     this.http.post('api/complexEvent/infoList/addAttributeList', {
-      type: this.attributeForm.value.selectType,
+      type: '1',
+      // type: this.attributeForm.value.selectType,
       attributeName: this.attributeForm.value.attributeName,
       attributeRelation: this.attributeForm.value.attributeRelation,
       attributeValue: this.attributeForm.value.attributeValue,
