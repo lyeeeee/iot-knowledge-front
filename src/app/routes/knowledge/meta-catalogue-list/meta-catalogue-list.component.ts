@@ -49,7 +49,7 @@ export class KnowledgeMetaCatalogueListComponent implements OnInit {
       buttons: [
         {text: '修改', click: (item: any) => this.update(item)},
         {text: '删除', click: (item: any) => this.delete(item)},
-        {text: '查看详情', click: (item: any) => this.delete(item)},
+        // {text: '查看详情', click: (item: any) => this.delete(item)},
         // { text: '编辑', type: 'static', component: FormEditComponent, click: 'reload' },
       ]
     }
@@ -74,6 +74,7 @@ export class KnowledgeMetaCatalogueListComponent implements OnInit {
     this.http.get('api/knowledge/directory/getSelect', {
       type: '01',
     }).subscribe(data => {
+      console.log(data)
       this.fieldList = data;
     })
   }

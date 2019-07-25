@@ -1,6 +1,6 @@
 <page-header [action]="phActionTpl">
   <ng-template #phActionTpl>
-    <button (click)="add()" nz-button nzType="primary">新建元目录</button>
+    <button (click)="add()" nz-button nzType="primary">新建元知识</button>
   </ng-template>
 </page-header>
 <nz-card>
@@ -10,7 +10,7 @@
 <!--新增弹出框-->
 <nz-modal
   [(nzVisible)]="isVisible"
-  nzTitle="新增元目录"
+  nzTitle="新增或修改元知识"
   (nzOnCancel)="handleCancel()"
   nzFooter=" "
 >
@@ -19,8 +19,8 @@
     <se label="所属领域及部门" error="请选择所属领域及部门" required>
       <nz-cascader formControlName="selectField" [nzOptions]="fieldList" [(ngModel)]="values"> </nz-cascader>
     </se>
-    <se label="元目录名称" error="请输入元目录名称" required>
-      <input nz-input formControlName="name" placeholder="请输入元目录名称"/>
+    <se label="元知识名称" error="请输入元知识名称" required>
+      <input nz-input formControlName="name" placeholder="请输入元知识名称"/>
     </se>
     <se>
       <button nz-button nzType="primary" [disabled]="form.invalid" type="submit">提交</button>
@@ -29,5 +29,5 @@
 </nz-modal>
 <!--删除确认弹出框-->
 <nz-modal [(nzVisible)]="deleteIsVisible" nzTitle="提示" (nzOnCancel)="handleCancel()" (nzOnOk)="deleteSubmit()">
-  确定要删除此元目录吗？
+  确定要删除此元知识吗？
 </nz-modal>

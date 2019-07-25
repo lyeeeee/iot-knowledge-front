@@ -61,7 +61,7 @@ export class EventMetaEventListComponent implements OnInit {
       title: '操作',
       buttons: [
         {text: '查看与编辑对应关系', click: (item: any) => this.addOrUpdateRelation(item)},
-        {text: '修改', click: (item: any) => this.updateMetaEvent(item)},
+        // {text: '修改', click: (item: any) => this.updateMetaEvent(item)},
         {text: '删除', click: (item: any) => this.deleteMetaEvent(item)},
       ]
     }

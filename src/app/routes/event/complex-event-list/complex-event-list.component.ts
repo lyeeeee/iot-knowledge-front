@@ -4,6 +4,7 @@ import {STColumn, STComponent} from '@delon/abc';
 import {SFSchema} from '@delon/form';
 import {NzNotificationService} from "ng-zorro-antd";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {DatePipe} from "@angular/common";
 
 @Component({
   selector: 'app-event-complex-event-list',
@@ -15,6 +16,7 @@ export class EventComplexEventListComponent implements OnInit {
   list: any[] = [];
   metaList: any[] = [];//所选知识列表
   attributeList: any[] = [];//对应关系列表
+  targetList: any[] = [];//目标列表
   insertComplexEventIsVisible;//是否显示新增复杂事件弹出框
   deleteComplexEventIsVisible;//是否显示删除复杂事件弹出框
   addMetaIsVisible;//是否显示选择元知识弹出框
@@ -23,6 +25,9 @@ export class EventComplexEventListComponent implements OnInit {
   addAttributeIsVisible;//是否显示添加属性弹出框
   saveAttributeIsVisible;//是否显示新增添加属性弹出框
   deleteAttributeIsVisible;//是否显示删除添加属性弹出框
+  addTargetIsVisible;//是否显示添加目标弹出框
+  saveTargetIsVisible;//是否显示新增目标弹出框
+  deleteTargetIsVisible;//是否显示删目标弹出框
 
   name = '';//复杂事件名称
   complexEventName: any[] = [];//存放所有已存在的复杂事件名称，更新及新增时检查是否已存在
@@ -34,22 +39,57 @@ export class EventComplexEventListComponent implements OnInit {
   checkRelation = '';//所选属性关系
   deleteMetaId = '';//要删除的原子事件的id
   deleteAttributeId = '';//要删除的属性关系的id
+  deleteTargetId = '';
   attributeRelationInfo = '';//属性关系展示信息
   metaEventCompany = '';//原子事件范围单位展示信息
   relationList: any[] = [{value: 0, label: "小于"}, {value: 1, label: "小于等于"}, {value: 2, label: "等于"},
     {value: 3, label: "大于等于"}, {value: 4, label: "大于"},];
   metaEventCompanyList: any[] = [{value: "subsites", label: "子站"}, {value: "subsystem", label: "子系统"},
-    {value: "equipment", label: "设备"}, {value: "attribute", label: "属性"}];
+    {value: "equipment", label: "设备"}, {value: "target", label: "属性"}];
   metaEventRangeList: any[] = [];
   checkCompany = "";
   checkRange = "";
   typeList: any[] = [{value: "2", label: "目标"}, {value: "1", label: "属性"}];
+  andOrNotList: any[] = [{value: "1", label: "与"}, {value: "2", label: "或"}, {value: "3", label: "非"}];
+  // targetNameList: any[] = [{value: "00", label: "失锁"}, {value: "01", label: "自动重锁"}, {value: "02", label: "重锁失败"}];
+  targetNameList: any[] = [{
+    label: "链路光纤故障",
+    value: "0",
+    "children": [{label: "失锁", value: "00", isLeaf: true}, {label: "自动重锁", value: "01", isLeaf: true}, {
+      label: "重锁失败",
+      value: "02",
+      isLeaf: true
+    }]
+  },
+    {
+      label: "2故障",
+      value: "1",
+      "children": [{label: "10", value: "10", isLeaf: true}, {label: "11", value: "11", isLeaf: true}, {
+        label: "12",
+        value: "12",
+        isLeaf: true
+      }]
+    }];
+  metaAttributeList: any[] = [{value: "EDFA锁定状态", label: "EDFA锁定状态"}, {value: "光源锁定状态", label: "光源锁定状态"}, {value: "再生光激光器锁定状态", label: "再生光激光器锁定状态"}
+    , {value: "电源状态", label: "电源状态"}, {value: "设备工作状态", label: "设备工作状态"}, {value: "链路锁定状态", label: "链路锁定状态"}
+    , {value: "光频传递指标", label: "光频传递指标"}, {value: "再生光输出功率", label: "再生光输出功率"}, {value: "发送端输出功率", label: "发送端输出功率"}
+    , {value: "接收端输入功率", label: "接收端输入功率"}, {value: "环内拍频信号", label: "环内拍频信号"}, {value: "环境温度", label: "环境温度"}
+    , {value: "相位噪声", label: "相位噪声"}, {value: "离子泵电流", label: "离子泵电流"}, {value: "输入功率", label: "输入功率"}
+    , {value: "输出功率", label: "输出功率"}, {value: "透射峰电压", label: "透射峰电压"}, {value: "频率稳定度", label: "频率稳定度"}];
+
   checktype = "";
   typrInfo = "";
+  andOrNot = "";//与或非
+  targetName = "";
+  warnType = 1;
+  stopTimer = false;
+  time1 = "";
+  typeSum = 0;
 
   complexEventForm: FormGroup;
   metaForm: FormGroup;
   attributeForm: FormGroup;
+  targetForm: FormGroup;
 
   searchSchema: SFSchema = {
     properties: {
@@ -72,10 +112,12 @@ export class EventComplexEventListComponent implements OnInit {
       title: '操作',
       buttons: [
         {text: '选择原子事件', click: (item: any) => this.addOrUpdateMeta(item)},
-        {text: '编辑属性', click: (item: any) => this.addOrUpdateAttribute(item)},
+        // {text: '编辑属性', click: (item: any) => this.addOrUpdateAttribute(item)},
+        {text: '编辑目标', click: (item: any) => this.addOrUpdateTarget(item)},
         {text: '修改', click: (item: any) => this.updateComplexEvent(item)},
         {text: '删除', click: (item: any) => this.deleteComplexEvent(item)},
         // {text: '报警', click: (item: any) => this.createNotification("error")},
+        // {text: '报警', click: (item: any) => this.aaaa()},
       ]
     }
   ];
@@ -84,6 +126,7 @@ export class EventComplexEventListComponent implements OnInit {
     {title: '序号', type: 'no'},
     {title: 'id', index: 'id', iif: () => false},
     {title: '原子事件范围单位', index: 'attributeName'},
+    {title: '属性', index: 'metaAttribute'},
     {title: '关系', index: 'attributeRelation'},
     {title: '值(设备号)', index: 'attributeValue'},
     {
@@ -108,11 +151,28 @@ export class EventComplexEventListComponent implements OnInit {
       ]
     }
   ];
+  @ViewChild('targetst') targetst: STComponent;
+  targetColumns: STColumn[] = [
+    {title: '序号', type: 'no'},
+    {title: 'id', index: 'id', iif: () => false},
+    // {title: '类型', index: 'type'},
+    {title: '名称', index: 'attributeName'},
+    {title: '关系', index: 'attributeRelation'},
+    {title: '值', index: 'attributeValue'},
+    {title: '与或非', index: 'andOrNot'},
+    {
+      title: '操作',
+      buttons: [
+        {text: '删除', click: (item: any) => this.deleteTarget(item)},
+      ]
+    }
+  ];
 
   constructor(private notification: NzNotificationService,
               private fb: FormBuilder,
               private modal: ModalHelper,
-              private http: _HttpClient) {
+              private http: _HttpClient,
+              private datePipe: DatePipe) {
   }
 
   ngOnInit() {
@@ -126,15 +186,25 @@ export class EventComplexEventListComponent implements OnInit {
     });
     this.metaForm = this.fb.group({
       selectMeta: [null, [Validators.required]],
+      metaAttribute: [null, [Validators.required]],
       metaEventRelation: [null, [Validators.required]],
       metaEventValue: [null, [Validators.required]],
     });
     this.attributeForm = this.fb.group({
-      selectType: [null, [Validators.required]],
+      // selectType: [null, [Validators.required]],
       attributeName: [null, [Validators.required]],
       attributeRelation: [null, [Validators.required]],
       attributeValue: [null, [Validators.required]],
     });
+    this.targetForm = this.fb.group({
+      selectAndOrNot: [null, [Validators.required]],
+      targetName: [null, [Validators.required]],
+      targetRelation: [null, [Validators.required]],
+      targetValue: [null, [Validators.required]],
+    });
+
+
+    this.warn();
 
   }
 
@@ -204,12 +274,12 @@ export class EventComplexEventListComponent implements OnInit {
   //复杂事件新增或修改  提交到后台
   submitComplexEvent() {
     //检查是否存在
-    if (!this.checkComplexEventName(this.complexEventForm.value.name)) {
-      this.notification.create("error",
-        '提示', this.complexEventForm.value.name + '已存在！'
-      );
-      return;
-    }
+    // if (!this.checkComplexEventName(this.complexEventForm.value.name)) {
+    //   this.notification.create("error",
+    //     '提示', this.complexEventForm.value.name + '已存在！'
+    //   );
+    //   return;
+    // }
     //不存在则新增或修改
     this.http.post('api/complexEvent/infoList/insertComplexEvent', {
       name: this.complexEventForm.value.name,
@@ -275,7 +345,7 @@ export class EventComplexEventListComponent implements OnInit {
     this.http.get('api/complexEvent/infoList/getMetaList', {
       complexId: this.complexId
     }).subscribe(data => {
-      console.log(data)
+      console.log(data);
       this.metaList = Array(data.length)
         .fill({}).map((item: any, idx: number) => {
           if (data[idx].attributeRelation === '0') {
@@ -289,18 +359,19 @@ export class EventComplexEventListComponent implements OnInit {
           } else if (data[idx].attributeRelation === '4') {
             this.attributeRelationInfo = "大于"
           }
-          if(data[idx].attributeName === 'equipment'){
+          if (data[idx].attributeName === 'equipment') {
             this.metaEventCompany = "设备";
-          } else if(data[idx].attributeName === 'attribute'){
+          } else if (data[idx].attributeName === 'attribute') {
             this.metaEventCompany = "属性";
-          } else if(data[idx].attributeName === 'subsites'){
+          } else if (data[idx].attributeName === 'subsites') {
             this.metaEventCompany = "子站";
-          } else if(data[idx].attributeName === 'subsystem'){
+          } else if (data[idx].attributeName === 'subsystem') {
             this.metaEventCompany = "子系统";
           }
           return {
             id: data[idx].id,
             attributeName: this.metaEventCompany,
+            metaAttribute: data[idx].metaAttribute,
             attributeRelation: this.attributeRelationInfo,
             attributeValue: data[idx].attributeValue,
           }
@@ -332,6 +403,7 @@ export class EventComplexEventListComponent implements OnInit {
     this.saveMetaIsVisible = false;
     this.metaForm = this.fb.group({
       selectMeta: [null, [Validators.required]],
+      metaAttribute: [null, [Validators.required]],
       metaEventRelation: [null, [Validators.required]],
       metaEventValue: [null, [Validators.required]],
     });
@@ -349,6 +421,7 @@ export class EventComplexEventListComponent implements OnInit {
       // metaEventId: this.checkMeta,
       complexEventId: this.complexId,
       attributeName: this.metaForm.value.selectMeta,
+      metaAttribute: this.metaForm.value.metaAttribute,
       attributeRelation: this.metaForm.value.metaEventRelation,
       attributeValue: this.metaForm.value.metaEventValue,
     }).subscribe(data => {
@@ -440,7 +513,7 @@ export class EventComplexEventListComponent implements OnInit {
   saveAttributeHandleCancel(): void {
     this.saveAttributeIsVisible = false;
     this.attributeForm = this.fb.group({
-      selectType: [null, [Validators.required]],
+      // selectType: [null, [Validators.required]],
       attributeName: [null, [Validators.required]],
       attributeRelation: [null, [Validators.required]],
       attributeValue: [null, [Validators.required]],
@@ -497,6 +570,208 @@ export class EventComplexEventListComponent implements OnInit {
     this.checktype = e;
   }
 
+  //目标target--------------------------------------------------
+
+  //打开目标关系弹出框
+  addOrUpdateTarget(item) {
+    this.addTargetIsVisible = true;
+    this.complexId = item.id;
+    this.getTargetList();//获取对应关系列表
+  }
+
+  //获取目标关系列表
+  getTargetList() {
+    this.http.get('api/complexEvent/infoList/getTargetList', {
+      complexId: this.complexId
+    }).subscribe(data => {
+      this.targetList = Array(data.length)
+        .fill({}).map((item: any, idx: number) => {
+          if (data[idx].attributeRelation === '0') {
+            this.attributeRelationInfo = "小于"
+          } else if (data[idx].attributeRelation === '1') {
+            this.attributeRelationInfo = "小于等于"
+          } else if (data[idx].attributeRelation === '2') {
+            this.attributeRelationInfo = "等于"
+          } else if (data[idx].attributeRelation === '3') {
+            this.attributeRelationInfo = "大于等于"
+          } else if (data[idx].attributeRelation === '4') {
+            this.attributeRelationInfo = "大于"
+          }
+          if (data[idx].attributeName == "00") {
+            this.targetName = "失锁"
+          } else if (data[idx].attributeName == "01") {
+            this.targetName = "自动重锁"
+          } else if (data[idx].attributeName == "02") {
+            this.targetName = "重锁失败"
+          }
+          if (data[idx].andOrNot == "1") {
+            this.andOrNot = "与"
+          } else if (data[idx].andOrNot == "2") {
+            this.andOrNot = "或"
+          } else if (data[idx].andOrNot == "3") {
+            this.andOrNot = "非"
+          }
+          return {
+            id: data[idx].id,
+            attributeName: this.targetName,
+            attributeRelation: this.attributeRelationInfo,
+            attributeValue: data[idx].attributeValue,
+            andOrNot: this.andOrNot,
+          }
+        })
+    })
+  }
+
+//所选目标关系的取消按钮方法
+  addTargetHandleCancel(): void {
+    this.addTargetIsVisible = false;
+    this.complexId = '';
+  }
+
+  //新增所选目标关系
+  addTarget() {
+    this.saveTargetIsVisible = true;
+  }
+
+  //新增所选目标关系的取消按钮方法
+  saveTargetHandleCancel(): void {
+    this.saveTargetIsVisible = false;
+    this.targetForm = this.fb.group({
+      selectAndOrNot: [null, [Validators.required]],
+      targetName: [null, [Validators.required]],
+      targetRelation: [null, [Validators.required]],
+      targetValue: [null, [Validators.required]],
+      // andOrNot: [null, [Validators.required]],
+    });
+  }
+
+  // //选择的目标关系
+  // relationChange(e) {
+  //   this.checkRelation = e;
+  // }
+
+  //提交保存所选目标关系
+  submitTarget() {
+    // console.log(this.targetForm.value.targetName[1])
+    this.http.post('api/complexEvent/infoList/addTargetList', {
+      type: '2',
+      // type: this.targetForm.value.selectType,
+      attributeName: this.targetForm.value.targetName[1],
+      attributeRelation: this.targetForm.value.targetRelation,
+      attributeValue: this.targetForm.value.targetValue,
+      andOrNot: this.targetForm.value.selectAndOrNot,
+      complexEventId: this.complexId,
+    }).subscribe(data => {
+      this.saveTargetHandleCancel();
+      this.getTargetList();
+    })
+  }
+
+  //删除所选目标关系
+  deleteTarget(item) {
+    this.deleteTargetIsVisible = true;
+    this.deleteTargetId = item.id;
+    console.log(item);
+  }
+
+  //删除所选目标关系取消按钮方法
+  deleteTargetHandleCancel(): void {
+    this.deleteTargetIsVisible = false;
+    this.deleteTargetId = '';
+  }
+
+  //删除所选目标关系提交
+  deleteTargetSubmit() {
+    this.deleteTargetIsVisible = false;
+    this.http.delete('api/complexEvent/infoList/deleteTarget/' + this.deleteTargetId).subscribe(data => {
+      this.getTargetList();//重新获取数据刷新列表
+      this.notification.create("success",
+        '提示',
+        '删除成功！'
+      );
+      this.deleteTargetId = '';//删除成功后置空
+    })
+  }
+
+//--------------------------------------
+  warn() {
+    // setInterval()
+    let timer = setInterval(() => {
+      this.http.get('api/warn/warn', {}).subscribe(data => {
+        console.log(data);
+        if(data.type === "1"){
+          if(this.warnType  === 1){
+            this.warnType = 2;
+            this.warn1();
+          }
+        }
+        if(data.type === "2"){
+          if(this.warnType  === 2){
+            this.warnType = 0;//结束
+            this.warn2();
+          }
+        }
+        if (this.stopTimer == true) {
+          clearInterval(timer);
+          this.stopTimer = false;
+        }
+      })
+    }, 2000)
+  }
+
+  warn1() {
+    // let time = new Date();
+    let time =this.datePipe.transform(new Date(), 'yyyy-MM-dd HH:mm:ss');
+    this.notification.create(
+      //error，warning,info
+      "error",
+      '站点报警',//标题
+      '<table border="1"><tr><td>系统</td><td>子站</td><td>子系统</td><td>设备</td><td>故障等级</td><td>值</td><td>时间</td><td>类型</td></tr>' +
+      '<tr bgcolor="87cefa"><td>授时系统</td><td>北京站</td><td>光纤光频传递分系统</td><td>光频传递系统接收设备1</td><td>低</td><td>55</td><td>'+time+'</td><td>单一复杂事件</td></tr></table>',//在这里写表格内容
+      {
+        nzStyle: {width: '800px', marginLeft: '-400px'},//弹出框的样式，分别是宽度，左距离，颜色
+        nzDuration: 20000,//显示时间，单位是毫秒，0为一直显示，不自动关闭
+      }
+    );
+    this.time1 = time;
+  }
+
+  warn2() {
+    const time1 = this.time1;
+    let time2 =this.datePipe.transform(new Date(), 'yyyy-MM-dd HH:mm:ss');
+    this.notification.create(
+      //error，warning,info
+      "error",
+      '站点报警',//标题
+      '<table border="1"><tr><td>系统</td><td>子站</td><td>子系统</td><td>设备</td><td>故障等级</td><td>值</td><td>时间</td><td>类型</td></tr>' +
+      '<tr bgcolor="red"><td>授时系统</td><td>北京站</td><td>光纤光频传递分系统</td><td>光频传递系统接收设备3</td><td>高</td><td>56</td><td>'+time2+'</td><td>复合复杂事件</td></tr>' +
+      '<tr bgcolor="#ff8c00"><td>授时系统</td><td>北京站</td><td>光纤光频传递分系统</td><td>光频传递系统接收设备2</td><td>中</td><td>56</td><td>'+time2+'</td><td>复合复杂事件</td></tr>' +
+      '<tr bgcolor="#87cefa"><td>授时系统</td><td>北京站</td><td>光纤光频传递分系统</td><td>光频传递系统接收设备1</td><td>低</td><td>55</td><td>'+time1+'</td><td>单一复杂事件</td></tr></table>',//在这里写表格内容
+      {
+        nzStyle: {width: '800px', marginLeft: '-400px',},//弹出框的样式，分别是宽度，左距离，颜色
+        nzDuration: 0,//显示时间，单位是毫秒，0为一直显示，不自动关闭
+      }
+    );
+    this.stopTimer = true;
+  }
+
+  warn3() {
+    this.notification.create(
+      //error，warning,info
+      "error",
+      '站点报警',//标题
+      '<table border="1"><tr><td>系统</td><td>子站</td><td>子系统</td><td>设备</td><td>报警信息</td></tr>' +
+      '<tr><td>授时系统</td><td>北京站</td><td>子系统1</td><td>设备1</td><td>失锁</td></tr>' +
+      '<tr><td>授时系统</td><td>北京站</td><td>子系统1</td><td>设备2</td><td>自动重锁</td></tr>' +
+      '<tr><td>授时系统</td><td>北京站</td><td>子系统1</td><td>设备3</td><td>重锁失败</td></tr></table>',//在这里写表格内容
+      {
+        nzStyle: {width: '470px', marginLeft: '-100px', color: 'red'},//弹出框的样式，分别是宽度，左距离，颜色
+        nzDuration: 0,//显示时间，单位是毫秒，0为一直显示，不自动关闭
+      }
+    );
+    this.stopTimer = true;
+  }
+
 
   createNotification(type: string): void {
     this.notification.create(
@@ -505,7 +780,7 @@ export class EventComplexEventListComponent implements OnInit {
       '站点报警',//标题
       '<table border="1"><tr><td>系统</td><td>子站</td><td>子系统</td><td>设备</td></tr><tr><td>1111111</td><td>222222222222</td><td>3333</td><td>444444</td></tr></table>',//在这里写表格内容
       {
-        nzStyle: {width:'470px',marginLeft: '-100px',color:'red'},//弹出框的样式，分别是宽度，左距离，颜色
+        nzStyle: {width: '470px', marginLeft: '-100px', color: 'red'},//弹出框的样式，分别是宽度，左距离，颜色
         nzDuration: 0,//显示时间，单位是毫秒，0为一直显示，不自动关闭
       }
     );

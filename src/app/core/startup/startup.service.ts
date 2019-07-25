@@ -172,10 +172,11 @@ export class StartupService {
                 text: '复杂事件管理',
                 link: '/event/complex-event-list'
               },
-              {
-                text: '报警测试',
-                link: '/event/test'
-              }]
+              // {
+              //   text: '报警测试',
+              //   link: '/event/test'
+              // }
+              ]
           }
         ]
       }

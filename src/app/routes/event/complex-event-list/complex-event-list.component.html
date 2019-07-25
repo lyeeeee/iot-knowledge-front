@@ -10,7 +10,7 @@
 <!--新增复杂事件弹出框-->
 <nz-modal
   [(nzVisible)]="insertComplexEventIsVisible"
-  nzTitle="新增复杂事件"
+  nzTitle="新增或修改复杂事件"
   (nzOnCancel)="handleCancel()"
   nzFooter=" "
   nzWidth="800px"
@@ -65,6 +65,11 @@
         <nz-option *ngFor="let i of metaEventCompanyList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
       </nz-select>
     </se>
+    <se label="属性" error="请选择属性" required>
+      <nz-select formControlName="metaAttribute" [nzPlaceHolder]="'属性'" [nzShowSearch]="true">
+        <nz-option *ngFor="let i of metaAttributeList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+      </nz-select>
+    </se>
     <se label="请选择对应关系" error="请选择对应关系" required>
       <nz-select formControlName="metaEventRelation" [nzPlaceHolder]="'请选择对应关系'" [nzShowSearch]="true">
         <nz-option *ngFor="let i of relationList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
@@ -103,12 +108,12 @@
 >
   <form nz-form [formGroup]="attributeForm" (ngSubmit)="submitAttribute()" se-container="1">
 
-    <se label="请选择类型" error="请选择类型" required>
-      <nz-select formControlName="selectType" [nzPlaceHolder]="'请选择类型'" [nzShowSearch]="true"
-                 (ngModelChange)="typeChange($event)">
-        <nz-option *ngFor="let i of typeList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
-      </nz-select>
-    </se>
+    <!--<se label="请选择类型" error="请选择类型" required>-->
+      <!--<nz-select formControlName="selectType" [nzPlaceHolder]="'请选择类型'" [nzShowSearch]="true"-->
+                 <!--(ngModelChange)="typeChange($event)">-->
+        <!--<nz-option *ngFor="let i of typeList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>-->
+      <!--</nz-select>-->
+    <!--</se>-->
     <se label="名称" error="请输入名称" required>
       <input nz-input formControlName="attributeName" placeholder="请输入名称"/>
     </se>
@@ -129,4 +134,56 @@
 <nz-modal [(nzVisible)]="deleteAttributeIsVisible" nzTitle="提示" (nzOnCancel)="deleteAttributeHandleCancel()"
           (nzOnOk)="deleteAttributeSubmit()">
   确定要删除此属性吗？
+</nz-modal>
+
+
+
+<!--目标弹出框-->
+<nz-modal [(nzVisible)]="addTargetIsVisible"
+          nzTitle="编辑目标" (nzOnCancel)="addTargetHandleCancel()"
+          nzFooter=" " nzWidth="1200px">
+  <button (click)="addTarget()" nz-button nzType="primary" style="margin: 0 20px 20px;">新增目标</button>
+  <nz-card>
+    <st #targetst [data]="targetList" [columns]="targetColumns"></st>
+  </nz-card>
+</nz-modal>
+<!--新增目标弹出框-->
+<nz-modal
+  [(nzVisible)]="saveTargetIsVisible"
+  nzTitle="新增目标"
+  (nzOnCancel)="saveTargetHandleCancel()"
+  nzFooter=" "
+  nzWidth="800px"
+>
+  <form nz-form [formGroup]="targetForm" (ngSubmit)="submitTarget()" se-container="1">
+
+    <se label="请选择目标" error="请选择目标" required>
+      <!--<input nz-input formControlName="targetName" placeholder="请输入名称"/>-->
+      <!--<nz-select formControlName="targetName" [nzPlaceHolder]="'请选择目标'" [nzShowSearch]="true">-->
+        <!--<nz-option *ngFor="let i of targetNameList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>-->
+      <!--</nz-select>-->
+      <nz-cascader formControlName="targetName" [nzOptions]="targetNameList"> </nz-cascader>
+    </se>
+    <se label="请选择对应关系" error="请选择对应关系" required>
+      <nz-select formControlName="targetRelation" [nzPlaceHolder]="'请选择对应关系'" [nzShowSearch]="true"
+                 (ngModelChange)="relationChange($event)">
+        <nz-option *ngFor="let i of relationList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+      </nz-select>
+    </se>
+    <se label="值" error="请输入值" required>
+      <input nz-input formControlName="targetValue" placeholder="请输入值"/>
+    </se>
+    <se label="与其他事件关系" error="请选择类型" required>
+      <nz-select formControlName="selectAndOrNot" [nzPlaceHolder]="'请选择类型'" [nzShowSearch]="true">
+        <nz-option *ngFor="let i of andOrNotList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+      </nz-select>
+    </se>
+    <se>
+      <button nz-button nzType="primary" [disabled]="targetForm.invalid" type="submit">提交</button>
+    </se>
+  </form>
+</nz-modal>
+<nz-modal [(nzVisible)]="deleteTargetIsVisible" nzTitle="提示" (nzOnCancel)="deleteTargetHandleCancel()"
+          (nzOnOk)="deleteTargetSubmit()">
+  确定要删除此目标吗？
 </nz-modal>

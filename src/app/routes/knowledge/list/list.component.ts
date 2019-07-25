@@ -73,7 +73,7 @@ export class KnowledgeListComponent implements OnInit {
       title: '操作',
       buttons: [
         {text: 'SparQL查询', click: (item: any) => this.sparqlSelect(item)},
-        {text: '知识图谱', type: 'static', click: 'reload'},
+        // {text: '知识图谱', type: 'static', click: 'reload'},
       ]
     }
   ];
@@ -118,7 +118,7 @@ export class KnowledgeListComponent implements OnInit {
         .fill({}).map((item: any, idx: number) => {
           return {
             name: data[idx].name,
-            field_name: data[idx].departmentName,
+            field_name: data[idx].fieldName,
             department_name: data[idx].departmentName,
             meta_catalogue_name: data[idx].metaCatalogueName,
             knowledge_synopsis: data[idx].knowledgeSynopsis,

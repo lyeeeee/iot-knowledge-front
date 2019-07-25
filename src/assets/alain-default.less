@@ -1591,7 +1591,7 @@ this.tinycolor = tinycolor;
 @padding-sm: 12px; // Form controls and items
 @padding-xs: 8px; // small items
 
-// vertical padding for all metaEventForm controls
+// vertical padding for all form controls
 @control-padding-horizontal: @padding-sm;
 @control-padding-horizontal-sm: @padding-xs;
 
@@ -4080,7 +4080,7 @@ this.tinycolor = tinycolor;
 @padding-sm: 12px; // Form controls and items
 @padding-xs: 8px; // small items
 
-// vertical padding for all metaEventForm controls
+// vertical padding for all form controls
 @control-padding-horizontal: @padding-sm;
 @control-padding-horizontal-sm: @padding-xs;
 
@@ -5192,8 +5192,8 @@ progress {
 
 [type='search'] {
   // This overrides the extra rounded corners on search inputs in iOS so that our
-  // `.metaEventForm-control` class can properly style them. Note that this cannot simply
-  // be added to `.metaEventForm-control` as it's not specific enough. For details, see
+  // `.form-control` class can properly style them. Note that this cannot simply
+  // be added to `.form-control` as it's not specific enough. For details, see
   // https://github.com/twbs/bootstrap/issues/11586.
   outline-offset: -2px; // 2. Correct the outline style in Safari.
   -webkit-appearance: none;
@@ -11604,7 +11604,7 @@ a.@{btn-prefix-cls} {
   }
 }
 
-// Reset metaEventForm styles
+// Reset form styles
 // -----------------------------
 // Based on Bootstrap framework
 .reset-form() {
@@ -11638,7 +11638,7 @@ a.@{btn-prefix-cls} {
     display: block;
   }
 
-  // Make range inputs behave like textual metaEventForm controls
+  // Make range inputs behave like textual form controls
   input[type='range'] {
     display: block;
     width: 100%;
@@ -11750,7 +11750,7 @@ input[type='checkbox'] {
 }
 
 // Form items
-// You should wrap labels and controls in .@{metaEventForm-prefix-cls}-item for optimum spacing
+// You should wrap labels and controls in .@{form-prefix-cls}-item for optimum spacing
 .@{form-prefix-cls}-item {
   label {
     position: relative;
@@ -12000,7 +12000,7 @@ form {
 }
 
 .@{form-prefix-cls}-vertical .@{form-prefix-cls}-item-label,
-  // when labelCol is 24, it is a vertical metaEventForm
+  // when labelCol is 24, it is a vertical form
 .@{ant-prefix}-col-24.@{form-prefix-cls}-item-label,
 .@{ant-prefix}-col-xl-24.@{form-prefix-cls}-item-label {
   .make-vertical-layout-label();
@@ -20072,7 +20072,7 @@ nz-table {
 // @import '../../../../node_modules/ng-zorro-antd/core/style/index.less';
 // @import '../../../../node_modules/ng-zorro-antd/divider/style/index.less';
 // @import '../../../../node_modules/ng-zorro-antd/dropdown/style/index.less';
-// @import '../../../../node_modules/ng-zorro-antd/metaEventForm/style/index.less';
+// @import '../../../../node_modules/ng-zorro-antd/form/style/index.less';
 // @import '../../../../node_modules/ng-zorro-antd/input/style/index.less';
 // @import '../../../../node_modules/ng-zorro-antd/input-number/style/index.less';
 // @import '../../../../node_modules/ng-zorro-antd/layout/style/index.less';
@@ -20704,9 +20704,9 @@ fieldset {
     &__form {
       // FIXED-CHECK
       // // BUG: https://github.com/NG-ZORRO/ng-zorro-antd/issues/1202
-      // &.@{ant-prefix}-metaEventForm-inline {
-      //   .@{ant-prefix}-metaEventForm-item-label,
-      //   .@{ant-prefix}-metaEventForm-item-control-wrapper {
+      // &.@{ant-prefix}-form-inline {
+      //   .@{ant-prefix}-form-item-label,
+      //   .@{ant-prefix}-form-item-control-wrapper {
       //     padding: 0 !important;
       //   }
       // }
