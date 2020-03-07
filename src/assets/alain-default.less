@@ -1329,7 +1329,7 @@ this.tinycolor = tinycolor;
     var saturation;
     if (isLight) {
       saturation = Math.round(hsv.s * 100) - saturationStep * i;
-    } else if (i == darkColorCount) {
+    } else if (i === darkColorCount) {
       saturation = Math.round(hsv.s * 100) + saturationStep;
     } else {
       saturation = Math.round(hsv.s * 100) + saturationStep2 * i;
@@ -1563,8 +1563,6 @@ this.tinycolor = tinycolor;
 @code-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
 @text-color: fade(@black, 65%);
 @text-color-secondary: fade(@black, 45%);
-@text-color-warning: @gold-7;
-@text-color-danger: @red-7;
 @text-color-inverse: @white;
 @icon-color: inherit;
 @icon-color-hover: fade(@black, 75%);
@@ -1572,6 +1570,7 @@ this.tinycolor = tinycolor;
 @heading-color-dark: fade(@white, 100%);
 @text-color-dark: fade(@white, 85%);
 @text-color-secondary-dark: fade(@white, 65%);
+@text-selection-bg: @primary-color;
 @font-variant-base: tabular-nums;
 @font-feature-settings-base: 'tnum';
 @font-size-base: 14px;
@@ -1670,12 +1669,12 @@ this.tinycolor = tinycolor;
 @btn-primary-bg: @primary-color;
 
 @btn-default-color: @text-color;
-@btn-default-bg: #fff;
+@btn-default-bg: @component-background;
 @btn-default-border: @border-color-base;
 
-@btn-danger-color: @error-color;
-@btn-danger-bg: @background-color-base;
-@btn-danger-border: @border-color-base;
+@btn-danger-color: #fff;
+@btn-danger-bg: color(~`colorPalette('@{error-color}', 5) `);
+@btn-danger-border: color(~`colorPalette('@{error-color}', 5) `);
 
 @btn-disable-color: @disabled-color;
 @btn-disable-bg: @disabled-bg;
@@ -1695,6 +1694,10 @@ this.tinycolor = tinycolor;
 @btn-circle-size-lg: @btn-height-lg;
 @btn-circle-size-sm: @btn-height-sm;
 
+@btn-square-size: @btn-height-base;
+@btn-square-size-lg: @btn-height-lg;
+@btn-square-size-sm: @btn-height-sm;
+
 @btn-group-border: @primary-5;
 
 // Checkbox
@@ -1702,6 +1705,12 @@ this.tinycolor = tinycolor;
 @checkbox-color: @primary-color;
 @checkbox-check-color: #fff;
 @checkbox-border-width: @border-width-base;
+
+// Descriptions
+@descriptions-bg: #fafafa;
+
+// Dropdown
+@dropdown-selected-color: @primary-color;
 
 // Empty
 @empty-font-size: @font-size-base;
@@ -1792,14 +1801,24 @@ this.tinycolor = tinycolor;
 @animation-duration-base: 0.2s;
 @animation-duration-fast: 0.1s; // Tooltip
 
+//CollapsePanel
+@collapse-panel-border-radius: @border-radius-base;
+
+//Dropdown
+@dropdown-vertical-padding: 5px;
+@dropdown-font-size: @font-size-base;
+@dropdown-line-height: 22px;
+
 // Form
 // ---
 @label-required-color: @highlight-color;
 @label-color: @heading-color;
+@form-warning-input-bg: @input-bg;
 @form-item-margin-bottom: 24px;
 @form-item-trailing-colon: true;
 @form-vertical-label-padding: 0 0 8px;
 @form-vertical-label-margin: 0;
+@form-error-input-bg: @input-bg;
 
 // Input
 // ---
@@ -1816,10 +1835,13 @@ this.tinycolor = tinycolor;
 @input-placeholder-color: hsv(0, 0, 75%);
 @input-color: @text-color;
 @input-border-color: @border-color-base;
-@input-bg: #fff;
+@input-bg: @component-background;
 @input-number-handler-active-bg: #f4f4f4;
+@input-number-handler-hover-bg: @primary-5;
+@input-number-handler-bg: @component-background;
+@input-number-handler-border-color: @border-color-base;
 @input-addon-bg: @background-color-light;
-@input-hover-border-color: @primary-color;
+@input-hover-border-color: @primary-5;
 @input-disabled-bg: @disabled-bg;
 @input-outline-offset: 0 0;
 
@@ -1827,6 +1849,13 @@ this.tinycolor = tinycolor;
 // ---
 @select-border-color: @border-color-base;
 @select-item-selected-font-weight: 600;
+@select-dropdown-bg: @component-background;
+@select-item-selected-bg: @background-color-light;
+@select-item-active-bg: @item-active-bg;
+
+// Anchor
+// ---
+@anchor-border-color: @border-color-split;
 
 // Tooltip
 // ---
@@ -1846,7 +1875,7 @@ this.tinycolor = tinycolor;
 // Popover
 // ---
 // Popover body background color
-@popover-bg: #fff;
+@popover-bg: @component-background;
 // Popover text color
 @popover-color: @text-color;
 // Popover maximum width
@@ -1865,14 +1894,16 @@ this.tinycolor = tinycolor;
 // --
 @modal-body-padding: 24px;
 @modal-header-bg: @component-background;
-@modal-footer-bg: tranparent;
-@modal-mask-bg: fade(@black, 65%);
+@modal-footer-bg: transparent;
+@modal-footer-border-color-split: @border-color-split;
+@modal-mask-bg: fade(@black, 45%);
 
 // Progress
 // --
 @progress-default-color: @processing-color;
 @progress-remaining-color: @background-color-base;
 @progress-text-color: @text-color;
+@progress-radius: 100px;
 
 // Menu
 // ---
@@ -1886,6 +1917,18 @@ this.tinycolor = tinycolor;
 @menu-item-active-bg: @item-active-bg;
 @menu-item-active-border-width: 3px;
 @menu-item-group-title-color: @text-color-secondary;
+@menu-icon-size: @font-size-base;
+@menu-icon-size-lg: @font-size-lg;
+
+@menu-item-vertical-margin: 4px;
+@menu-item-font-size: @font-size-base;
+@menu-item-boundary-margin: 8px;
+@menu-icon-size: @font-size-base;
+@menu-icon-size-lg: @font-size-lg;
+@menu-dark-selected-item-icon-color: @white;
+@menu-dark-selected-item-text-color: @white;
+@dark-menu-item-hover-bg: transparent;
+
 // dark theme
 @menu-dark-color: @text-color-secondary-dark;
 @menu-dark-bg: @layout-header-background;
@@ -1893,7 +1936,9 @@ this.tinycolor = tinycolor;
 @menu-dark-submenu-bg: #000c17;
 @menu-dark-highlight-color: #fff;
 @menu-dark-item-active-bg: @primary-color;
-
+@menu-dark-selected-item-icon-color: @white;
+@menu-dark-selected-item-text-color: @white;
+@menu-dark-item-hover-bg: transparent;
 // Spin
 // ---
 @spin-dot-size-sm: 14px;
@@ -1907,11 +1952,16 @@ this.tinycolor = tinycolor;
 @table-header-sort-bg: @background-color-base;
 @table-body-sort-bg: rgba(0, 0, 0, 0.01);
 @table-row-hover-bg: @primary-1;
+@table-selected-row-color: inherit;
 @table-selected-row-bg: #fafafa;
+@table-body-selected-sort-bg: @table-selected-row-bg;
+@table-selected-row-hover-bg: @table-selected-row-bg;
 @table-expanded-row-bg: #fbfbfb;
 @table-padding-vertical: 16px;
 @table-padding-horizontal: 16px;
 @table-border-radius-base: @border-radius-base;
+@table-footer-bg: @background-color-light;
+@table-footer-color: @heading-color;
 
 // Tag
 // --
@@ -1953,7 +2003,8 @@ this.tinycolor = tinycolor;
 @card-inner-head-padding: 12px;
 @card-padding-base: 24px;
 @card-actions-background: @background-color-light;
-@card-background: #cfd8dc;
+@card-skeleton-bg: #cfd8dc;
+@card-background: @component-background;
 @card-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
 @card-radius: @border-radius-sm;
 
@@ -1961,6 +2012,8 @@ this.tinycolor = tinycolor;
 // ---
 @comment-padding-base: 16px 0;
 @comment-nest-indent: 44px;
+@comment-font-size-base: @font-size-base;
+@comment-font-size-sm: @font-size-sm;
 @comment-author-name-color: @text-color-secondary;
 @comment-author-time-color: #ccc;
 @comment-action-color: @text-color-secondary;
@@ -1986,6 +2039,8 @@ this.tinycolor = tinycolor;
 @tabs-highlight-color: @primary-color;
 @tabs-hover-color: @primary-5;
 @tabs-active-color: @primary-7;
+@tabs-card-gutter: 2px;
+@tabs-card-tab-active-border-top: 2px solid transparent;
 
 // BackTop
 // ---
@@ -2020,12 +2075,14 @@ this.tinycolor = tinycolor;
 @pagination-item-size-sm: 24px;
 @pagination-font-family: Arial;
 @pagination-font-weight-active: 500;
-@pagination-item-bg-active: transparent;
+@pagination-item-bg-active: @component-background;
 
 // PageHeader
 // ---
-@page-header-padding-horizontal: 24px;
+@page-header-padding: 24px;
 @page-header-padding-vertical: 16px;
+@page-header-padding-breadcrumb: 12px;
+@page-header-back-color: #000;
 
 // Breadcrumb
 // ---
@@ -2045,11 +2102,14 @@ this.tinycolor = tinycolor;
 @slider-rail-background-color-hover: #e1e1e1;
 @slider-track-background-color: @primary-3;
 @slider-track-background-color-hover: @primary-4;
+@slider-handle-border-width: 2px;
+@slider-handle-background-color: @component-background;
 @slider-handle-color: @primary-3;
 @slider-handle-color-hover: @primary-4;
 @slider-handle-color-focus: tint(@primary-color, 20%);
 @slider-handle-color-focus-shadow: fade(@primary-color, 20%);
 @slider-handle-color-tooltip-open: @primary-color;
+@slider-handle-shadow: 0;
 @slider-dot-border-color: @border-color-split;
 @slider-dot-border-color-active: tint(@primary-color, 50%);
 @slider-disabled-color: @disabled-color;
@@ -2061,10 +2121,13 @@ this.tinycolor = tinycolor;
 @tree-child-padding: 18px;
 @tree-directory-selected-color: #fff;
 @tree-directory-selected-bg: @primary-color;
+@tree-node-hover-bg: @item-hover-bg;
+@tree-node-selected-bg: @primary-2;
 
 // Collapse
 // ---
-@collapse-header-padding: 12px 16px 12px 40px;
+@collapse-header-padding: 12px 16px;
+@collapse-header-padding-extra: 40px;
 @collapse-header-bg: @background-color-light;
 @collapse-content-padding: @padding-md;
 @collapse-content-bg: @component-background;
@@ -2075,7 +2138,9 @@ this.tinycolor = tinycolor;
 
 // Transfer
 // ---
+@transfer-header-height: 40px;
 @transfer-disabled-bg: @disabled-bg;
+@transfer-list-height: 200px;
 
 // Message
 // ---
@@ -2115,12 +2180,24 @@ this.tinycolor = tinycolor;
 @statistic-title-font-size: @font-size-base;
 @statistic-content-font-size: 24px;
 @statistic-unit-font-size: 16px;
-@statistic-font-family: Tahoma, 'Helvetica Neue', @font-family;
+@statistic-font-family: @font-family;
 
 // Drawer
 // ---
 @drawer-header-padding: 16px 24px;
 @drawer-body-padding: 24px;
+
+// Timeline
+// ---
+@timeline-width: 2px;
+@timeline-color: @border-color-split;
+@timeline-dot-border-width: 2px;
+@timeline-dot-color: @primary-color;
+@timeline-dot-bg: @component-background;
+
+// Typography
+// ---
+@typography-title-font-weight: 600;
 
 // Mixins
 // --------------------------------------------------
@@ -2152,6 +2229,10 @@ this.tinycolor = tinycolor;
   &::-webkit-input-placeholder {
     color: @color;
   }
+
+  &:placeholder-shown {
+    text-overflow: ellipsis;
+  }
 }
 
 // mixins for clearfix
@@ -2160,8 +2241,8 @@ this.tinycolor = tinycolor;
   zoom: 1;
   &::before,
   &::after {
-    content: '';
     display: table;
+    content: '';
   }
   &::after {
     clear: both;
@@ -2202,6 +2283,7 @@ this.tinycolor = tinycolor;
 .iconfont-size-under-12px(@size, @rotate: 0deg) {
   display: inline-block;
   @font-scale: unit(@size / 12px);
+
   font-size: 12px;
   // IE9
   font-size: ~'@{size} \9';
@@ -2225,10 +2307,12 @@ this.tinycolor = tinycolor;
   .@{className}-enter,
   .@{className}-appear {
     .motion-common(@duration);
+
     animation-play-state: paused;
   }
   .@{className}-leave {
     .motion-common-leave(@duration);
+
     animation-play-state: paused;
   }
   .@{className}-enter.@{className}-enter-active,
@@ -2253,6 +2337,23 @@ this.tinycolor = tinycolor;
   line-height: @line-height-base;
   list-style: none;
   font-feature-settings: @font-feature-settings-base;
+}
+
+.operation-unit() {
+  color: @link-color;
+  text-decoration: none;
+  outline: none;
+  cursor: pointer;
+  transition: color 0.3s;
+
+  &:focus,
+  &:hover {
+    color: @link-hover-color;
+  }
+
+  &:active {
+    color: @link-active-color;
+  }
 }
 
 .text-truncate() {
@@ -2486,6 +2587,87 @@ darker  @grey-9;
 
 // Forced to turn off Modal animation
 @forced-turn-off-nz-modal-animation-enabled: false;
+
+@avatar-list-prefix: ~'.avatar-list';
+@avatar-list-mini-wh: 20px;
+
+@se-prefix: ~'.se';
+@se-label-color: rgba(0, 0, 0, 0.5);
+@se-label-optional-color: rgba(0, 0, 0, 0.35);
+@se-compact-bottom: @layout-gutter;
+@se-optional-margin: 2px;
+
+@ellipsis-prefix: ~'.ellipsis';
+
+@error-collect-prefix: ~'.error-collect';
+@error-collect-color: #f5222d;
+
+@exception-prefix: ~'.exception';
+
+@footer-toolbar-prefix: ~'.footer-toolbar';
+@footer-toolbar-height: 56px;
+@footer-toolbar-box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.03);
+@footer-toolbar-bg: #fff;
+@footer-toolbar-border-top: 1px solid @border-color-split;
+@footer-toolbar-padding: 0 24px;
+
+@full-content-prefix: ~'.full-content';
+
+@global-footer-prefix: ~'.global-footer';
+
+@notice-icon-prefix: ~'.notice-icon';
+
+@page-header-prefix: ~'.page-header';
+@page-header-bg: #fff;
+@page-header-wide: 1200px;
+
+@quick-menu-prefix: ~'.quick-menu';
+@quick-menu-border-width: 1px;
+@quick-menu-ctrl-hw: 50px;
+@quick-menu-border-color: #fff;
+
+@result-prefix: ~'.result';
+@result-extra-bg: #fafafa;
+
+@reuse-tab-prefix: ~'.reuse-tab';
+@reuse-tab-height: 52px;
+@reuse-tab-bg: #fff;
+@reuse-tab-padding: 8px;
+@reuse-tab-border-color: #d9d9d9;
+
+@st-prefix: ~'.st';
+@st-btn-disabled-color: rgba(0, 0, 0, 0.25);
+@st-title-optional-color: rgba(0, 0, 0, 0.35);
+
+@sv-prefix: ~'.sv';
+@sv-label-color: rgba(0, 0, 0, 0.5);
+@sv-label-optional-color: rgba(0, 0, 0, 0.35);
+@sv-detail-color: @text-color;
+@sv-type-primary-color: @primary-color;
+@sv-type-success-color: @success-color;
+@sv-type-danger-color: @error-color;
+@sv-type-warning-color: @warning-color;
+@sv-bottom: @layout-gutter * 2;
+@sv-default-text: '-';
+@sv-unit-margin: 8px;
+@sv-unit-color: @grey-7;
+@sv-optional-margin: 2px;
+
+@g2-card-prefix: ~'.g2-card';
+
+@g2-gauge-prefix: ~'.g2-gauge';
+
+@g2-mini-progress-prefix: ~'.g2-mini-progress';
+
+@number-info-prefix: ~'.number-info';
+
+@g2-pie-prefix: ~'.g2-pie';
+
+@g2-radar-prefix: ~'.g2-radar';
+
+@trend-prefix: ~'.trend';
+
+@g2-water-wave-prefix: ~'.g2-water-wave';
 
 // antd
 /* stylelint-disable at-rule-empty-line-before,at-rule-name-space-after,at-rule-no-unknown */
@@ -3818,7 +4000,7 @@ this.tinycolor = tinycolor;
     var saturation;
     if (isLight) {
       saturation = Math.round(hsv.s * 100) - saturationStep * i;
-    } else if (i == darkColorCount) {
+    } else if (i === darkColorCount) {
       saturation = Math.round(hsv.s * 100) + saturationStep;
     } else {
       saturation = Math.round(hsv.s * 100) + saturationStep2 * i;
@@ -4052,8 +4234,6 @@ this.tinycolor = tinycolor;
 @code-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
 @text-color: fade(@black, 65%);
 @text-color-secondary: fade(@black, 45%);
-@text-color-warning: @gold-7;
-@text-color-danger: @red-7;
 @text-color-inverse: @white;
 @icon-color: inherit;
 @icon-color-hover: fade(@black, 75%);
@@ -4061,6 +4241,7 @@ this.tinycolor = tinycolor;
 @heading-color-dark: fade(@white, 100%);
 @text-color-dark: fade(@white, 85%);
 @text-color-secondary-dark: fade(@white, 65%);
+@text-selection-bg: @primary-color;
 @font-variant-base: tabular-nums;
 @font-feature-settings-base: 'tnum';
 @font-size-base: 14px;
@@ -4159,12 +4340,12 @@ this.tinycolor = tinycolor;
 @btn-primary-bg: @primary-color;
 
 @btn-default-color: @text-color;
-@btn-default-bg: #fff;
+@btn-default-bg: @component-background;
 @btn-default-border: @border-color-base;
 
-@btn-danger-color: @error-color;
-@btn-danger-bg: @background-color-base;
-@btn-danger-border: @border-color-base;
+@btn-danger-color: #fff;
+@btn-danger-bg: color(~`colorPalette('@{error-color}', 5) `);
+@btn-danger-border: color(~`colorPalette('@{error-color}', 5) `);
 
 @btn-disable-color: @disabled-color;
 @btn-disable-bg: @disabled-bg;
@@ -4184,6 +4365,10 @@ this.tinycolor = tinycolor;
 @btn-circle-size-lg: @btn-height-lg;
 @btn-circle-size-sm: @btn-height-sm;
 
+@btn-square-size: @btn-height-base;
+@btn-square-size-lg: @btn-height-lg;
+@btn-square-size-sm: @btn-height-sm;
+
 @btn-group-border: @primary-5;
 
 // Checkbox
@@ -4191,6 +4376,12 @@ this.tinycolor = tinycolor;
 @checkbox-color: @primary-color;
 @checkbox-check-color: #fff;
 @checkbox-border-width: @border-width-base;
+
+// Descriptions
+@descriptions-bg: #fafafa;
+
+// Dropdown
+@dropdown-selected-color: @primary-color;
 
 // Empty
 @empty-font-size: @font-size-base;
@@ -4281,14 +4472,24 @@ this.tinycolor = tinycolor;
 @animation-duration-base: 0.2s;
 @animation-duration-fast: 0.1s; // Tooltip
 
+//CollapsePanel
+@collapse-panel-border-radius: @border-radius-base;
+
+//Dropdown
+@dropdown-vertical-padding: 5px;
+@dropdown-font-size: @font-size-base;
+@dropdown-line-height: 22px;
+
 // Form
 // ---
 @label-required-color: @highlight-color;
 @label-color: @heading-color;
+@form-warning-input-bg: @input-bg;
 @form-item-margin-bottom: 24px;
 @form-item-trailing-colon: true;
 @form-vertical-label-padding: 0 0 8px;
 @form-vertical-label-margin: 0;
+@form-error-input-bg: @input-bg;
 
 // Input
 // ---
@@ -4305,10 +4506,13 @@ this.tinycolor = tinycolor;
 @input-placeholder-color: hsv(0, 0, 75%);
 @input-color: @text-color;
 @input-border-color: @border-color-base;
-@input-bg: #fff;
+@input-bg: @component-background;
 @input-number-handler-active-bg: #f4f4f4;
+@input-number-handler-hover-bg: @primary-5;
+@input-number-handler-bg: @component-background;
+@input-number-handler-border-color: @border-color-base;
 @input-addon-bg: @background-color-light;
-@input-hover-border-color: @primary-color;
+@input-hover-border-color: @primary-5;
 @input-disabled-bg: @disabled-bg;
 @input-outline-offset: 0 0;
 
@@ -4316,6 +4520,13 @@ this.tinycolor = tinycolor;
 // ---
 @select-border-color: @border-color-base;
 @select-item-selected-font-weight: 600;
+@select-dropdown-bg: @component-background;
+@select-item-selected-bg: @background-color-light;
+@select-item-active-bg: @item-active-bg;
+
+// Anchor
+// ---
+@anchor-border-color: @border-color-split;
 
 // Tooltip
 // ---
@@ -4335,7 +4546,7 @@ this.tinycolor = tinycolor;
 // Popover
 // ---
 // Popover body background color
-@popover-bg: #fff;
+@popover-bg: @component-background;
 // Popover text color
 @popover-color: @text-color;
 // Popover maximum width
@@ -4354,14 +4565,16 @@ this.tinycolor = tinycolor;
 // --
 @modal-body-padding: 24px;
 @modal-header-bg: @component-background;
-@modal-footer-bg: tranparent;
-@modal-mask-bg: fade(@black, 65%);
+@modal-footer-bg: transparent;
+@modal-footer-border-color-split: @border-color-split;
+@modal-mask-bg: fade(@black, 45%);
 
 // Progress
 // --
 @progress-default-color: @processing-color;
 @progress-remaining-color: @background-color-base;
 @progress-text-color: @text-color;
+@progress-radius: 100px;
 
 // Menu
 // ---
@@ -4375,6 +4588,18 @@ this.tinycolor = tinycolor;
 @menu-item-active-bg: @item-active-bg;
 @menu-item-active-border-width: 3px;
 @menu-item-group-title-color: @text-color-secondary;
+@menu-icon-size: @font-size-base;
+@menu-icon-size-lg: @font-size-lg;
+
+@menu-item-vertical-margin: 4px;
+@menu-item-font-size: @font-size-base;
+@menu-item-boundary-margin: 8px;
+@menu-icon-size: @font-size-base;
+@menu-icon-size-lg: @font-size-lg;
+@menu-dark-selected-item-icon-color: @white;
+@menu-dark-selected-item-text-color: @white;
+@dark-menu-item-hover-bg: transparent;
+
 // dark theme
 @menu-dark-color: @text-color-secondary-dark;
 @menu-dark-bg: @layout-header-background;
@@ -4382,7 +4607,9 @@ this.tinycolor = tinycolor;
 @menu-dark-submenu-bg: #000c17;
 @menu-dark-highlight-color: #fff;
 @menu-dark-item-active-bg: @primary-color;
-
+@menu-dark-selected-item-icon-color: @white;
+@menu-dark-selected-item-text-color: @white;
+@menu-dark-item-hover-bg: transparent;
 // Spin
 // ---
 @spin-dot-size-sm: 14px;
@@ -4396,11 +4623,16 @@ this.tinycolor = tinycolor;
 @table-header-sort-bg: @background-color-base;
 @table-body-sort-bg: rgba(0, 0, 0, 0.01);
 @table-row-hover-bg: @primary-1;
+@table-selected-row-color: inherit;
 @table-selected-row-bg: #fafafa;
+@table-body-selected-sort-bg: @table-selected-row-bg;
+@table-selected-row-hover-bg: @table-selected-row-bg;
 @table-expanded-row-bg: #fbfbfb;
 @table-padding-vertical: 16px;
 @table-padding-horizontal: 16px;
 @table-border-radius-base: @border-radius-base;
+@table-footer-bg: @background-color-light;
+@table-footer-color: @heading-color;
 
 // Tag
 // --
@@ -4442,7 +4674,8 @@ this.tinycolor = tinycolor;
 @card-inner-head-padding: 12px;
 @card-padding-base: 24px;
 @card-actions-background: @background-color-light;
-@card-background: #cfd8dc;
+@card-skeleton-bg: #cfd8dc;
+@card-background: @component-background;
 @card-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
 @card-radius: @border-radius-sm;
 
@@ -4450,6 +4683,8 @@ this.tinycolor = tinycolor;
 // ---
 @comment-padding-base: 16px 0;
 @comment-nest-indent: 44px;
+@comment-font-size-base: @font-size-base;
+@comment-font-size-sm: @font-size-sm;
 @comment-author-name-color: @text-color-secondary;
 @comment-author-time-color: #ccc;
 @comment-action-color: @text-color-secondary;
@@ -4475,6 +4710,8 @@ this.tinycolor = tinycolor;
 @tabs-highlight-color: @primary-color;
 @tabs-hover-color: @primary-5;
 @tabs-active-color: @primary-7;
+@tabs-card-gutter: 2px;
+@tabs-card-tab-active-border-top: 2px solid transparent;
 
 // BackTop
 // ---
@@ -4509,12 +4746,14 @@ this.tinycolor = tinycolor;
 @pagination-item-size-sm: 24px;
 @pagination-font-family: Arial;
 @pagination-font-weight-active: 500;
-@pagination-item-bg-active: transparent;
+@pagination-item-bg-active: @component-background;
 
 // PageHeader
 // ---
-@page-header-padding-horizontal: 24px;
+@page-header-padding: 24px;
 @page-header-padding-vertical: 16px;
+@page-header-padding-breadcrumb: 12px;
+@page-header-back-color: #000;
 
 // Breadcrumb
 // ---
@@ -4534,11 +4773,14 @@ this.tinycolor = tinycolor;
 @slider-rail-background-color-hover: #e1e1e1;
 @slider-track-background-color: @primary-3;
 @slider-track-background-color-hover: @primary-4;
+@slider-handle-border-width: 2px;
+@slider-handle-background-color: @component-background;
 @slider-handle-color: @primary-3;
 @slider-handle-color-hover: @primary-4;
 @slider-handle-color-focus: tint(@primary-color, 20%);
 @slider-handle-color-focus-shadow: fade(@primary-color, 20%);
 @slider-handle-color-tooltip-open: @primary-color;
+@slider-handle-shadow: 0;
 @slider-dot-border-color: @border-color-split;
 @slider-dot-border-color-active: tint(@primary-color, 50%);
 @slider-disabled-color: @disabled-color;
@@ -4550,10 +4792,13 @@ this.tinycolor = tinycolor;
 @tree-child-padding: 18px;
 @tree-directory-selected-color: #fff;
 @tree-directory-selected-bg: @primary-color;
+@tree-node-hover-bg: @item-hover-bg;
+@tree-node-selected-bg: @primary-2;
 
 // Collapse
 // ---
-@collapse-header-padding: 12px 16px 12px 40px;
+@collapse-header-padding: 12px 16px;
+@collapse-header-padding-extra: 40px;
 @collapse-header-bg: @background-color-light;
 @collapse-content-padding: @padding-md;
 @collapse-content-bg: @component-background;
@@ -4564,7 +4809,9 @@ this.tinycolor = tinycolor;
 
 // Transfer
 // ---
+@transfer-header-height: 40px;
 @transfer-disabled-bg: @disabled-bg;
+@transfer-list-height: 200px;
 
 // Message
 // ---
@@ -4604,12 +4851,24 @@ this.tinycolor = tinycolor;
 @statistic-title-font-size: @font-size-base;
 @statistic-content-font-size: 24px;
 @statistic-unit-font-size: 16px;
-@statistic-font-family: Tahoma, 'Helvetica Neue', @font-family;
+@statistic-font-family: @font-family;
 
 // Drawer
 // ---
 @drawer-header-padding: 16px 24px;
 @drawer-body-padding: 24px;
+
+// Timeline
+// ---
+@timeline-width: 2px;
+@timeline-color: @border-color-split;
+@timeline-dot-border-width: 2px;
+@timeline-dot-color: @primary-color;
+@timeline-dot-bg: @component-background;
+
+// Typography
+// ---
+@typography-title-font-weight: 600;
 
 // Mixins
 // --------------------------------------------------
@@ -4641,6 +4900,10 @@ this.tinycolor = tinycolor;
   &::-webkit-input-placeholder {
     color: @color;
   }
+
+  &:placeholder-shown {
+    text-overflow: ellipsis;
+  }
 }
 
 // mixins for clearfix
@@ -4649,8 +4912,8 @@ this.tinycolor = tinycolor;
   zoom: 1;
   &::before,
   &::after {
-    content: '';
     display: table;
+    content: '';
   }
   &::after {
     clear: both;
@@ -4691,6 +4954,7 @@ this.tinycolor = tinycolor;
 .iconfont-size-under-12px(@size, @rotate: 0deg) {
   display: inline-block;
   @font-scale: unit(@size / 12px);
+
   font-size: 12px;
   // IE9
   font-size: ~'@{size} \9';
@@ -4714,10 +4978,12 @@ this.tinycolor = tinycolor;
   .@{className}-enter,
   .@{className}-appear {
     .motion-common(@duration);
+
     animation-play-state: paused;
   }
   .@{className}-leave {
     .motion-common-leave(@duration);
+
     animation-play-state: paused;
   }
   .@{className}-enter.@{className}-enter-active,
@@ -4742,6 +5008,23 @@ this.tinycolor = tinycolor;
   line-height: @line-height-base;
   list-style: none;
   font-feature-settings: @font-feature-settings-base;
+}
+
+.operation-unit() {
+  color: @link-color;
+  text-decoration: none;
+  outline: none;
+  cursor: pointer;
+  transition: color 0.3s;
+
+  &:focus,
+  &:hover {
+    color: @link-hover-color;
+  }
+
+  &:active {
+    color: @link-active-color;
+  }
 }
 
 /* stylelint-disable at-rule-no-unknown */
@@ -5247,7 +5530,7 @@ mark {
 
 ::selection {
   color: @text-color-inverse;
-  background: @primary-color;
+  background: @text-selection-bg;
 }
 
 // Utility classes
@@ -5436,30 +5719,32 @@ mark {
   position: relative;
 }
 
+html {
+  --antd-wave-shadow-color: @primary-color;
+}
+
 [ant-click-animating-without-extra-node='true']::after,
 .ant-click-animating-node {
   position: absolute;
-  top: -1px;
-  right: -1px;
-  bottom: -1px;
-  left: -1px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   display: block;
-  border: 0 solid @primary-color;
   border-radius: inherit;
+  box-shadow: 0 0 0 0 @primary-color;
+  box-shadow: 0 0 0 0 var(--antd-wave-shadow-color);
   opacity: 0.2;
   animation: fadeEffect 2s @ease-out-circ, waveEffect 0.4s @ease-out-circ;
   animation-fill-mode: forwards;
-  pointer-events: none;
   content: '';
+  pointer-events: none;
 }
 
 @keyframes waveEffect {
   100% {
-    top: -@wave-animation-width;
-    right: -@wave-animation-width;
-    bottom: -@wave-animation-width;
-    left: -@wave-animation-width;
-    border-width: @wave-animation-width;
+    box-shadow: 0 0 0 @primary-color;
+    box-shadow: 0 0 0 @wave-animation-width var(--antd-wave-shadow-color);
   }
 }
 
@@ -5594,6 +5879,7 @@ mark {
   .@{className}-enter,
   .@{className}-appear {
     .motion-common();
+
     animation-play-state: paused;
   }
   .@{className}-enter.@{className}-enter-active,
@@ -5788,11 +6074,16 @@ mark {
 }
 
 // For common/openAnimation
-.ant-motion-collapse {
+.ant-motion-collapse-legacy {
   overflow: hidden;
   &-active {
     transition: height 0.15s @ease-in-out, opacity 0.15s @ease-in-out !important;
   }
+}
+
+.ant-motion-collapse {
+  overflow: hidden;
+  transition: height 0.15s @ease-in-out, opacity 0.15s @ease-in-out !important;
 }
 
 // cdk overlay
@@ -5942,8 +6233,10 @@ textarea.cdk-textarea-autosize-measuring {
 
 .@{alert-prefix-cls} {
   .reset-component;
+
   position: relative;
   padding: 8px 15px 8px 37px;
+  word-wrap: break-word;
   border-radius: @border-radius-base;
 
   &&-no-icon {
@@ -6005,6 +6298,8 @@ textarea.cdk-textarea-autosize-measuring {
     overflow: hidden;
     font-size: @font-size-sm;
     line-height: 22px;
+    background-color: transparent;
+    border: none;
     cursor: pointer;
 
     .@{iconfont-css-prefix}-close {
@@ -6017,8 +6312,11 @@ textarea.cdk-textarea-autosize-measuring {
   }
 
   &-close-text {
-    position: absolute;
-    right: 16px;
+    color: @alert-close-color;
+    transition: color 0.3s;
+    &:hover {
+      color: @alert-close-hover-color;
+    }
   }
 
   &-with-description {
@@ -6053,6 +6351,10 @@ textarea.cdk-textarea-autosize-measuring {
     margin-bottom: 4px;
     color: @alert-message-color;
     font-size: @font-size-lg;
+  }
+
+  &-message {
+    color: @alert-message-color;
   }
 
   &-with-description &-description {
@@ -6110,6 +6412,7 @@ textarea.cdk-textarea-autosize-measuring {
 
 .@{ant-prefix}-anchor {
   .reset-component;
+
   position: relative;
   padding-left: @anchor-border-width;
 
@@ -6131,7 +6434,7 @@ textarea.cdk-textarea-autosize-measuring {
       width: @anchor-border-width;
       height: 100%;
       margin: 0 auto;
-      background-color: @border-color-split;
+      background-color: @anchor-border-color;
       content: ' ';
     }
     &-ball {
@@ -6189,6 +6492,7 @@ textarea.cdk-textarea-autosize-measuring {
 
 .@{avatar-prefix-cls} {
   .reset-component;
+
   position: relative;
   display: inline-block;
   overflow: hidden;
@@ -6220,6 +6524,7 @@ textarea.cdk-textarea-autosize-measuring {
     display: block;
     width: 100%;
     height: 100%;
+    object-fit: cover;
   }
 }
 
@@ -6244,6 +6549,7 @@ textarea.cdk-textarea-autosize-measuring {
 
 .@{backtop-prefix-cls} {
   .reset-component;
+
   position: fixed;
   right: 100px;
   bottom: 50px;
@@ -6294,6 +6600,7 @@ textarea.cdk-textarea-autosize-measuring {
 
 .@{badge-prefix-cls} {
   .reset-component;
+
   position: relative;
   display: inline-block;
   color: unset;
@@ -6481,6 +6788,7 @@ textarea.cdk-textarea-autosize-measuring {
 
 .@{breadcrumb-prefix-cls} {
   .reset-component;
+
   color: @breadcrumb-base-color;
   font-size: @breadcrumb-font-size;
 
@@ -6498,6 +6806,9 @@ textarea.cdk-textarea-autosize-measuring {
 
   & > span:last-child {
     color: @breadcrumb-last-item-color;
+    a {
+      color: @breadcrumb-last-item-color;
+    }
   }
 
   & > span:last-child &-separator {
@@ -6514,6 +6825,20 @@ textarea.cdk-textarea-autosize-measuring {
       margin-left: 4px;
     }
   }
+
+  &-overlay-link {
+    > .@{iconfont-css-prefix} {
+      margin-left: 4px;
+    }
+  }
+}
+
+.@{breadcrumb-prefix-cls} {
+  &-link {
+    .@{iconfont-css-prefix} + span {
+      margin-left: 4px;
+    }
+  }
 }
 
 // mixins for button
@@ -6525,7 +6850,7 @@ textarea.cdk-textarea-autosize-measuring {
   border-radius: @border-radius;
 }
 
-.button-disabled() {
+.button-disabled(@color: @btn-disable-color; @background: @btn-disable-bg; @border: @btn-disable-border) {
   &-disabled,
   &.disabled,
   &[disabled] {
@@ -6534,7 +6859,8 @@ textarea.cdk-textarea-autosize-measuring {
     &:focus,
     &:active,
     &.active {
-      .button-color(@btn-disable-color; @btn-disable-bg; @btn-disable-border);
+      .button-color(@color; @background; @border);
+
       text-shadow: none;
       box-shadow: none;
     }
@@ -6543,6 +6869,7 @@ textarea.cdk-textarea-autosize-measuring {
 
 .button-variant-primary(@color; @background) {
   .button-color(@color; @background; @background);
+
   text-shadow: @btn-text-shadow;
   box-shadow: @btn-primary-shadow;
 
@@ -6582,36 +6909,26 @@ textarea.cdk-textarea-autosize-measuring {
   }
   .button-disabled();
 }
-.button-variant-danger(@color; @background; @border) {
-  .button-color(@color; @background; @border);
-  &:hover {
-    .button-color(
-      @btn-primary-color; ~`colorPalette('@{color}', 5) `; ~`colorPalette('@{color}', 5) `
-    );
-  }
-  &:focus {
-    .button-color(
-      ~`colorPalette('@{color}', 5) `; @component-background; ~`colorPalette('@{color}', 5) `
-    );
-  }
-  &:active,
-  &.active {
-    .button-color(
-      @btn-primary-color; ~`colorPalette('@{color}', 7) `; ~`colorPalette('@{color}', 7) `
-    );
-  }
-  .button-disabled();
-}
-.button-variant-ghost(@color) {
-  .button-color(@color; transparent; @color);
+.button-variant-ghost(@color; @border: @color) {
+  .button-color(@color; transparent; @border);
   text-shadow: none;
   &:hover,
   &:focus {
-    .button-color(~`colorPalette('@{color}', 5) `; transparent; ~`colorPalette('@{color}', 5) `);
+    & when (@border = transparent) {
+      .button-color(~`colorPalette('@{color}', 5) `; transparent; transparent);
+    }
+    & when not(@border = transparent) {
+      .button-color(~`colorPalette('@{color}', 5) `; transparent; ~`colorPalette('@{color}', 5) `);
+    }
   }
   &:active,
   &.active {
-    .button-color(~`colorPalette('@{color}', 7) `; transparent; ~`colorPalette('@{color}', 7) `);
+    & when (@border = transparent) {
+      .button-color(~`colorPalette('@{color}', 7) `; transparent; transparent);
+    }
+    & when not(@border = transparent) {
+      .button-color(~`colorPalette('@{color}', 7) `; transparent; ~`colorPalette('@{color}', 7) `);
+    }
   }
   .button-disabled();
 }
@@ -6656,6 +6973,11 @@ textarea.cdk-textarea-autosize-measuring {
     .button-size(@btn-height-lg; @btn-padding-lg; @btn-font-size-lg; 0);
     line-height: @btn-height-lg - 2px;
   }
+  &-lg > .@{btnClassName}.@{btnClassName}-icon-only {
+    .square(@btn-height-lg);
+    padding-right: 0;
+    padding-left: 0;
+  }
   &-sm > .@{btnClassName},
   &-sm > span > .@{btnClassName} {
     .button-size(@btn-height-sm; @btn-padding-sm; @font-size-base; 0);
@@ -6663,6 +6985,11 @@ textarea.cdk-textarea-autosize-measuring {
     > .@{iconfont-css-prefix} {
       font-size: @font-size-base;
     }
+  }
+  &-sm > .@{btnClassName}.@{btnClassName}-icon-only {
+    .square(@btn-height-sm);
+    padding-right: 0;
+    padding-left: 0;
   }
 }
 // Base styles of buttons
@@ -6736,14 +7063,25 @@ textarea.cdk-textarea-autosize-measuring {
 }
 // danger button style
 .btn-danger() {
-  .button-variant-danger(@btn-danger-color, @btn-danger-bg, @btn-danger-border);
+  .button-variant-primary(@btn-danger-color, @btn-danger-bg);
+}
+// link button style
+.btn-link() {
+  .button-variant-other(@link-color, transparent, transparent);
+  box-shadow: none;
+  &:hover,
+  &:focus,
+  &:active {
+    border-color: transparent;
+  }
+  .button-disabled(@disabled-color; transparent; transparent);
 }
 // round button
 .btn-round(@btnClassName: btn) {
-  .button-size(@btn-circle-size; 0 @btn-circle-size / 2; @font-size-base + 2px; @btn-circle-size);
+  .button-size(@btn-circle-size; 0 @btn-circle-size / 2; @font-size-base; @btn-circle-size);
   &.@{btnClassName}-lg {
     .button-size(
-      @btn-circle-size-lg; 0 @btn-circle-size-lg / 2; @btn-font-size-lg + 2px; @btn-circle-size-lg
+      @btn-circle-size-lg; 0 @btn-circle-size-lg / 2; @btn-font-size-lg; @btn-circle-size-lg
     );
   }
   &.@{btnClassName}-sm {
@@ -6752,20 +7090,36 @@ textarea.cdk-textarea-autosize-measuring {
     );
   }
 }
-// circle button: the content only contains icon
-.btn-circle(@btnClassName: btn) {
-  .square(@btn-circle-size);
-  .button-size(@btn-circle-size; 0; @font-size-base + 2px; 50%);
+// square button: the content only contains icon
+.btn-square(@btnClassName: btn) {
+  .square(@btn-square-size);
+  .button-size(@btn-square-size; 0; @font-size-base + 2px; @btn-border-radius-base);
   &.@{btnClassName}-lg {
-    .square(@btn-circle-size-lg);
-    .button-size(@btn-circle-size-lg; 0; @btn-font-size-lg + 2px; 50%);
+    .square(@btn-square-size-lg);
+    .button-size(@btn-square-size-lg; 0; @btn-font-size-lg + 2px; @btn-border-radius-base);
   }
   &.@{btnClassName}-sm {
-    .square(@btn-circle-size-sm);
-    .button-size(@btn-circle-size-sm; 0; @font-size-base; 50%);
+    .square(@btn-square-size-sm);
+    .button-size(@btn-square-size-sm; 0; @font-size-base; @btn-border-radius-base);
   }
 }
-// Horizontal button groups styl
+// circle button: the content only contains icon
+.btn-circle(@btnClassName: btn) {
+  min-width: @btn-height-base;
+  padding-right: 0;
+  padding-left: 0;
+  text-align: center;
+  border-radius: 50%;
+  &.@{btnClassName}-lg {
+    min-width: @btn-height-lg;
+    border-radius: 50%;
+  }
+  &.@{btnClassName}-sm {
+    min-width: @btn-height-sm;
+    border-radius: 50%;
+  }
+}
+// Horizontal button groups style
 // --------------------------------------------------
 .btn-group(@btnClassName: btn) {
   .button-group-base(@btnClassName);
@@ -6852,10 +7206,7 @@ textarea.cdk-textarea-autosize-measuring {
 // Button styles
 // -----------------------------
 .@{btn-prefix-cls} {
-  // Fixing https://github.com/ant-design/ant-design/issues/12978
-  // It is a render problem of chrome, which is only happened in the codesandbox demo
-  // 0.001px solution works and I don't why
-  line-height: @line-height-base - 0.001;
+  line-height: @line-height-base;
   .btn;
   .btn-default;
 
@@ -6864,6 +7215,7 @@ textarea.cdk-textarea-autosize-measuring {
   > i,
   > span {
     display: inline-block;
+    transition: margin-left 0.3s @ease-in-out;
     pointer-events: none;
   }
 
@@ -6909,8 +7261,19 @@ textarea.cdk-textarea-autosize-measuring {
     .btn-danger;
   }
 
+  &-link {
+    .btn-link;
+  }
+
+  &-icon-only {
+    .btn-square(@btn-prefix-cls);
+  }
+
   &-round {
     .btn-round(@btn-prefix-cls);
+    &.@{btn-prefix-cls}-icon-only {
+      width: auto;
+    }
   }
 
   &-circle,
@@ -6930,8 +7293,8 @@ textarea.cdk-textarea-autosize-measuring {
     border-radius: inherit;
     opacity: 0.35;
     transition: opacity 0.2s;
-    pointer-events: none;
     content: '';
+    pointer-events: none;
   }
 
   .@{iconfont-css-prefix} {
@@ -6947,14 +7310,17 @@ textarea.cdk-textarea-autosize-measuring {
     }
   }
 
+  &&-loading {
+    position: relative;
+    pointer-events: none;
+  }
+
   &&-loading::before {
     display: block;
   }
 
   &&-loading:not(&-circle):not(&-circle-outline):not(&-icon-only) {
-    position: relative;
     padding-left: 29px;
-    pointer-events: none;
     .@{iconfont-css-prefix}:not(:last-child) {
       margin-left: -14px;
     }
@@ -6969,11 +7335,6 @@ textarea.cdk-textarea-autosize-measuring {
 
   &-group {
     .btn-group(@btn-prefix-cls);
-  }
-
-  &:not(&-circle):not(&-circle-outline)&-icon-only {
-    padding-right: 8px;
-    padding-left: 8px;
   }
 
   // http://stackoverflow.com/a/21281554/3040605
@@ -6999,7 +7360,13 @@ textarea.cdk-textarea-autosize-measuring {
   }
 
   &-background-ghost&-danger {
-    .button-variant-ghost(@btn-danger-color);
+    .button-variant-ghost(@btn-danger-border);
+  }
+
+  &-background-ghost&-link {
+    .button-variant-ghost(@link-color; transparent);
+
+    color: @component-background;
   }
 
   &-two-chinese-chars::first-letter {
@@ -7022,7 +7389,12 @@ textarea.cdk-textarea-autosize-measuring {
 }
 
 a.@{btn-prefix-cls} {
+  // Fixing https://github.com/ant-design/ant-design/issues/12978
+  // It is a render problem of chrome, which is only happened in the codesandbox demo
+  // 0.1px for padding-top solution works and I don't why
+  padding-top: 0.1px;
   line-height: @btn-height-base - 2px;
+
   &-lg {
     line-height: @btn-height-lg - 2px;
   }
@@ -7034,14 +7406,16 @@ a.@{btn-prefix-cls} {
 @card-prefix-cls: ~'@{ant-prefix}-card';
 @card-head-height: 48px;
 @card-hover-border: fade(@black, 9%);
+@card-action-icon-size: 16px;
 
-@gradient-min: fade(@card-background, 20%);
-@gradient-max: fade(@card-background, 40%);
+@gradient-min: fade(@card-skeleton-bg, 20%);
+@gradient-max: fade(@card-skeleton-bg, 40%);
 
 .@{card-prefix-cls} {
   .reset-component;
+
   position: relative;
-  background: @component-background;
+  background: @card-background;
   border-radius: @card-radius;
   transition: all 0.3s;
 
@@ -7126,10 +7500,12 @@ a.@{btn-prefix-cls} {
       1px 1px 0 0 @border-color-split, 1px 0 0 0 @border-color-split inset,
       0 1px 0 0 @border-color-split inset;
     transition: all 0.3s;
-    &:hover {
-      position: relative;
-      z-index: 1;
-      box-shadow: @box-shadow-base;
+    &-hoverable {
+      &:hover {
+        position: relative;
+        z-index: 1;
+        box-shadow: @box-shadow-base;
+      }
     }
   }
 
@@ -7138,7 +7514,7 @@ a.@{btn-prefix-cls} {
     padding-bottom: 0;
   }
 
-  &-contain-tabs &-extra {
+  &-contain-tabs > &-head &-extra {
     padding-bottom: 0;
   }
 
@@ -7166,9 +7542,9 @@ a.@{btn-prefix-cls} {
       color: @text-color-secondary;
       text-align: center;
 
-      & > span {
+      > span {
         position: relative;
-        display: inline-block;
+        display: block;
         min-width: 32px;
         font-size: 14px;
         line-height: 22px;
@@ -7179,20 +7555,22 @@ a.@{btn-prefix-cls} {
           transition: color 0.3s;
         }
 
-        & > .anticon {
-          font-size: 16px;
-          line-height: 22px;
-        }
-
-        a {
+        a:not(.@{ant-prefix}-btn),
+        > .anticon {
           display: inline-block;
           width: 100%;
           color: @text-color-secondary;
           line-height: 22px;
+          transition: color 0.3s;
 
           &:hover {
             color: @primary-color;
           }
+        }
+
+        > .anticon {
+          font-size: @card-action-icon-size;
+          line-height: 22px;
         }
       }
 
@@ -7325,7 +7703,7 @@ a.@{btn-prefix-cls} {
   &&-card &-card-bar &-tab {
     height: @tabs-card-height;
     margin: 0;
-    margin-right: 2px;
+    margin-right: @tabs-card-gutter;
     padding: 0 16px;
     line-height: @tabs-card-height - 2px;
     background: @tabs-card-head-background;
@@ -7339,6 +7717,14 @@ a.@{btn-prefix-cls} {
     background: @component-background;
     border-color: @border-color-split;
     border-bottom: @border-width-base solid @component-background;
+
+    &::before {
+      border-top: @tabs-card-tab-active-border-top;
+    }
+  }
+  &&-card &-card-bar &-tab-disabled {
+    color: @tabs-card-active-color;
+    color: @disabled-color;
   }
   &&-card &-card-bar &-tab-inactive {
     padding: 0;
@@ -7375,7 +7761,8 @@ a.@{btn-prefix-cls} {
   }
 
   &-extra-content {
-    line-height: @tabs-card-height;
+    line-height: @tabs-title-font-size * @line-height-base + extract(@tabs-horizontal-padding, 1) *
+      2;
 
     .@{tab-prefix-cls}-new-tab {
       position: relative;
@@ -7404,11 +7791,28 @@ a.@{btn-prefix-cls} {
     }
   }
 
+  // https://github.com/ant-design/ant-design/issues/17865
+  &&-large &-extra-content {
+    line-height: @tabs-title-font-size-lg * @line-height-base +
+      extract(@tabs-horizontal-padding-lg, 1) * 2;
+  }
+
+  // https://github.com/ant-design/ant-design/issues/17865
+  &&-small &-extra-content {
+    line-height: @tabs-title-font-size-sm * @line-height-base +
+      extract(@tabs-horizontal-padding-sm, 1) * 2;
+  }
+
+  // https://github.com/ant-design/ant-design/issues/17865
+  &&-card &-extra-content {
+    line-height: @tabs-card-height;
+  }
+
   // https://github.com/ant-design/ant-design/issues/4669
   &-vertical&-card &-card-bar&-left-bar,
   &-vertical&-card &-card-bar&-right-bar {
     .@{tab-prefix-cls}-nav-container {
-      height: auto;
+      height: 100%;
     }
     .@{tab-prefix-cls}-tab {
       margin-bottom: 8px;
@@ -7457,6 +7861,7 @@ a.@{btn-prefix-cls} {
 
   // https://github.com/ant-design/ant-design/issues/9104
   & &-card-bar&-bottom-bar &-tab {
+    height: auto;
     border-top: 0;
     border-bottom: @border-width-base @border-style-base @border-color-split;
     border-radius: 0 0 @border-radius-base @border-radius-base;
@@ -7471,8 +7876,21 @@ a.@{btn-prefix-cls} {
 
 @tab-prefix-cls: ~'@{ant-prefix}-tabs';
 
+// Hidden content
+.tabs-hidden-content() {
+  height: 0;
+  padding: 0 !important;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  input {
+    visibility: hidden;
+  }
+}
+
 .@{tab-prefix-cls} {
   .reset-component;
+
   position: relative;
   overflow: hidden;
   .clearfix;
@@ -7633,8 +8051,19 @@ a.@{btn-prefix-cls} {
       padding: @tabs-horizontal-padding;
       text-decoration: none;
       cursor: pointer;
-
       transition: color 0.3s @ease-in-out;
+
+      &::before {
+        position: absolute;
+        top: -1px;
+        left: 0;
+        width: 100%;
+        border-top: 2px solid transparent;
+        border-radius: @border-radius-base @border-radius-base 0 0;
+        transition: all 0.3s;
+        content: '';
+        pointer-events: none;
+      }
 
       &:last-child {
         margin-right: 0;
@@ -7652,17 +8081,17 @@ a.@{btn-prefix-cls} {
         margin-right: 8px;
       }
 
+      &-active {
+        color: @tabs-highlight-color;
+        font-weight: 500;
+      }
+
       &-disabled {
         &,
         &:hover {
           color: @disabled-color;
           cursor: not-allowed;
         }
-      }
-
-      &-active {
-        color: @tabs-highlight-color;
-        font-weight: 500;
       }
     }
   }
@@ -7685,6 +8114,14 @@ a.@{btn-prefix-cls} {
     }
   }
 
+  // Create an empty element to avoid margin collapsing
+  // https://github.com/ant-design/ant-design/issues/18103
+  &-content::before {
+    display: block;
+    overflow: hidden;
+    content: '';
+  }
+
   // Horizontal Content
   .@{tab-prefix-cls}-top-content,
   .@{tab-prefix-cls}-bottom-content {
@@ -7698,13 +8135,7 @@ a.@{btn-prefix-cls} {
     }
 
     > .@{tab-prefix-cls}-tabpane-inactive {
-      height: 0;
-      padding: 0 !important;
-      opacity: 0;
-      pointer-events: none;
-      input {
-        visibility: hidden;
-      }
+      .tabs-hidden-content();
     }
 
     &.@{tab-prefix-cls}-content-animated {
@@ -7720,14 +8151,8 @@ a.@{btn-prefix-cls} {
   .@{tab-prefix-cls}-right-bar {
     height: 100%;
     border-bottom: 0;
-    &-tab-prev,
-    &-tab-next {
-      width: @tabs-scrolling-size;
-      height: 0;
-      transition: height 0.3s @ease-in-out, opacity 0.3s @ease-in-out, color 0.3s @ease-in-out;
-    }
-    &-tab-prev.@{tab-prefix-cls}-tab-arrow-show,
-    &-tab-next.@{tab-prefix-cls}-tab-arrow-show {
+
+    .@{tab-prefix-cls}-tab-arrow-show {
       width: 100%;
       height: @tabs-scrolling-size;
     }
@@ -7781,6 +8206,7 @@ a.@{btn-prefix-cls} {
     }
 
     .@{tab-prefix-cls}-tab-next {
+      right: 0;
       bottom: 0;
       width: 100%;
       height: @tabs-scrolling-size;
@@ -7864,7 +8290,7 @@ a.@{btn-prefix-cls} {
     transform: none !important;
   }
   > .@{tab-prefix-cls}-tabpane-inactive {
-    display: none;
+    .tabs-hidden-content();
   }
 }
 
@@ -7902,8 +8328,6 @@ a.@{btn-prefix-cls} {
   .col(@index, @list) when (@index > @grid-columns) {
     @{list} {
       position: relative;
-      // Prevent columns from collapsing when empty
-      min-height: 1px;
       padding-right: (@grid-gutter-width / 2);
       padding-left: (@grid-gutter-width / 2);
     }
@@ -7985,6 +8409,7 @@ a.@{btn-prefix-cls} {
 // Grid system
 .@{ant-prefix}-row {
   .make-row();
+
   display: block;
   box-sizing: border-box;
 }
@@ -8041,6 +8466,8 @@ a.@{btn-prefix-cls} {
 
 .@{ant-prefix}-col {
   position: relative;
+  // Prevent columns from collapsing when empty
+  min-height: 1px;
 }
 
 .make-grid-columns();
@@ -8239,7 +8666,6 @@ a.@{btn-prefix-cls} {
   // Dots
   .slick-dots {
     position: absolute;
-    bottom: 12px;
     display: block;
     width: 100%;
     height: @carousel-dot-height;
@@ -8247,6 +8673,12 @@ a.@{btn-prefix-cls} {
     padding: 0;
     text-align: center;
     list-style: none;
+    &-bottom {
+      bottom: 12px;
+    }
+    &-top {
+      top: 12px;
+    }
     li {
       position: relative;
       display: inline-block;
@@ -8289,11 +8721,16 @@ a.@{btn-prefix-cls} {
 .@{ant-prefix}-carousel-vertical {
   .slick-dots {
     top: 50%;
-    right: 12px;
     bottom: auto;
     width: @carousel-dot-height;
     height: auto;
     transform: translateY(-50%);
+    &-left {
+      left: 12px;
+    }
+    &-right {
+      right: 12px;
+    }
     li {
       margin: 0 2px;
       vertical-align: baseline;
@@ -8314,6 +8751,7 @@ a.@{btn-prefix-cls} {
   // 一般状态
   .@{checkbox-prefix-cls} {
     .reset-component;
+
     position: relative;
     top: -0.09em;
     display: inline-block;
@@ -8339,7 +8777,7 @@ a.@{btn-prefix-cls} {
       border-radius: @border-radius-sm;
       visibility: hidden;
       animation: antCheckboxEffect 0.36s ease-in-out;
-      animation-fill-mode: both;
+      animation-fill-mode: backwards;
       content: '';
     }
 
@@ -8366,6 +8804,7 @@ a.@{btn-prefix-cls} {
       &::after {
         @check-width: (@checkbox-size / 14) * 5px;
         @check-height: (@checkbox-size / 14) * 8px;
+
         position: absolute;
         top: 50%;
         left: 21%;
@@ -8444,10 +8883,17 @@ a.@{btn-prefix-cls} {
       color: @disabled-color;
       cursor: not-allowed;
     }
+
+    // Not show highlight border of checkbox when disabled
+    &:hover::after,
+    .@{checkbox-prefix-cls}-wrapper:hover &::after {
+      visibility: hidden;
+    }
   }
 
   .@{checkbox-prefix-cls}-wrapper {
     .reset-component;
+
     display: inline-block;
     line-height: unset;
     cursor: pointer;
@@ -8456,7 +8902,6 @@ a.@{btn-prefix-cls} {
     }
   }
 
-  .@{checkbox-prefix-cls}-wrapper + span,
   .@{checkbox-prefix-cls} + span {
     padding-right: 8px;
     padding-left: 8px;
@@ -8464,6 +8909,7 @@ a.@{btn-prefix-cls} {
 
   .@{checkbox-prefix-cls}-group {
     .reset-component;
+
     display: inline-block;
     &-item {
       display: inline-block;
@@ -8480,12 +8926,13 @@ a.@{btn-prefix-cls} {
   // 半选状态
   .@{checkbox-prefix-cls}-indeterminate {
     .@{checkbox-inner-prefix-cls} {
-      background-color: #fff;
+      background-color: @component-background;
       border-color: @border-color-base;
     }
     .@{checkbox-inner-prefix-cls}::after {
       @indeterminate-width: @checkbox-size - 8px;
       @indeterminate-height: @checkbox-size - 8px;
+
       top: 50%;
       left: 50%;
       width: @indeterminate-width;
@@ -8521,10 +8968,11 @@ a.@{btn-prefix-cls} {
 
 .@{collapse-prefix-cls} {
   .reset-component;
+
   background-color: @collapse-header-bg;
   border: @border-width-base @border-style-base @border-color-base;
   border-bottom: 0;
-  border-radius: @border-radius-base;
+  border-radius: @collapse-panel-border-radius;
 
   & > &-item {
     border-bottom: @border-width-base @border-style-base @border-color-base;
@@ -8532,13 +8980,14 @@ a.@{btn-prefix-cls} {
     &:last-child {
       &,
       & > .@{collapse-prefix-cls}-header {
-        border-radius: 0 0 @border-radius-base @border-radius-base;
+        border-radius: 0 0 @collapse-panel-border-radius @collapse-panel-border-radius;
       }
     }
 
     > .@{collapse-prefix-cls}-header {
       position: relative;
       padding: @collapse-header-padding;
+      padding-left: @collapse-header-padding-extra;
       color: @heading-color;
       line-height: 22px;
       cursor: pointer;
@@ -8546,13 +8995,12 @@ a.@{btn-prefix-cls} {
 
       .@{collapse-prefix-cls}-arrow {
         .iconfont-mixin();
+
         position: absolute;
         top: 50%;
         left: @padding-md;
         display: inline-block;
-        margin-top: 2px;
         font-size: @font-size-sm;
-        line-height: 46px;
         transform: translateY(-50%);
 
         & svg {
@@ -8572,6 +9020,21 @@ a.@{btn-prefix-cls} {
     &.@{collapse-prefix-cls}-no-arrow {
       > .@{collapse-prefix-cls}-header {
         padding-left: 12px;
+      }
+    }
+  }
+
+  // Expand Icon right
+  &-icon-position-right {
+    & > .@{collapse-prefix-cls}-item {
+      > .@{collapse-prefix-cls}-header {
+        padding: @collapse-header-padding;
+        padding-right: @collapse-header-padding-extra;
+
+        .@{collapse-prefix-cls}-arrow {
+          right: @padding-md;
+          left: initial;
+        }
       }
     }
   }
@@ -8597,7 +9060,7 @@ a.@{btn-prefix-cls} {
 
   &-item:last-child {
     > .@{collapse-prefix-cls}-content {
-      border-radius: 0 0 @border-radius-base @border-radius-base;
+      border-radius: 0 0 @collapse-panel-border-radius @collapse-panel-border-radius;
     }
   }
 
@@ -8659,25 +9122,25 @@ a.@{btn-prefix-cls} {
     position: relative;
     flex: 1 1 auto;
     min-width: 1px;
-    font-size: 14px;
+    font-size: @comment-font-size-base;
     word-wrap: break-word;
 
     &-author {
       display: flex;
       justify-content: flex-start;
       margin-bottom: 4px;
-      font-size: 14px;
+      font-size: @comment-font-size-base;
       & > a,
       & > span {
         height: 18px;
         padding-right: 8px;
-        font-size: 12px;
+        font-size: @comment-font-size-sm;
         line-height: 18px;
       }
 
       &-name {
         color: @comment-author-name-color;
-        font-size: 14px;
+        font-size: @comment-font-size-base;
         transition: color 0.3s;
         > * {
           color: @comment-author-name-color;
@@ -8708,7 +9171,7 @@ a.@{btn-prefix-cls} {
       > span {
         padding-right: 10px;
         color: @comment-action-color;
-        font-size: 12px;
+        font-size: @comment-font-size-sm;
         cursor: pointer;
         transition: color 0.3s;
         user-select: none;
@@ -8725,6 +9188,7 @@ a.@{btn-prefix-cls} {
 }
 
 @input-affix-width: 19px;
+@input-affix-with-clear-btn-width: 38px;
 
 // size mixins for input
 .input-lg() {
@@ -8749,7 +9213,7 @@ a.@{btn-prefix-cls} {
 
 // == when hoverd
 .hover(@color: @input-hover-border-color) {
-  border-color: ~`colorPalette('@{color}', 5) `;
+  border-color: @color;
   border-right-width: @border-width-base !important;
 }
 
@@ -8758,6 +9222,7 @@ a.@{btn-prefix-cls} {
   background-color: @input-disabled-bg;
   cursor: not-allowed;
   opacity: 1;
+
   &:hover {
     .hover(@input-border-color);
   }
@@ -8801,6 +9266,7 @@ a.@{btn-prefix-cls} {
     max-width: 100%; // prevent textearea resize from coming out of its container
     height: auto;
     min-height: @input-height-base;
+    line-height: @line-height-base;
     vertical-align: bottom;
     transition: all 0.3s, height 0s;
   }
@@ -8832,6 +9298,7 @@ a.@{btn-prefix-cls} {
 
   > [class*='col-'] {
     padding-right: 8px;
+
     &:last-child {
       padding-right: 0;
     }
@@ -8863,10 +9330,12 @@ a.@{btn-prefix-cls} {
     width: 100%;
     margin-bottom: 0;
     text-align: inherit;
+
     &:focus {
       z-index: 1; // Fix https://gw.alipayobjects.com/zos/rmsportal/DHNpoqfMXSfrSnlZvhsJ.png
       border-right-width: 1px;
     }
+
     &:hover {
       z-index: 1;
       border-right-width: 1px;
@@ -8879,7 +9348,6 @@ a.@{btn-prefix-cls} {
     color: @input-color;
     font-weight: normal;
     font-size: @font-size-base;
-    line-height: 1;
     text-align: center;
     background-color: @input-addon-bg;
     border: @border-width-base @border-style-base @input-border-color;
@@ -8945,6 +9413,7 @@ a.@{btn-prefix-cls} {
   &-addon:first-child {
     border-right: 0;
   }
+
   &-addon:last-child {
     border-left: 0;
   }
@@ -8996,9 +9465,11 @@ a.@{btn-prefix-cls} {
     > .@{inputClass} {
       &:not(:first-child):not(:last-child) {
         border-right-width: @border-width-base;
+
         &:hover {
           z-index: 1;
         }
+
         &:focus {
           z-index: 1;
         }
@@ -9031,9 +9502,11 @@ a.@{btn-prefix-cls} {
     & > .@{ant-prefix}-time-picker .@{ant-prefix}-time-picker-input {
       border-right-width: @border-width-base;
       border-radius: 0;
+
       &:hover {
         z-index: 1;
       }
+
       &:focus {
         z-index: 1;
       }
@@ -9085,16 +9558,32 @@ a.@{btn-prefix-cls} {
     text-align: inherit;
   }
 
+  // Should not break align of icon & text
+  // https://github.com/ant-design/ant-design/issues/18087
+  // https://github.com/ant-design/ant-design/issues/17414
+  // https://github.com/ant-design/ant-design/pull/17684
+  // https://codesandbox.io/embed/pensive-paper-di2wk
+  // https://codesandbox.io/embed/nifty-benz-gb7ml
   .@{inputClass}-prefix,
   .@{inputClass}-suffix {
     position: absolute;
     top: 50%;
     z-index: 2;
+    display: flex;
+    align-items: center;
     color: @input-color;
     line-height: 0;
     transform: translateY(-50%);
+
     :not(.anticon) {
       line-height: @line-height-base;
+    }
+  }
+
+  .@{inputClass}-disabled ~ .@{inputClass}-suffix {
+    .anticon {
+      color: @disabled-color;
+      cursor: not-allowed;
     }
   }
 
@@ -9113,6 +9602,10 @@ a.@{btn-prefix-cls} {
   .@{inputClass}:not(:last-child) {
     padding-right: @input-padding-horizontal-base + @input-affix-width;
   }
+
+  &.@{inputClass}-affix-wrapper-with-clear-btn .@{inputClass}:not(:last-child) {
+    padding-right: @input-padding-horizontal-base + @input-affix-with-clear-btn-width;
+  }
 }
 
 @calendar-prefix-cls: ~'@{ant-prefix}-calendar';
@@ -9120,6 +9613,7 @@ a.@{btn-prefix-cls} {
 
 .@{calendar-prefix-cls}-picker-container {
   .reset-component;
+
   position: absolute;
   z-index: @zindex-picker;
   font-family: @font-family;
@@ -9151,6 +9645,7 @@ a.@{btn-prefix-cls} {
 
 .@{calendar-prefix-cls}-picker {
   .reset-component;
+
   position: relative;
   display: inline-block;
   outline: none;
@@ -9159,6 +9654,10 @@ a.@{btn-prefix-cls} {
 
   &-input {
     outline: none;
+
+    &.@{ant-prefix}-input {
+      line-height: @line-height-base;
+    }
   }
 
   &-input.@{ant-prefix}-input-sm {
@@ -9167,7 +9666,7 @@ a.@{btn-prefix-cls} {
   }
 
   &:hover &-input:not(.@{ant-prefix}-input-disabled) {
-    border-color: @primary-color;
+    border-color: @input-hover-border-color;
   }
 
   &:focus &-input:not(.@{ant-prefix}-input-disabled) {
@@ -9217,6 +9716,67 @@ a.@{btn-prefix-cls} {
   &-small &-clear,
   &-small &-icon {
     right: @control-padding-horizontal-sm;
+  }
+}
+
+.calendarLeftArrow() {
+  height: 100%;
+
+  &::before,
+  &::after {
+    position: relative;
+    top: -1px;
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    vertical-align: middle;
+    border: 0 solid #aaa;
+    border-width: 1.5px 0 0 1.5px;
+    border-radius: 1px;
+    transform: rotate(-45deg) scale(0.8);
+    transition: all 0.3s;
+    content: '';
+  }
+
+  &:hover::before,
+  &:hover::after {
+    border-color: @text-color;
+  }
+
+  &::after {
+    display: none;
+  }
+}
+
+.calendarLeftDoubleArrow() {
+  .calendarLeftArrow;
+
+  &::after {
+    position: relative;
+    left: -3px;
+    display: inline-block;
+  }
+}
+
+.calendarRightArrow() {
+  .calendarLeftArrow;
+
+  &::before,
+  &::after {
+    transform: rotate(135deg) scale(0.8);
+  }
+}
+
+.calendarRightDoubleArrow() {
+  .calendarRightArrow;
+
+  &::before {
+    position: relative;
+    left: 3px;
+  }
+
+  &::after {
+    display: inline-block;
   }
 }
 
@@ -9271,35 +9831,35 @@ a.@{btn-prefix-cls} {
   .@{calendar-prefix-cls}-prev-decade-btn,
   .@{calendar-prefix-cls}-prev-year-btn {
     left: 7px;
-
-    &::after {
-      content: '«';
-    }
+    .calendarLeftDoubleArrow;
   }
 
   .@{calendar-prefix-cls}-next-century-btn,
   .@{calendar-prefix-cls}-next-decade-btn,
   .@{calendar-prefix-cls}-next-year-btn {
     right: 7px;
-
-    &::after {
-      content: '»';
-    }
+    .calendarRightDoubleArrow;
   }
 
   .@{calendar-prefix-cls}-prev-month-btn {
     left: 29px;
-
-    &::after {
-      content: '‹';
-    }
+    .calendarLeftArrow;
   }
 
   .@{calendar-prefix-cls}-next-month-btn {
     right: 29px;
+    .calendarRightArrow;
+  }
+}
 
-    &::after {
-      content: '›';
+.calendar-selected-cell() {
+  .@{calendar-prefix-cls}-date {
+    color: @text-color-inverse;
+    background: @primary-color;
+    border: @border-width-base @border-style-base transparent;
+
+    &:hover {
+      background: @primary-color;
     }
   }
 }
@@ -9428,26 +9988,17 @@ a.@{btn-prefix-cls} {
     border-color: @primary-color;
   }
 
+  &-selected-day &-date {
+    background: @primary-2;
+  }
+
   &-last-month-cell &-date,
   &-next-month-btn-day &-date {
-    color: @disabled-color;
-  }
-
-  &-selected-day &-date {
-    background: tint(@primary-color, 80%);
-  }
-
-  &-selected-date,
-  &-selected-start-date,
-  &-selected-end-date {
-    .@{calendar-prefix-cls}-date {
-      color: @text-color-inverse;
-      background: @primary-color;
-      border: @border-width-base @border-style-base transparent;
-
-      &:hover {
-        background: @primary-color;
-      }
+    &,
+    &:hover {
+      color: @disabled-color;
+      background: transparent;
+      border-color: transparent;
     }
   }
 
@@ -9564,6 +10115,7 @@ a.@{btn-prefix-cls} {
     .btn;
     .btn-primary;
     .button-size(@btn-height-sm; @btn-padding-sm; @font-size-base; @border-radius-base);
+
     line-height: @btn-height-sm - 2px;
 
     .button-disabled();
@@ -9656,6 +10208,22 @@ a.@{btn-prefix-cls} {
     transform: translateX(-50%);
   }
 
+  .@{calendar-prefix-cls}-today
+    :not(.@{calendar-prefix-cls}-disabled-cell)
+    :not(.@{calendar-prefix-cls}-last-month-cell)
+    :not(.@{calendar-prefix-cls}-next-month-btn-day) {
+    .@{calendar-prefix-cls}-date {
+      color: @primary-color;
+      background: @primary-2;
+      border-color: @primary-color;
+    }
+  }
+
+  .@{calendar-prefix-cls}-selected-start-date,
+  .@{calendar-prefix-cls}-selected-end-date {
+    .calendar-selected-cell;
+  }
+
   &.@{calendar-prefix-cls}-time &-right .@{calendar-prefix-cls}-date-input-wrap {
     margin-left: 0;
   }
@@ -9671,6 +10239,7 @@ a.@{btn-prefix-cls} {
     height: @input-height-sm;
     padding-right: 0;
     padding-left: 0;
+    line-height: @input-height-sm;
     border: 0;
     box-shadow: none;
 
@@ -9741,7 +10310,8 @@ a.@{btn-prefix-cls} {
 
   .@{calendar-prefix-cls},
   .@{calendar-prefix-cls}-month-panel,
-  .@{calendar-prefix-cls}-year-panel {
+  .@{calendar-prefix-cls}-year-panel,
+  .@{calendar-prefix-cls}-decade-panel {
     &-header {
       border-bottom: 0;
     }
@@ -9851,7 +10421,6 @@ a.@{btn-prefix-cls} {
   &-select {
     position: relative; // Fix chrome weird render bug
     float: left;
-    box-sizing: border-box;
     height: 226px;
     overflow: hidden;
     font-size: @font-size-base;
@@ -9871,7 +10440,6 @@ a.@{btn-prefix-cls} {
     }
 
     ul {
-      box-sizing: border-box;
       width: 100%;
       max-height: 206px;
       margin: 0;
@@ -9880,30 +10448,35 @@ a.@{btn-prefix-cls} {
     }
 
     li {
-      box-sizing: content-box;
       width: 100%;
       height: 24px;
       margin: 0;
-      padding-left: 32px;
       line-height: 24px;
+      text-align: center;
       list-style: none;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: all .3s;
       user-select: none;
-    }
 
-    li:last-child::after {
-      display: block;
-      height: 202px;
-      content: '';
-    }
+      &:last-child::after {
+        display: block;
+        height: 202px;
+        content: '';
+      }
 
-    li:hover {
-      background: @item-hover-bg;
+      &:hover {
+        background: @item-hover-bg;
+      }
+
+      &:focus {
+        color: @primary-color;
+        font-weight: 600;
+        outline: none;
+      }
     }
 
     li&-option-selected {
-      font-weight: bold;
+      font-weight: 600;
       background: @time-picker-selected-bg;
     }
 
@@ -9952,7 +10525,7 @@ a.@{btn-prefix-cls} {
 
 .@{calendar-prefix-cls}-month-panel {
   position: absolute;
-  top: 1px;
+  top: 0;
   right: 0;
   bottom: 0;
   left: 0;
@@ -9975,6 +10548,7 @@ a.@{btn-prefix-cls} {
 
 .@{calendar-prefix-cls}-month-panel-header {
   .calendarPanelHeader(~'@{calendar-prefix-cls}-month-panel');
+  position: relative;
 }
 
 .@{calendar-prefix-cls}-month-panel-body {
@@ -10038,7 +10612,7 @@ a.@{btn-prefix-cls} {
 
 .@{calendar-prefix-cls}-year-panel {
   position: absolute;
-  top: 1px;
+  top: 0;
   right: 0;
   bottom: 0;
   left: 0;
@@ -10061,6 +10635,7 @@ a.@{btn-prefix-cls} {
 
 .@{calendar-prefix-cls}-year-panel-header {
   .calendarPanelHeader(~'@{calendar-prefix-cls}-year-panel');
+  position: relative;
 }
 
 .@{calendar-prefix-cls}-year-panel-body {
@@ -10141,6 +10716,7 @@ a.@{btn-prefix-cls} {
 
 .@{calendar-prefix-cls}-decade-panel-header {
   .calendarPanelHeader(~'@{calendar-prefix-cls}-decade-panel');
+  position: relative;
 }
 
 .@{calendar-prefix-cls}-decade-panel-body {
@@ -10281,7 +10857,9 @@ a.@{btn-prefix-cls} {
 .@{ant-prefix}-input-clear-icon {
   color: @disabled-color;
   font-size: @font-size-sm;
-  vertical-align: top;
+  // https://github.com/ant-design/ant-design/pull/18151
+  // https://codesandbox.io/s/wizardly-sun-u10br
+  vertical-align: 0;
   cursor: pointer;
   transition: color 0.3s;
 
@@ -10334,6 +10912,7 @@ a.@{btn-prefix-cls} {
 
 .@{timepicker-prefix-cls}-panel {
   .reset-component;
+
   position: absolute;
   z-index: @zindex-picker;
   font-family: @font-family;
@@ -10365,7 +10944,6 @@ a.@{btn-prefix-cls} {
 
     &-wrap {
       position: relative;
-      box-sizing: border-box;
       padding: 7px 2px 7px @control-padding-horizontal;
       border-bottom: @border-width-base @border-style-base @border-color-split;
     }
@@ -10382,7 +10960,6 @@ a.@{btn-prefix-cls} {
   &-select {
     position: relative; // Fix chrome weird render bug
     float: left;
-    box-sizing: border-box;
     width: @time-picker-panel-column-width;
     max-height: @timepicker-item-height * 6;
     overflow: hidden;
@@ -10407,15 +10984,15 @@ a.@{btn-prefix-cls} {
     }
 
     ul {
-      box-sizing: border-box;
-      width: 100%;
+      // use fixed width instead of 100%
+      // to fix strange render bug in safari: https://github.com/ant-design/ant-design/issues/17842
+      width: @time-picker-panel-column-width;
       margin: 0;
       padding: 0 0 @timepicker-item-height * 5;
       list-style: none;
     }
 
     li {
-      box-sizing: content-box;
       width: 100%;
       height: @timepicker-item-height;
       margin: 0;
@@ -10424,8 +11001,14 @@ a.@{btn-prefix-cls} {
       text-align: left;
       list-style: none;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: all 0.3s;
       user-select: none;
+
+      &:focus {
+        color: @primary-color;
+        font-weight: 600;
+        outline: none;
+      }
     }
 
     li:hover {
@@ -10433,7 +11016,7 @@ a.@{btn-prefix-cls} {
     }
 
     li&-option-selected {
-      font-weight: bold;
+      font-weight: 600;
       background: @time-picker-selected-bg;
       &:hover {
         background: @time-picker-selected-bg;
@@ -10485,6 +11068,7 @@ a.@{btn-prefix-cls} {
 
 .@{timepicker-prefix-cls} {
   .reset-component;
+
   position: relative;
   display: inline-block;
   width: 128px;
@@ -10551,10 +11135,22 @@ a.@{btn-prefix-cls} {
   }
 }
 
+// Fix cursor height in safari
+// https://stackoverflow.com/q/3843408/3040605
+// https://browserstrangeness.github.io/css_hacks.html#safari
+@media not all and (min-resolution: 0.001dpcm) {
+  @supports (-webkit-appearance: none) and (stroke-color: transparent) {
+    .@{ant-prefix}-input {
+      line-height: @line-height-base;
+    }
+  }
+}
+
 @tag-prefix-cls: ~'@{ant-prefix}-tag';
 
 .@{tag-prefix-cls} {
   .reset-component;
+
   display: inline-block;
   height: auto;
   margin-right: 8px;
@@ -10565,7 +11161,7 @@ a.@{btn-prefix-cls} {
   background: @tag-default-bg;
   border: @border-width-base @border-style-base @border-color-base;
   border-radius: @border-radius-base;
-  cursor: pointer;
+  cursor: default;
   opacity: 1;
   transition: all 0.3s @ease-in-out-circ;
 
@@ -10587,6 +11183,7 @@ a.@{btn-prefix-cls} {
 
   .@{iconfont-css-prefix}-close {
     .iconfont-size-under-12px(10px);
+
     margin-left: 3px;
     color: @text-color-secondary;
     font-weight: bold;
@@ -10653,10 +11250,154 @@ a.@{btn-prefix-cls} {
   .make-color-classes();
 }
 
+@descriptions-prefix-cls: ~'@{ant-prefix}-descriptions';
+
+@descriptions-default-padding: 16px 24px;
+@descriptions-middle-padding: 12px 24px;
+@descriptions-small-padding: 8px 16px;
+
+.@{descriptions-prefix-cls} {
+  &-title {
+    margin-bottom: 20px;
+    color: @heading-color;
+    font-weight: bold;
+    font-size: @font-size-lg;
+    line-height: @line-height-base;
+  }
+
+  &-view {
+    width: 100%;
+    overflow: hidden;
+    border-radius: @border-radius-base;
+    table {
+      width: 100%;
+      table-layout: fixed;
+    }
+  }
+
+  &-row {
+    > th,
+    > td {
+      padding-bottom: 16px;
+    }
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &-item-label {
+    color: @heading-color;
+    font-weight: normal;
+    font-size: @font-size-base;
+    line-height: @line-height-base;
+    white-space: nowrap;
+
+    &::after {
+      position: relative;
+      top: -0.5px;
+      margin: 0 8px 0 2px;
+      content: ' ';
+    }
+  }
+
+  &-item-colon {
+    &::after {
+      content: ':';
+    }
+  }
+
+  &-item-no-label {
+    &::after {
+      margin: 0;
+      content: '';
+    }
+  }
+
+  &-item-content {
+    display: table-cell;
+    color: @text-color;
+    font-size: @font-size-base;
+    line-height: @line-height-base;
+  }
+
+  &-item {
+    padding-bottom: 0;
+    > span {
+      display: inline-block;
+    }
+  }
+
+  &-middle {
+    .@{descriptions-prefix-cls}-row {
+      > th,
+      > td {
+        padding-bottom: 12px;
+      }
+    }
+  }
+
+  &-small {
+    .@{descriptions-prefix-cls}-row {
+      > th,
+      > td {
+        padding-bottom: 8px;
+      }
+    }
+  }
+
+  &-bordered {
+    .@{descriptions-prefix-cls}-view {
+      border: 1px solid @border-color-split;
+      > table {
+        table-layout: auto;
+      }
+    }
+
+    .@{descriptions-prefix-cls}-item-label,
+    .@{descriptions-prefix-cls}-item-content {
+      padding: @descriptions-default-padding;
+      border-right: 1px solid @border-color-split;
+
+      &:last-child {
+        border-right: none;
+      }
+    }
+
+    .@{descriptions-prefix-cls}-item-label {
+      background-color: @descriptions-bg;
+      &::after {
+        display: none;
+      }
+    }
+
+    .@{descriptions-prefix-cls}-row {
+      border-bottom: 1px solid @border-color-split;
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    &.@{descriptions-prefix-cls}-middle {
+      .@{descriptions-prefix-cls}-item-label,
+      .@{descriptions-prefix-cls}-item-content {
+        padding: @descriptions-middle-padding;
+      }
+    }
+
+    &.@{descriptions-prefix-cls}-small {
+      .@{descriptions-prefix-cls}-item-label,
+      .@{descriptions-prefix-cls}-item-content {
+        padding: @descriptions-small-padding;
+      }
+    }
+  }
+}
+
 @divider-prefix-cls: ~'@{ant-prefix}-divider';
 
 .@{divider-prefix-cls} {
   .reset-component;
+
   background: @border-color-split;
 
   &,  /* for compatiable */
@@ -10669,6 +11410,7 @@ a.@{btn-prefix-cls} {
     margin: 0 8px;
     vertical-align: middle;
   }
+
   &-horizontal {
     display: block;
     clear: both;
@@ -10678,7 +11420,7 @@ a.@{btn-prefix-cls} {
     margin: 24px 0;
   }
 
-  &-horizontal&-with-text,
+  &-horizontal&-with-text-center,
   &-horizontal&-with-text-left,
   &-horizontal&-with-text-right {
     display: table;
@@ -10738,9 +11480,12 @@ a.@{btn-prefix-cls} {
 
   &-dashed {
     background: none;
-    border-top: 1px dashed @border-color-split;
+    border-color: @border-color-split;
+    border-style: dashed;
+    border-width: 1px 0 0;
   }
-  &-horizontal&-with-text&-dashed,
+
+  &-horizontal&-with-text-center&-dashed,
   &-horizontal&-with-text-left&-dashed,
   &-horizontal&-with-text-right&-dashed {
     border-top: 0;
@@ -10748,6 +11493,10 @@ a.@{btn-prefix-cls} {
     &::after {
       border-style: dashed none none;
     }
+  }
+
+  &-vertical&-dashed {
+    border-width: 0 0 0 1px;
   }
 }
 
@@ -10759,25 +11508,27 @@ a.@{btn-prefix-cls} {
 
 .@{drawer-prefix-cls} {
   position: fixed;
-  top: 0;
   z-index: @zindex-modal;
   width: 0%;
   height: 100%;
-
+  transition: transform @animation-duration-slow @ease-base-out,
+    height 0s ease @animation-duration-slow, width 0s ease @animation-duration-slow;
   > * {
-    transition: transform @animation-duration-slow @ease-base-in,
-      box-shadow @animation-duration-slow @ease-base-in;
+    transition: transform @animation-duration-slow @ease-base-out,
+      box-shadow @animation-duration-slow @ease-base-out;
   }
 
   &-content-wrapper {
-    position: fixed;
+    position: absolute;
   }
   .@{drawer-prefix-cls}-content {
     width: 100%;
     height: 100%;
   }
+
   &-left,
   &-right {
+    top: 0;
     width: 0%;
     height: 100%;
     .@{drawer-prefix-cls}-content-wrapper {
@@ -10785,11 +11536,13 @@ a.@{btn-prefix-cls} {
     }
     &.@{drawer-prefix-cls}-open {
       width: 100%;
+      transition: transform @animation-duration-slow @ease-base-out;
     }
     &.@{drawer-prefix-cls}-open.no-mask {
       width: 0%;
     }
   }
+
   &-left {
     &.@{drawer-prefix-cls}-open {
       .@{drawer-prefix-cls}-content-wrapper {
@@ -10797,7 +11550,10 @@ a.@{btn-prefix-cls} {
       }
     }
   }
+
   &-right {
+    right: 0;
+
     .@{drawer-prefix-cls} {
       &-content-wrapper {
         right: 0;
@@ -10807,31 +11563,45 @@ a.@{btn-prefix-cls} {
       .@{drawer-prefix-cls}-content-wrapper {
         box-shadow: @shadow-1-left;
       }
+      // https://github.com/ant-design/ant-design/issues/18607, Avoid edge alignment bug.
+      &.no-mask {
+        right: 1px;
+        transform: translateX(1px);
+      }
     }
   }
 
   &-top,
   &-bottom {
+    left: 0;
     width: 100%;
     height: 0%;
+
     .@{drawer-prefix-cls}-content-wrapper {
       width: 100%;
     }
     &.@{drawer-prefix-cls}-open {
       height: 100%;
+      transition: transform @animation-duration-slow @ease-base-out;
     }
     &.@{drawer-prefix-cls}-open.no-mask {
       height: 0%;
     }
   }
+
   &-top {
+    top: 0;
+
     &.@{drawer-prefix-cls}-open {
       .@{drawer-prefix-cls}-content-wrapper {
         box-shadow: @shadow-1-down;
       }
     }
   }
+
   &-bottom {
+    bottom: 0;
+
     .@{drawer-prefix-cls} {
       &-content-wrapper {
         bottom: 0;
@@ -10841,13 +11611,18 @@ a.@{btn-prefix-cls} {
       .@{drawer-prefix-cls}-content-wrapper {
         box-shadow: @shadow-1-up;
       }
+      &.no-mask {
+        bottom: 1px;
+        transform: translateY(1px);
+      }
     }
   }
+
   &.@{drawer-prefix-cls}-open {
     .@{drawer-prefix-cls} {
       &-mask {
         height: 100%;
-        opacity: 0.3;
+        opacity: 1;
         transition: none;
         animation: antdDrawerFadeIn @animation-duration-slow @ease-base-out;
       }
@@ -10865,6 +11640,7 @@ a.@{btn-prefix-cls} {
   &-content {
     position: relative;
     z-index: 1;
+    overflow: auto;
     background-color: @component-background;
     background-clip: padding-box;
     border: 0;
@@ -10923,16 +11699,17 @@ a.@{btn-prefix-cls} {
   }
 
   &-mask {
-    position: fixed;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 0;
     background-color: @modal-mask-bg;
     opacity: 0;
-    filter: ~'alpha(opacity=50)';
+    filter: ~'alpha(opacity=45)';
     transition: opacity @animation-duration-slow linear, height 0s ease @animation-duration-slow;
   }
   &-open {
-    transition: transform @animation-duration-slow @ease-base-out;
     &-content {
       box-shadow: @shadow-2;
     }
@@ -10944,7 +11721,7 @@ a.@{btn-prefix-cls} {
     opacity: 0;
   }
   100% {
-    opacity: 0.3;
+    opacity: 1;
   }
 }
 
@@ -10952,6 +11729,7 @@ a.@{btn-prefix-cls} {
 
 .@{dropdown-prefix-cls} {
   .reset-component;
+
   position: absolute;
   top: -9999px;
   left: -9999px;
@@ -11024,11 +11802,11 @@ a.@{btn-prefix-cls} {
     &-submenu-title {
       clear: both;
       margin: 0;
-      padding: 5px @control-padding-horizontal;
+      padding: @dropdown-vertical-padding @control-padding-horizontal;
       color: @text-color;
       font-weight: normal;
-      font-size: @font-size-base;
-      line-height: 22px;
+      font-size: @dropdown-font-size;
+      line-height: @dropdown-line-height;
       white-space: nowrap;
       cursor: pointer;
       transition: all 0.3s;
@@ -11048,7 +11826,7 @@ a.@{btn-prefix-cls} {
 
       &-selected,
       &-selected > a {
-        color: @primary-color;
+        color: @dropdown-selected-color;
         background-color: @item-active-bg;
       }
 
@@ -11215,6 +11993,11 @@ a.@{btn-prefix-cls} {
     img {
       height: 100%;
     }
+
+    svg {
+      height: 100%;
+      margin: auto;
+    }
   }
 
   &-description {
@@ -11252,6 +12035,7 @@ a.@{btn-prefix-cls} {
 .@{input-number-prefix-cls} {
   .reset-component;
   .input;
+
   display: inline-block;
   width: 90px;
   margin: 0;
@@ -11275,13 +12059,14 @@ a.@{btn-prefix-cls} {
     }
     &:hover &-up-inner,
     &:hover &-down-inner {
-      color: @primary-5;
+      color: @input-number-handler-hover-bg;
     }
   }
 
   &-handler-up-inner,
   &-handler-down-inner {
     .iconfont-mixin();
+
     position: absolute;
     right: 4px;
     width: 12px;
@@ -11320,8 +12105,14 @@ a.@{btn-prefix-cls} {
     border-radius: @border-radius-base;
     outline: 0;
     transition: all 0.3s linear;
-    -moz-appearance: textfield;
+    -moz-appearance: textfield !important;
     .placeholder();
+
+    &[type='number']::-webkit-inner-spin-button,
+    &[type='number']::-webkit-outer-spin-button {
+      margin: 0;
+      -webkit-appearance: none;
+    }
   }
 
   &-lg {
@@ -11348,8 +12139,8 @@ a.@{btn-prefix-cls} {
     right: 0;
     width: 22px;
     height: 100%;
-    background: @component-background;
-    border-left: @border-width-base @border-style-base @border-color-base;
+    background: @input-number-handler-bg;
+    border-left: @border-width-base @border-style-base @input-number-handler-border-color;
     border-radius: 0 @border-radius-base @border-radius-base 0;
     opacity: 0;
     transition: opacity 0.24s linear 0.1s;
@@ -11361,6 +12152,7 @@ a.@{btn-prefix-cls} {
       .@{input-number-prefix-cls}-handler-up-inner,
       .@{input-number-prefix-cls}-handler-down-inner {
         .iconfont-size-under-12px(7px);
+
         min-width: auto;
         margin-right: 0;
       }
@@ -11376,6 +12168,7 @@ a.@{btn-prefix-cls} {
   }
 
   &-handler-up {
+    border-top-right-radius: @border-radius-base;
     cursor: pointer;
     &-inner {
       top: 50%;
@@ -11390,6 +12183,7 @@ a.@{btn-prefix-cls} {
   &-handler-down {
     top: 0;
     border-top: @border-width-base @border-style-base @border-color-base;
+    border-bottom-right-radius: @border-radius-base;
     cursor: pointer;
     &-inner {
       top: 50%;
@@ -11507,6 +12301,7 @@ a.@{btn-prefix-cls} {
         position: absolute;
         top: @layout-header-height;
         right: -@layout-zero-trigger-width;
+        z-index: 1;
         width: @layout-zero-trigger-width;
         height: @layout-zero-trigger-height;
         color: @layout-trigger-color;
@@ -11524,6 +12319,7 @@ a.@{btn-prefix-cls} {
 
         &-right {
           left: -@layout-zero-trigger-width;
+          border-radius: @border-radius-base 0 0 @border-radius-base;
         }
       }
     }
@@ -11555,6 +12351,7 @@ a.@{btn-prefix-cls} {
   .@{ant-prefix}-input {
     &,
     &:hover {
+      background-color: @background-color;
       border-color: @border-color;
     }
 
@@ -11576,6 +12373,7 @@ a.@{btn-prefix-cls} {
     .@{ant-prefix}-input {
       &,
       &:hover {
+        background-color: @background-color;
         border-color: @border-color;
       }
 
@@ -11720,35 +12518,6 @@ a.@{btn-prefix-cls} {
   }
 }
 
-// Radio && Checkbox
-input[type='radio'],
-input[type='checkbox'] {
-  &[disabled],
-  &.disabled {
-    cursor: not-allowed;
-  }
-}
-
-// These classes are used directly on <label>s
-.@{ant-prefix}-radio-inline,
-.@{ant-prefix}-radio-vertical,
-.@{ant-prefix}-checkbox-inline,
-.@{ant-prefix}-checkbox-vertical {
-  &.disabled {
-    cursor: not-allowed;
-  }
-}
-
-// These classes are used on elements with <label> descendants
-.@{ant-prefix}-radio,
-.@{ant-prefix}-checkbox {
-  &.disabled {
-    label {
-      cursor: not-allowed;
-    }
-  }
-}
-
 // Form items
 // You should wrap labels and controls in .@{form-prefix-cls}-item for optimum spacing
 .@{form-prefix-cls}-item {
@@ -11762,6 +12531,7 @@ input[type='checkbox'] {
   }
 
   .reset-component;
+
   margin-bottom: @form-item-margin-bottom;
   vertical-align: top;
 
@@ -11776,7 +12546,7 @@ input[type='checkbox'] {
   }
 
   &-with-help {
-    margin-bottom: @form-item-margin-bottom - @form-explain-height - @form-help-margin-top;
+    margin-bottom: max(0, @form-item-margin-bottom - @form-explain-height - @form-help-margin-top);
   }
 
   &-label {
@@ -11826,11 +12596,14 @@ input[type='checkbox'] {
   text-align: center;
 }
 
-// 表单下的输入框尺寸唯一: 大尺寸
 form {
   .has-feedback {
     .@{ant-prefix}-input {
       padding-right: 24px;
+    }
+
+    .@{ant-prefix}-input-password-icon {
+      margin-right: 18px;
     }
 
     // Fix overlapping between feedback icon and <Select>'s arrow.
@@ -11876,6 +12649,7 @@ form {
     }
   }
 
+  .@{ant-prefix}-mentions,
   textarea.@{ant-prefix}-input {
     height: auto;
     margin-bottom: 4px;
@@ -11943,33 +12717,6 @@ form {
     top: -1px;
     display: inline-block;
     vertical-align: middle;
-  }
-}
-
-// Input combined with select
-.@{ant-prefix}-input-group-wrap {
-  .@{ant-prefix}-select-selection {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    &:hover {
-      border-color: @border-color-base;
-    }
-  }
-
-  .@{ant-prefix}-select-selection--single {
-    height: @input-height-lg;
-    margin-left: -1px;
-    background-color: fade(@black, 7%);
-    .@{ant-prefix}-select-selection__rendered {
-      padding-right: 25px;
-      padding-left: 8px;
-      line-height: 30px;
-    }
-  }
-
-  .@{ant-prefix}-select-open .@{ant-prefix}-select-selection {
-    border-color: @border-color-base;
-    box-shadow: none;
   }
 }
 
@@ -12120,7 +12867,7 @@ form {
 }
 
 .has-warning {
-  .form-control-validation(@warning-color; @warning-color;);
+  .form-control-validation(@warning-color; @warning-color; @form-warning-input-bg;);
 
   &.has-feedback .@{form-prefix-cls}-item-children-icon {
     color: @warning-color;
@@ -12169,7 +12916,7 @@ form {
 }
 
 .has-error {
-  .form-control-validation(@error-color; @error-color;);
+  .form-control-validation(@error-color; @error-color; @form-error-input-bg;);
 
   &.has-feedback .@{form-prefix-cls}-item-children-icon {
     color: @error-color;
@@ -12345,6 +13092,7 @@ form {
 
 .@{list-prefix-cls} {
   .reset-component;
+
   position: relative;
 
   * {
@@ -12377,14 +13125,16 @@ form {
     text-align: center;
   }
 
+  &-items {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
   &-item {
     display: flex;
     align-items: center;
     padding: @list-item-padding;
-
-    &-no-flex {
-      display: block;
-    }
 
     &-content {
       color: @text-color;
@@ -12487,7 +13237,7 @@ form {
     min-height: 32px;
   }
 
-  &-something-after-last-item .@{ant-prefix}-spin-container > &-item:last-child {
+  &-something-after-last-item .@{ant-prefix}-spin-container > &-items > &-item:last-child {
     border-bottom: 1px solid @border-color-split;
   }
 
@@ -12537,13 +13287,27 @@ form {
     }
   }
 
-  &-grid &-item {
+  &-grid .@{ant-prefix}-col > &-item {
     display: block;
     max-width: 100%;
     margin-bottom: 16px;
     padding-top: 0;
     padding-bottom: 0;
     border-bottom: none;
+  }
+
+  // ============================ without flex ============================
+  &-item-no-flex {
+    display: block;
+  }
+
+  // Horizontal
+  &:not(.@{list-prefix-cls}-vertical) {
+    .@{list-prefix-cls}-item-no-flex {
+      .@{list-prefix-cls}-item-action {
+        float: right;
+      }
+    }
   }
 }
 
@@ -12635,6 +13399,7 @@ form {
 
 .@{spin-prefix-cls} {
   .reset-component;
+
   position: absolute;
   display: none;
   color: @primary-color;
@@ -12720,8 +13485,8 @@ form {
       background: @component-background;
       opacity: 0;
       transition: all 0.3s;
-      pointer-events: none;
       content: '';
+      pointer-events: none;
     }
   }
 
@@ -12752,7 +13517,7 @@ form {
     display: inline-block;
     font-size: @spin-dot-size;
 
-    .square(@spin-dot-size);
+    .square(1em);
 
     &-item {
       position: absolute;
@@ -12800,7 +13565,6 @@ form {
   &-sm &-dot {
     font-size: @spin-dot-size-sm;
 
-    .square(@spin-dot-size-sm);
     i {
       width: 6px;
       height: 6px;
@@ -12811,7 +13575,6 @@ form {
   &-lg &-dot {
     font-size: @spin-dot-size-lg;
 
-    .square(@spin-dot-size-lg);
     i {
       width: 14px;
       height: 14px;
@@ -12890,9 +13653,14 @@ form {
     user-select: none;
 
     a {
-      margin: 0 6px;
+      display: block;
+      padding: 0 6px;
       color: @text-color;
       transition: none;
+
+      &:hover {
+        text-decoration: none;
+      }
     }
 
     &:focus,
@@ -12933,6 +13701,7 @@ form {
 
       .@{pagination-prefix-cls}-item-link-icon {
         .iconfont-size-under-12px(12px);
+
         color: @primary-color;
         letter-spacing: -1px;
         opacity: 0;
@@ -13066,6 +13835,7 @@ form {
 
       input {
         .input;
+
         width: 50px;
         margin: 0 8px;
       }
@@ -13161,7 +13931,58 @@ form {
 
       input {
         .input-sm;
+
         width: 44px;
+      }
+    }
+  }
+
+  // ============================ Disabled ============================
+  &&-disabled {
+    cursor: not-allowed;
+
+    .@{pagination-prefix-cls}-item {
+      background: @disabled-bg;
+      border-color: @border-color-base;
+      cursor: not-allowed;
+
+      a {
+        color: @disabled-color;
+        background: transparent;
+        border: none;
+        cursor: not-allowed;
+      }
+
+      &-active {
+        background: darken(@disabled-bg, 10%);
+        border-color: transparent;
+        a {
+          color: #fff;
+        }
+      }
+    }
+
+    .@{pagination-prefix-cls}-item-link {
+      &,
+      &:hover,
+      &:focus {
+        color: @text-color-secondary;
+        background: @disabled-bg;
+        border-color: @border-color-base;
+        cursor: not-allowed;
+      }
+    }
+
+    .@{pagination-prefix-cls}-jump-prev,
+    .@{pagination-prefix-cls}-jump-next {
+      &:focus,
+      &:hover {
+        .@{pagination-prefix-cls}-item-link-icon {
+          opacity: 0;
+        }
+        .@{pagination-prefix-cls}-item-ellipsis {
+          opacity: 1;
+        }
       }
     }
   }
@@ -13187,6 +14008,7 @@ form {
 // default theme
 .@{menu-prefix-cls} {
   .reset-component;
+
   margin-bottom: 0;
   padding-left: 0; // Override default ul/ol
   color: @menu-item-color;
@@ -13221,6 +14043,10 @@ form {
   &-submenu-inline {
     transition: border-color 0.3s @ease-in-out, background 0.3s @ease-in-out,
       padding 0.15s @ease-in-out;
+  }
+
+  &-submenu-selected {
+    color: @menu-highlight-color;
   }
 
   &-item:active,
@@ -13399,8 +14225,13 @@ form {
           position: absolute;
           width: 6px;
           height: 1.5px;
+          // background + background-image to makes before & after cross have same color.
+          // Since `linear-gradient` not work on IE9, we should hack it.
+          // ref: https://github.com/ant-design/ant-design/issues/15910
           background: @menu-bg;
+          background: ~'@{menu-item-color} \9';
           background-image: linear-gradient(to right, @menu-item-color, @menu-item-color);
+          background-image: ~'none \9';
           border-radius: 2px;
           transition: background 0.3s @ease-in-out, transform 0.3s @ease-in-out,
             top 0.3s @ease-in-out;
@@ -13524,11 +14355,11 @@ form {
     .@{menu-prefix-cls}-item,
     .@{menu-prefix-cls}-submenu-title {
       height: @menu-item-height;
-      margin-top: 4px;
-      margin-bottom: 4px;
+      margin-top: @menu-item-vertical-margin;
+      margin-bottom: @menu-item-vertical-margin;
       padding: 0 16px;
       overflow: hidden;
-      font-size: @font-size-base;
+      font-size: @menu-item-font-size;
       line-height: @menu-item-height;
       text-overflow: ellipsis;
     }
@@ -13539,7 +14370,7 @@ form {
     }
 
     .@{menu-prefix-cls}-item:not(:last-child) {
-      margin-bottom: 8px;
+      margin-bottom: @menu-item-boundary-margin;
     }
 
     > .@{menu-prefix-cls}-item,
@@ -13768,6 +14599,9 @@ form {
       }
     }
   }
+  &-dark &-item:hover {
+    background-color: @menu-dark-item-hover-bg;
+  }
 
   &-dark &-item-selected {
     color: @menu-dark-highlight-color;
@@ -13778,6 +14612,12 @@ form {
     > a,
     > a:hover {
       color: @menu-dark-highlight-color;
+    }
+    .@{iconfont-css-prefix} {
+      color: @menu-dark-selected-item-icon-color;
+    }
+    .@{iconfont-css-prefix} + span {
+      color: @menu-dark-selected-item-text-color;
     }
   }
 
@@ -13811,9 +14651,18 @@ form {
 
 @tooltip-prefix-cls: ~'@{ant-prefix}-tooltip';
 
+@tooltip-arrow-shadow-width: 3px;
+
+@tooltip-arrow-rotate-width: sqrt(@tooltip-arrow-width * @tooltip-arrow-width * 2) +
+  @tooltip-arrow-shadow-width * 2;
+
+@tooltip-arrow-offset-vertical: 5px; // 8 - 3px
+@tooltip-arrow-offset-horizontal: 13px; // 16 - 3px
+
 // Base class
 .@{tooltip-prefix-cls} {
   .reset-component;
+
   position: absolute;
   z-index: @zindex-tooltip;
   display: block;
@@ -13829,16 +14678,19 @@ form {
   &-placement-topRight {
     padding-bottom: @tooltip-distance;
   }
+
   &-placement-right,
   &-placement-rightTop,
   &-placement-rightBottom {
     padding-left: @tooltip-distance;
   }
+
   &-placement-bottom,
   &-placement-bottomLeft,
   &-placement-bottomRight {
     padding-top: @tooltip-distance;
   }
+
   &-placement-left,
   &-placement-leftTop,
   &-placement-leftBottom {
@@ -13862,94 +14714,123 @@ form {
   // Arrows
   &-arrow {
     position: absolute;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-color: transparent;
+    display: block;
+    width: @tooltip-arrow-rotate-width;
+    height: @tooltip-arrow-rotate-width;
+    overflow: hidden;
+    background: transparent;
+    pointer-events: none;
+
+    &::before {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      display: block;
+      width: @tooltip-arrow-width;
+      height: @tooltip-arrow-width;
+      margin: auto;
+      background-color: @tooltip-bg;
+      content: '';
+      pointer-events: auto;
+    }
   }
 
   &-placement-top &-arrow,
   &-placement-topLeft &-arrow,
   &-placement-topRight &-arrow {
-    bottom: @tooltip-distance - @tooltip-arrow-width;
-    border-width: @tooltip-arrow-width @tooltip-arrow-width 0;
-    border-top-color: @tooltip-arrow-color;
+    bottom: @tooltip-distance - @tooltip-arrow-rotate-width;
+
+    &::before {
+      box-shadow: @tooltip-arrow-shadow-width @tooltip-arrow-shadow-width 7px fade(@black, 7%);
+      transform: translateY(-@tooltip-arrow-rotate-width / 2) rotate(45deg);
+    }
   }
 
   &-placement-top &-arrow {
     left: 50%;
-    margin-left: -@tooltip-arrow-width;
+    transform: translateX(-50%);
   }
 
   &-placement-topLeft &-arrow {
-    left: 16px;
+    left: @tooltip-arrow-offset-horizontal;
   }
 
   &-placement-topRight &-arrow {
-    right: 16px;
+    right: @tooltip-arrow-offset-horizontal;
   }
 
   &-placement-right &-arrow,
   &-placement-rightTop &-arrow,
   &-placement-rightBottom &-arrow {
-    left: @tooltip-distance - @tooltip-arrow-width;
-    border-width: @tooltip-arrow-width @tooltip-arrow-width @tooltip-arrow-width 0;
-    border-right-color: @tooltip-arrow-color;
+    left: @tooltip-distance - @tooltip-arrow-rotate-width;
+
+    &::before {
+      box-shadow: -@tooltip-arrow-shadow-width @tooltip-arrow-shadow-width 7px fade(@black, 7%);
+      transform: translateX(@tooltip-arrow-rotate-width / 2) rotate(45deg);
+    }
   }
 
   &-placement-right &-arrow {
     top: 50%;
-    margin-top: -@tooltip-arrow-width;
+    transform: translateY(-50%);
   }
 
   &-placement-rightTop &-arrow {
-    top: 8px;
+    top: @tooltip-arrow-offset-vertical;
   }
 
   &-placement-rightBottom &-arrow {
-    bottom: 8px;
+    bottom: @tooltip-arrow-offset-vertical;
   }
 
   &-placement-left &-arrow,
   &-placement-leftTop &-arrow,
   &-placement-leftBottom &-arrow {
-    right: @tooltip-distance - @tooltip-arrow-width;
-    border-width: @tooltip-arrow-width 0 @tooltip-arrow-width @tooltip-arrow-width;
-    border-left-color: @tooltip-arrow-color;
+    right: @tooltip-distance - @tooltip-arrow-rotate-width;
+
+    &::before {
+      box-shadow: @tooltip-arrow-shadow-width -@tooltip-arrow-shadow-width 7px fade(@black, 7%);
+      transform: translateX(-@tooltip-arrow-rotate-width / 2) rotate(45deg);
+    }
   }
 
   &-placement-left &-arrow {
     top: 50%;
-    margin-top: -@tooltip-arrow-width;
+    transform: translateY(-50%);
   }
 
   &-placement-leftTop &-arrow {
-    top: 8px;
+    top: @tooltip-arrow-offset-vertical;
   }
 
   &-placement-leftBottom &-arrow {
-    bottom: 8px;
+    bottom: @tooltip-arrow-offset-vertical;
   }
 
   &-placement-bottom &-arrow,
   &-placement-bottomLeft &-arrow,
   &-placement-bottomRight &-arrow {
-    top: @tooltip-distance - @tooltip-arrow-width;
-    border-width: 0 @tooltip-arrow-width @tooltip-arrow-width;
-    border-bottom-color: @tooltip-arrow-color;
+    top: @tooltip-distance - @tooltip-arrow-rotate-width;
+
+    &::before {
+      box-shadow: -@tooltip-arrow-shadow-width -@tooltip-arrow-shadow-width 7px fade(@black, 7%);
+      transform: translateY(@tooltip-arrow-rotate-width / 2) rotate(45deg);
+    }
   }
 
   &-placement-bottom &-arrow {
     left: 50%;
-    margin-left: -@tooltip-arrow-width;
+    transform: translateX(-50%);
   }
 
   &-placement-bottomLeft &-arrow {
-    left: 16px;
+    left: @tooltip-arrow-offset-horizontal;
   }
 
   &-placement-bottomRight &-arrow {
-    right: 16px;
+    right: @tooltip-arrow-offset-horizontal;
   }
 }
 
@@ -13957,6 +14838,7 @@ form {
 
 .@{mention-prefix-cls}-wrapper {
   .reset-component;
+
   position: relative;
   display: inline-block;
   width: 100%;
@@ -13964,6 +14846,7 @@ form {
 
   .@{mention-prefix-cls}-editor {
     .input;
+
     display: block;
     height: auto; // To override height in .input mixin
     min-height: @input-height-base;
@@ -14001,6 +14884,7 @@ form {
 
 .@{mention-prefix-cls}-dropdown {
   .reset-component;
+
   position: absolute;
   top: -9999px;
   left: -9999px;
@@ -14084,6 +14968,7 @@ form {
 
 .@{message-prefix-cls} {
   .reset-component;
+
   position: fixed;
   top: 16px;
   left: 0;
@@ -14159,11 +15044,13 @@ form {
 
 .@{dialog-prefix-cls} {
   .reset-component;
+
   position: relative;
   top: 100px;
   width: auto;
   margin: 0 auto;
   padding-bottom: 24px;
+  pointer-events: none;
 
   &-wrap {
     position: fixed;
@@ -14183,6 +15070,7 @@ form {
     font-weight: 500;
     font-size: @font-size-lg;
     line-height: 22px;
+    word-wrap: break-word;
   }
 
   &-content {
@@ -14192,6 +15080,7 @@ form {
     border: 0;
     border-radius: @border-radius-base;
     box-shadow: @shadow-2;
+    pointer-events: auto;
   }
 
   &-close {
@@ -14248,7 +15137,7 @@ form {
     padding: @modal-footer-padding-vertical @modal-footer-padding-horizontal;
     text-align: right;
     background: @modal-footer-bg;
-    border-top: @border-width-base @border-style-base @border-color-split;
+    border-top: @border-width-base @border-style-base @modal-footer-border-color-split;
     border-radius: 0 0 @border-radius-base @border-radius-base;
     button + button {
       margin-bottom: 0;
@@ -14475,12 +15364,17 @@ form {
       font-size: @font-size-base;
     }
 
-    .@{iconfont-css-prefix}&-icon {
+    // Icon & color style in different selector level
+    // https://github.com/ant-design/ant-design/issues/16503
+    // https://github.com/ant-design/ant-design/issues/15512
+    &-icon {
       position: absolute;
       margin-left: 4px;
       font-size: 24px;
       line-height: 24px;
+    }
 
+    .@{iconfont-css-prefix}&-icon {
       &-success {
         color: @success-color;
       }
@@ -14523,11 +15417,13 @@ form {
   &-fade-appear {
     opacity: 0;
     .notification-fade-effect();
+
     animation-play-state: paused;
   }
 
   &-fade-leave {
     .notification-fade-effect();
+
     animation-duration: 0.2s;
     animation-play-state: paused;
   }
@@ -14587,89 +15483,119 @@ form {
 
 .@{pageheader-prefix-cls} {
   .reset-component;
-  position: relative;
-  padding: @page-header-padding-vertical @page-header-padding-horizontal;
-  background: @component-background;
 
-  &.@{pageheader-prefix-cls}-has-footer {
+  position: relative;
+  padding: @page-header-padding-vertical @page-header-padding;
+  background-color: @component-background;
+
+  &-ghost {
+    background-color: inherit;
+  }
+
+  &.has-breadcrumb {
+    padding-top: @page-header-padding-breadcrumb;
+  }
+
+  &.has-footer {
     padding-bottom: 0;
   }
 
-  &-back-icon {
-    display: inline-block;
-    padding: 4px 0;
+  &-back {
+    float: left;
+    margin: 8px 0;
+    margin-right: 16px;
     font-size: 16px;
-    line-height: 100%;
-    cursor: pointer;
-    i:hover {
-      color: @primary-color;
+    line-height: 1;
+    &-button {
+      .operation-unit();
+      color: @page-header-back-color;
+      cursor: pointer;
     }
   }
 
-  .@{ant-prefix}-divider {
+  .@{ant-prefix}-divider-vertical {
     height: 14px;
     margin: 0 12px;
+    vertical-align: middle;
   }
 
-  .@{ant-prefix}-breadcrumb {
-    margin-bottom: 12px;
+  .@{ant-prefix}-breadcrumb + &-heading {
+    margin-top: 8px;
   }
 
-  &-title-view {
-    display: inline-block;
+  &-heading {
+    width: 100%;
+    overflow: hidden;
     &-title {
-      display: inline-block;
+      display: block;
+      float: left;
+      margin-bottom: 0;
       padding-right: 12px;
       color: @heading-color;
-      font-weight: bold;
-      font-size: 16px;
-      line-height: 1.4;
+      font-weight: 600;
+      font-size: @heading-4-size;
+      line-height: 32px;
+    }
+
+    .@{ant-prefix}-avatar {
+      float: left;
+      margin-right: 12px;
     }
 
     &-sub-title {
-      display: inline-block;
-      padding-right: 12px;
+      float: left;
+      margin: 5px 0;
+      margin-right: 12px;
       color: @text-color-secondary;
       font-size: 14px;
-      line-height: 1.8;
+      line-height: 22px;
     }
 
     &-tags {
-      display: inline-block;
-      vertical-align: top;
+      float: left;
+      margin: 4px 0;
     }
 
     &-extra {
-      position: absolute;
-      top: 16px;
-      right: @page-header-padding-horizontal;
+      float: right;
       > * {
-        margin-right: 8px;
+        margin-left: 8px;
       }
-      > *:last-child {
-        margin-right: 0;
+      > *:first-child {
+        margin-left: 0;
       }
     }
   }
 
-  &-content-view {
+  &-content {
     padding-top: 12px;
+    overflow: hidden;
   }
 
   &-footer {
-    margin: 0 -8px;
-    padding-top: 24px;
+    margin-top: 16px;
     .@{ant-prefix}-tabs-bar {
       margin-bottom: 1px;
       border-bottom: 0;
       .@{ant-prefix}-tabs-nav .@{ant-prefix}-tabs-tab {
-        padding: 12px 8px;
-        padding-top: 0;
+        padding: 8px;
+        font-size: 16px;
+      }
+    }
+  }
+
+  @media (max-width: @screen-sm) {
+    &-heading {
+      &-extra {
+        display: block;
+        float: unset;
+        width: 100%;
+        padding-top: 12px;
+        overflow: hidden;
       }
     }
   }
 }
-
 // style dependencies
 
 // style dependencies
@@ -14706,6 +15632,7 @@ form {
 
 .@{select-prefix-cls} {
   .reset-component;
+
   position: relative;
   display: inline-block;
   outline: 0;
@@ -14725,6 +15652,7 @@ form {
   // arrow
   &-arrow {
     .iconfont-mixin();
+
     position: absolute;
     top: 50%;
     right: @control-padding-horizontal - 1px;
@@ -14741,9 +15669,7 @@ form {
 
   &-selection {
     display: block;
-
     box-sizing: border-box;
-
     background-color: @component-background;
     border: @border-width-base @border-style-base @select-border-color;
     // strange align fix for chrome but works
@@ -14775,7 +15701,6 @@ form {
     &-selected-value {
       float: left;
       max-width: 100%;
-      padding-right: 20px;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -14820,6 +15745,16 @@ form {
     position: relative;
     height: @input-height-base;
     cursor: pointer;
+
+    .@{select-prefix-cls}-selection__rendered {
+      margin-right: 24px;
+    }
+  }
+
+  &-no-arrow {
+    .@{select-prefix-cls}-selection__rendered {
+      margin-right: @control-padding-horizontal - 1px;
+    }
   }
 
   &-selection__rendered {
@@ -14833,8 +15768,8 @@ form {
       display: inline-block;
       width: 0;
       visibility: hidden;
-      pointer-events: none;
       content: '.';
+      pointer-events: none;
     }
   }
 
@@ -14866,7 +15801,7 @@ form {
       height: @input-height-sm;
     }
     .@{select-prefix-cls}-selection__rendered {
-      margin: 0 @control-padding-horizontal-sm - 1px;
+      margin-left: @control-padding-horizontal-sm - 1px;
       line-height: @input-height-sm - 2px;
     }
     .@{select-prefix-cls}-selection--multiple {
@@ -15023,6 +15958,7 @@ form {
 
     .@{select-prefix-cls}-selection__choice__remove {
       .iconfont-mixin();
+
       position: absolute;
       right: 4px;
       display: inline-block;
@@ -15094,6 +16030,7 @@ form {
 
 .@{select-prefix-cls}-dropdown {
   .reset-component;
+
   position: absolute;
   top: -9999px;
   left: -9999px;
@@ -15104,8 +16041,7 @@ form {
   // https://github.com/ant-design/ant-design/issues/11456
   // https://github.com/ant-design/ant-design/issues/11843
   font-variant: initial;
-
-  background-color: @component-background;
+  background-color: @select-dropdown-bg;
   border-radius: @border-radius-base;
   outline: none;
   box-shadow: @box-shadow-base;
@@ -15175,7 +16111,7 @@ form {
       cursor: pointer;
       transition: background 0.3s ease;
 
-      &:hover {
+      &:hover:not(&-disabled) {
         background-color: @item-hover-bg;
       }
 
@@ -15187,28 +16123,24 @@ form {
         border-radius: 0 0 @border-radius-base @border-radius-base;
       }
 
+      &-selected {
+        color: @text-color;
+        font-weight: @select-item-selected-font-weight;
+        background-color: @select-item-selected-bg;
+      }
+
       &-disabled {
         color: @disabled-color;
         cursor: not-allowed;
 
         &:hover {
           color: @disabled-color;
-          background-color: @component-background;
           cursor: not-allowed;
         }
       }
 
-      &-selected {
-        &,
-        &:hover {
-          color: @text-color;
-          font-weight: @select-item-selected-font-weight;
-          background-color: @background-color-light;
-        }
-      }
-
-      &-active {
-        background-color: @item-active-bg;
+      &-active:not(&-disabled) {
+        background-color: @select-item-active-bg;
       }
 
       &-divider {
@@ -15273,6 +16205,7 @@ form {
 
 .@{popover-prefix-cls} {
   .reset-component;
+
   position: absolute;
   top: 0;
   left: 0;
@@ -15381,8 +16314,8 @@ form {
     width: sqrt(@popover-arrow-width * @popover-arrow-width * 2);
     height: sqrt(@popover-arrow-width * @popover-arrow-width * 2);
     background: transparent;
-    border-width: sqrt(@popover-arrow-width * @popover-arrow-width * 2) / 2;
     border-style: solid;
+    border-width: sqrt(@popover-arrow-width * @popover-arrow-width * 2) / 2;
     transform: rotate(45deg);
   }
 
@@ -15478,6 +16411,7 @@ form {
 
 .@{progress-prefix-cls} {
   .reset-component;
+
   display: inline-block;
 
   &-line {
@@ -15506,9 +16440,10 @@ form {
     position: relative;
     display: inline-block;
     width: 100%;
+    overflow: hidden;
     vertical-align: middle;
     background-color: @progress-remaining-color;
-    border-radius: 100px;
+    border-radius: @progress-radius;
   }
 
   &-circle-trail {
@@ -15517,13 +16452,19 @@ form {
 
   &-circle-path {
     animation: ~'@{ant-prefix}-progress-appear' 0.3s;
-    stroke: @progress-default-color;
+  }
+
+  &-inner:not(.@{ant-prefix}-progress-circle-gradient) {
+    .@{ant-prefix}-progress-circle-path {
+      stroke: @progress-default-color;
+    }
   }
 
   &-success-bg,
   &-bg {
     position: relative;
     background-color: @progress-default-color;
+    border-radius: @progress-radius;
     transition: all 0.4s @ease-out-circ 0s;
   }
 
@@ -15572,6 +16513,9 @@ form {
     .@{progress-prefix-cls}-text {
       color: @error-color;
     }
+  }
+
+  &-status-exception &-inner:not(.@{progress-prefix-cls}-circle-gradient) {
     .@{progress-prefix-cls}-circle-path {
       stroke: @error-color;
     }
@@ -15584,6 +16528,9 @@ form {
     .@{progress-prefix-cls}-text {
       color: @success-color;
     }
+  }
+
+  &-status-success &-inner:not(.@{progress-prefix-cls}-circle-gradient) {
     .@{progress-prefix-cls}-circle-path {
       stroke: @success-color;
     }
@@ -15648,6 +16595,7 @@ form {
 
 .@{radio-group-prefix-cls} {
   .reset-component;
+
   display: inline-block;
   line-height: unset;
 }
@@ -15655,6 +16603,7 @@ form {
 // 一般状态
 .@{radio-prefix-cls}-wrapper {
   .reset-component;
+
   position: relative;
   display: inline-block;
   margin-right: 8px;
@@ -15664,6 +16613,7 @@ form {
 
 .@{radio-prefix-cls} {
   .reset-component;
+
   position: relative;
   display: inline-block;
   line-height: 1;
@@ -15704,6 +16654,7 @@ form {
   &-inner {
     &::after {
       @radio-dot-size: @radio-size - 8px;
+
       position: absolute;
       top: (@radio-size - @radio-dot-size) / 2 - 1px;
       left: (@radio-size - @radio-dot-size) / 2 - 1px;
@@ -15727,9 +16678,9 @@ form {
     width: @radio-size;
     height: @radio-size;
     background-color: @radio-button-bg;
-    border-width: 1px;
-    border-style: solid;
     border-color: @border-color-base;
+    border-style: solid;
+    border-width: 1px;
     border-radius: 100px;
     transition: all @radio-duration;
   }
@@ -15751,7 +16702,7 @@ form {
   .@{radio-inner-prefix-cls} {
     border-color: @radio-dot-color;
     &::after {
-      transform: scale(0.875);
+      transform: scale(1);
       opacity: 1;
       transition: all @radio-duration @ease-in-out-circ;
     }
@@ -15866,16 +16817,18 @@ span.@{radio-prefix-cls} + * {
     pointer-events: none;
   }
 
-  &-checked {
+  &-checked:not(&-disabled) {
     z-index: 1;
     color: @radio-dot-color;
     background: @radio-button-checked-bg;
     border-color: @radio-dot-color;
     box-shadow: -1px 0 0 0 @radio-dot-color;
+
     &::before {
       background-color: @radio-dot-color !important;
       opacity: 0.1;
     }
+
     &:first-child {
       border-color: @radio-dot-color;
       box-shadow: none !important;
@@ -15964,6 +16917,7 @@ span.@{radio-prefix-cls} + * {
 
 .@{rate-prefix-cls} {
   .reset-component;
+
   display: inline-block;
   margin: 0;
   padding: 0;
@@ -15984,11 +16938,14 @@ span.@{radio-prefix-cls} + * {
     position: relative;
     display: inline-block;
     margin: 0;
-    margin-right: 8px;
     padding: 0;
     color: inherit;
     cursor: pointer;
     transition: all 0.3s;
+
+    &:not(:last-child) {
+      margin-right: 8px;
+    }
 
     > div {
       &:focus {
@@ -16175,6 +17132,7 @@ span.@{radio-prefix-cls} + * {
 
 .@{slider-prefix-cls} {
   .reset-component;
+
   position: relative;
   height: 12px;
   margin: @slider-margin;
@@ -16193,7 +17151,7 @@ span.@{radio-prefix-cls} + * {
     width: 100%;
     height: 4px;
     background-color: @slider-rail-background-color;
-    border-radius: 2px;
+    border-radius: @border-radius-sm;
     transition: background-color 0.3s;
   }
 
@@ -16202,7 +17160,7 @@ span.@{radio-prefix-cls} + * {
     height: 4px;
     background-color: @slider-track-background-color;
     border-radius: @border-radius-base;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s;
   }
 
   &-handle {
@@ -16211,10 +17169,10 @@ span.@{radio-prefix-cls} + * {
     height: 14px;
     margin-top: -5px;
     margin-left: -7px;
-    background-color: @component-background;
-    border: solid 2px @slider-handle-color;
+    background-color: @slider-handle-background-color;
+    border: solid @slider-handle-border-width @slider-handle-color;
     border-radius: 50%;
-    box-shadow: 0;
+    box-shadow: @slider-handle-shadow;
     cursor: pointer;
     transition: border-color 0.3s, box-shadow 0.6s,
       transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
@@ -16255,6 +17213,7 @@ span.@{radio-prefix-cls} + * {
     display: inline-block;
     color: @text-color-secondary;
     text-align: center;
+    word-break: keep-all;
     cursor: pointer;
 
     &-active {
@@ -16367,10 +17326,12 @@ span.@{radio-prefix-cls} + * {
 
   &-title {
     margin-bottom: 4px;
+    color: @text-color-secondary;
     font-size: @statistic-title-font-size;
   }
 
   &-content {
+    color: @heading-color;
     font-size: @statistic-content-font-size;
     font-family: @statistic-font-family;
 
@@ -16415,15 +17376,19 @@ span.@{radio-prefix-cls} + * {
 @error-description-color: @error-color;
 @error-tail-color: @wait-tail-color;
 @steps-background: @component-background;
+@steps-nav-arrow-color: fade(@black, 25%);
+@steps-nav-active-color: @primary-color;
 
 @steps-icon-size: 32px;
 @steps-small-icon-size: 24px;
 @steps-dot-size: 8px;
 @steps-current-dot-size: 10px;
 @steps-desciption-max-width: 140px;
+@steps-nav-content-max-width: @steps-desciption-max-width;
 
 .@{steps-prefix-cls} {
   .reset-component;
+
   display: flex;
   width: 100%;
   font-size: 0;
@@ -16436,12 +17401,16 @@ span.@{radio-prefix-cls} + * {
   overflow: hidden;
   vertical-align: top;
 
+  &-container {
+    outline: none;
+  }
+
   &:last-child {
     flex: none;
   }
 
-  &:last-child &-tail,
-  &:last-child &-title::after {
+  &:last-child > &-container > &-tail,
+  &:last-child > &-container > &-content > &-title::after {
     display: none;
   }
 
@@ -16504,6 +17473,13 @@ span.@{radio-prefix-cls} + * {
       content: '';
     }
   }
+  &-subtitle {
+    display: inline;
+    margin-left: 8px;
+    color: @text-color-secondary;
+    font-weight: normal;
+    font-size: @font-size-base;
+  }
   &-description {
     color: @text-color-secondary;
     font-size: @font-size-base;
@@ -16524,6 +17500,47 @@ span.@{radio-prefix-cls} + * {
 
   &.@{steps-prefix-cls}-next-error .@{steps-prefix-cls}-item-title::after {
     background: @error-icon-color;
+  }
+}
+
+// ===================== Clickable =====================
+.@{steps-prefix-cls} .@{steps-prefix-cls}-item {
+  &:not(.@{steps-prefix-cls}-item-active) {
+    & > .@{steps-prefix-cls}-item-container[role='button'] {
+      cursor: pointer;
+
+      .@{steps-prefix-cls}-item {
+        &-title,
+        &-description,
+        &-icon .@{steps-prefix-cls}-icon {
+          transition: color 0.3s;
+        }
+      }
+
+      &:hover {
+        .@{steps-prefix-cls}-item {
+          &-title,
+          &-subtitle,
+          &-description {
+            color: @primary-color;
+          }
+        }
+      }
+    }
+
+    &:not(.@{steps-prefix-cls}-item-process) {
+      & > .@{steps-prefix-cls}-item-container[role='button']:hover {
+        .@{steps-prefix-cls}-item {
+          &-icon {
+            border-color: @primary-color;
+
+            .@{steps-prefix-cls}-icon {
+              color: @primary-color;
+            }
+          }
+        }
+      }
+    }
   }
 }
 
@@ -16562,16 +17579,16 @@ span.@{radio-prefix-cls} + * {
       }
     }
   }
-  &-@{status} > &-content > &-title {
+  &-@{status} > &-container > &-content > &-title {
     color: @@title-color;
     &::after {
       background-color: @@tail-color;
     }
   }
-  &-@{status} > &-content > &-description {
+  &-@{status} > &-container > &-content > &-description {
     color: @@description-color;
   }
-  &-@{status} > &-tail::after {
+  &-@{status} > &-container > &-tail::after {
     background-color: @@tail-color;
   }
 }
@@ -16638,7 +17655,6 @@ span.@{radio-prefix-cls} + * {
   }
   .@{steps-prefix-cls}-item-tail {
     top: 8px;
-    padding: 0 8px;
   }
   .@{steps-prefix-cls}-item-custom .@{steps-prefix-cls}-item-icon {
     width: inherit;
@@ -16677,7 +17693,9 @@ span.@{radio-prefix-cls} + * {
     }
   }
 
-  > .@{steps-prefix-cls}-item > .@{steps-prefix-cls}-item-tail {
+  > .@{steps-prefix-cls}-item
+    > .@{steps-prefix-cls}-item-container
+    > .@{steps-prefix-cls}-item-tail {
     position: absolute;
     top: 0;
     left: 16px;
@@ -16690,11 +17708,14 @@ span.@{radio-prefix-cls} + * {
     }
   }
 
-  > .@{steps-prefix-cls}-item:not(:last-child) > .@{steps-prefix-cls}-item-tail {
+  > .@{steps-prefix-cls}-item:not(:last-child)
+    > .@{steps-prefix-cls}-item-container
+    > .@{steps-prefix-cls}-item-tail {
     display: block;
   }
 
   > .@{steps-prefix-cls}-item
+    > .@{steps-prefix-cls}-item-container
     > .@{steps-prefix-cls}-item-content
     > .@{steps-prefix-cls}-item-title {
     &::after {
@@ -16702,7 +17723,7 @@ span.@{radio-prefix-cls} + * {
     }
   }
 
-  &.@{steps-prefix-cls}-small {
+  &.@{steps-prefix-cls}-small .@{steps-prefix-cls}-item-container {
     .@{steps-prefix-cls}-item-tail {
       position: absolute;
       top: 0;
@@ -16759,7 +17780,8 @@ span.@{radio-prefix-cls} + * {
   }
 }
 
-.@{steps-prefix-cls}-dot {
+.@{steps-prefix-cls}-dot,
+.@{steps-prefix-cls}-dot.@{steps-prefix-cls}-small {
   .@{steps-prefix-cls}-item {
     &-title {
       line-height: @line-height-base;
@@ -16824,7 +17846,8 @@ span.@{radio-prefix-cls} + * {
     margin-top: 8px;
     margin-left: 0;
   }
-  .@{steps-prefix-cls}-item-tail {
+  // https://github.com/ant-design/ant-design/issues/18354
+  .@{steps-prefix-cls}-item > .@{steps-prefix-cls}-item-container > .@{steps-prefix-cls}-item-tail {
     top: 2px;
     left: -9px;
     margin: 0;
@@ -16835,6 +17858,98 @@ span.@{radio-prefix-cls} + * {
   }
   .@{steps-prefix-cls}-item-process .@{steps-prefix-cls}-icon-dot {
     left: -2px;
+  }
+}
+
+.@{steps-prefix-cls}-navigation {
+  padding-top: 12px;
+
+  &.@{steps-prefix-cls}-small {
+    .@{steps-prefix-cls}-item {
+      &-container {
+        margin-left: -12px;
+      }
+    }
+  }
+
+  .@{steps-prefix-cls}-item {
+    overflow: visible;
+    text-align: center;
+
+    &-container {
+      display: inline-block;
+      height: 100%;
+      margin-left: -16px;
+      padding-bottom: 12px;
+      text-align: left;
+      transition: opacity 0.3s;
+
+      .@{steps-prefix-cls}-item-content {
+        max-width: @steps-nav-content-max-width;
+      }
+
+      .@{steps-prefix-cls}-item-title {
+        max-width: 100%;
+        padding-right: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+
+        &::after {
+          display: none;
+        }
+      }
+    }
+
+    &:not(.@{steps-prefix-cls}-item-active) {
+      .@{steps-prefix-cls}-item-container[role='button'] {
+        cursor: pointer;
+        &:hover {
+          opacity: 0.85;
+        }
+      }
+    }
+
+    &:last-child {
+      flex: 1;
+      &::after {
+        display: none;
+      }
+    }
+
+    &::after {
+      position: absolute;
+      top: 50%;
+      left: 100%;
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-top: -14px;
+      margin-left: -2px;
+      border: 1px solid @steps-nav-arrow-color;
+      border-bottom: none;
+      border-left: none;
+      transform: rotate(45deg);
+      content: '';
+    }
+
+    &::before {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      display: inline-block;
+      width: 0;
+      height: 3px;
+      background-color: @steps-nav-active-color;
+      transition: width 0.3s, left 0.3s;
+      transition-timing-function: ease-out;
+      content: '';
+    }
+  }
+
+  .@{steps-prefix-cls}-item.@{steps-prefix-cls}-item-active::before {
+    left: 0;
+    width: 100%;
   }
 }
 
@@ -16894,6 +18009,7 @@ span.@{radio-prefix-cls} + * {
 
 .@{switch-prefix-cls} {
   .reset-component;
+
   position: relative;
   display: inline-block;
   box-sizing: border-box;
@@ -16934,8 +18050,8 @@ span.@{radio-prefix-cls} + * {
     box-shadow: 0 2px 4px 0 @switch-shadow-color;
   }
 
-  &:active::before,
-  &:active::after {
+  &:not(&-disabled):active::before,
+  &:not(&-disabled):active::after {
     width: 24px;
   }
 
@@ -17068,6 +18184,7 @@ span.@{radio-prefix-cls} + * {
 @table-header-icon-color: #bfbfbf;
 @table-header-sort-active-bg: darken(@table-header-bg, 3%);
 @table-header-filter-active-bg: darken(@table-header-sort-active-bg, 5%);
+@table-selection-column-width: 60px;
 
 .@{table-prefix-cls}-wrapper {
   .clearfix;
@@ -17075,6 +18192,7 @@ span.@{radio-prefix-cls} + * {
 
 .@{table-prefix-cls} {
   .reset-component;
+
   position: relative;
   clear: both;
 
@@ -17083,14 +18201,19 @@ span.@{radio-prefix-cls} + * {
   }
 
   &-empty &-body {
-    overflow: auto !important;
+    // https://github.com/ant-design/ant-design/issues/11135
+    overflow-x: auto !important;
+    // https://github.com/ant-design/ant-design/issues/17175
+    overflow-y: hidden !important;
   }
 
+  // https://github.com/ant-design/ant-design/issues/17611
   table {
     width: 100%;
     text-align: left;
     border-radius: @table-border-radius-base @table-border-radius-base 0 0;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
   }
 
   &-thead > tr > th {
@@ -17147,6 +18270,7 @@ span.@{radio-prefix-cls} + * {
         .@{table-prefix-cls}-column-sorter-up,
         .@{table-prefix-cls}-column-sorter-down {
           .iconfont-size-under-12px(11px);
+
           display: block;
           height: 1em;
           line-height: 1em;
@@ -17284,8 +18408,21 @@ span.@{radio-prefix-cls} + * {
     transition: all 0.3s, height 0s;
     &.@{table-prefix-cls}-row-hover,
     &:hover {
-      &:not(.@{table-prefix-cls}-expanded-row) > td {
+      &:not(.@{table-prefix-cls}-expanded-row):not(.@{table-prefix-cls}-row-selected) > td {
         background: @table-row-hover-bg;
+      }
+    }
+    &.@{table-prefix-cls}-row-selected > td {
+      &.@{table-prefix-cls}-column-sort {
+        background: @table-body-selected-sort-bg;
+      }
+    }
+    &:hover {
+      &.@{table-prefix-cls}-row-selected > td {
+        background: @table-selected-row-hover-bg;
+        &.@{table-prefix-cls}-column-sort {
+          background: @table-body-selected-sort-bg;
+        }
       }
     }
   }
@@ -17297,7 +18434,8 @@ span.@{radio-prefix-cls} + * {
   &-footer {
     position: relative;
     padding: @table-padding-vertical @table-padding-horizontal;
-    background: @table-header-bg;
+    color: @table-footer-color;
+    background: @table-footer-bg;
     border-top: @border-width-base @border-style-base @border-color-split;
     border-radius: 0 0 @table-border-radius-base @table-border-radius-base;
     &::before {
@@ -17306,7 +18444,7 @@ span.@{radio-prefix-cls} + * {
       left: 0;
       width: 100%;
       height: 1px;
-      background: @table-header-bg;
+      background: @table-footer-bg;
       content: '';
     }
   }
@@ -17330,8 +18468,8 @@ span.@{radio-prefix-cls} + * {
 
   &-title + &-content {
     position: relative;
-    overflow: hidden;
     border-radius: @table-border-radius-base @table-border-radius-base 0 0;
+
     .@{table-prefix-cls}-bordered & {
       &,
       table,
@@ -17354,6 +18492,7 @@ span.@{radio-prefix-cls} + * {
   }
 
   &-tbody > tr.@{table-prefix-cls}-row-selected td {
+    color: @table-selected-row-color;
     background: @table-selected-row-bg;
   }
 
@@ -17368,20 +18507,6 @@ span.@{radio-prefix-cls} + * {
   &-thead > tr > th,
   &-tbody > tr > td {
     padding: @table-padding-vertical @table-padding-horizontal;
-  }
-
-  &-thead > tr > th.@{table-prefix-cls}-selection-column-custom {
-    .@{table-prefix-cls}-selection {
-      margin-right: -15px;
-    }
-  }
-
-  &-thead > tr > th.@{table-prefix-cls}-selection-column,
-  &-tbody > tr > td.@{table-prefix-cls}-selection-column {
-    text-align: center;
-    .@{ant-prefix}-radio-wrapper {
-      margin-right: 0;
-    }
   }
 
   &-expand-icon-th,
@@ -17468,16 +18593,15 @@ span.@{radio-prefix-cls} + * {
   &-placeholder {
     position: relative;
     z-index: 1;
+    margin-top: -1px;
     padding: @table-padding-vertical @table-padding-horizontal;
     color: @disabled-color;
     font-size: @font-size-base;
     text-align: center;
     background: @component-background;
+    border-top: @border-width-base @border-style-base @border-color-split;
     border-bottom: @border-width-base @border-style-base @border-color-split;
     border-radius: 0 0 @border-radius-base @border-radius-base;
-    .@{iconfont-css-prefix} {
-      margin-right: 4px;
-    }
   }
 
   &-pagination.@{ant-prefix}-pagination {
@@ -17524,6 +18648,10 @@ span.@{radio-prefix-cls} + * {
 
     .@{ant-prefix}-dropdown-menu-item {
       overflow: hidden;
+    }
+
+    .@{ant-prefix}-checkbox-wrapper + span {
+      padding-left: 8px;
     }
 
     > .@{ant-prefix}-dropdown-menu > .@{ant-prefix}-dropdown-menu-item:last-child,
@@ -17594,15 +18722,26 @@ span.@{radio-prefix-cls} + * {
 
   &-row {
     &-expand-icon {
+      .operation-unit();
+
       display: inline-block;
       width: 17px;
       height: 17px;
-      line-height: 14px;
+      color: inherit;
+      line-height: 13px;
       text-align: center;
       background: @component-background;
       border: @border-width-base @border-style-base @border-color-split;
-      cursor: pointer;
+      border-radius: @border-radius-sm;
+      outline: none;
+      transition: all 0.3s;
       user-select: none;
+
+      &:focus,
+      &:hover,
+      &:active {
+        border-color: currentColor;
+      }
     }
 
     &-expanded::after {
@@ -17618,10 +18757,6 @@ span.@{radio-prefix-cls} + * {
       &::after {
         content: '.';
       }
-    }
-
-    &[class*='@{table-prefix-cls}-row-level-0'] .@{table-prefix-cls}-selection-column > span {
-      display: inline-block;
     }
   }
 
@@ -17674,6 +18809,35 @@ span.@{radio-prefix-cls} + * {
     // Workaround for additional scroll bar on the table header
     // https://github.com/ant-design/ant-design/issues/6515#issuecomment-419634369
     opacity: 0.9999;
+
+    &::-webkit-scrollbar {
+      border: 1px solid @border-color-split;
+      border-width: 0 0 1px 0;
+    }
+  }
+
+  &-hide-scrollbar {
+    // https://github.com/ant-design/ant-design/issues/4637
+    // https://stackoverflow.com/a/54101063
+    // https://github.com/react-component/table/pull/333
+    scrollbar-color: transparent transparent;
+    &::-webkit-scrollbar {
+      background-color: transparent;
+    }
+  }
+
+  // optimize header style of borderd table after hide extra scrollbar
+  &-bordered&-fixed-header &-scroll &-header {
+    &::-webkit-scrollbar {
+      border: 1px solid @border-color-split;
+      border-width: 1px 1px 1px 0;
+    }
+    &.@{table-prefix-cls}-hide-scrollbar
+      .@{table-prefix-cls}-thead
+      > tr:only-child
+      > th:last-child {
+      border-right-color: transparent;
+    }
   }
 
   &-fixed-left,
@@ -17743,6 +18907,42 @@ span.@{radio-prefix-cls} + * {
   &&-scroll-position-right &-fixed-right {
     box-shadow: none;
   }
+
+  // ========================== Row Selection ==========================
+  colgroup {
+    > col.@{table-prefix-cls}-selection-col {
+      width: @table-selection-column-width;
+    }
+  }
+
+  &-thead > tr > th.@{table-prefix-cls}-selection-column-custom {
+    .@{table-prefix-cls}-selection {
+      margin-right: -15px;
+    }
+  }
+
+  &-thead > tr > th.@{table-prefix-cls}-selection-column,
+  &-tbody > tr > td.@{table-prefix-cls}-selection-column {
+    text-align: center;
+
+    .@{ant-prefix}-radio-wrapper {
+      margin-right: 0;
+    }
+  }
+
+  &-row[class*='@{table-prefix-cls}-row-level-0'] .@{table-prefix-cls}-selection-column > span {
+    display: inline-block;
+  }
+}
+
+/**
+* Another fix of Firefox:
+*/
+@supports (-moz-appearance: meterbar) {
+  // https://github.com/ant-design/ant-design/issues/12628
+  .@{table-prefix-cls}-thead > tr > th.@{table-prefix-cls}-column-has-actions {
+    background-clip: padding-box;
+  }
 }
 
 @table-padding-vertical-md: @table-padding-vertical * 3 / 4;
@@ -17778,7 +18978,8 @@ span.@{radio-prefix-cls} + * {
   }
 
   tr.@{table-prefix-cls}-expanded-row td > .@{table-prefix-cls}-wrapper {
-    margin: -@table-padding-vertical-md -@table-padding-horizontal -@table-padding-vertical-md - 1px;
+    margin: -@table-padding-vertical-md -@table-padding-horizontal / 2 -@table-padding-vertical-md -
+      1px;
   }
 }
 
@@ -17822,6 +19023,8 @@ span.@{radio-prefix-cls} + * {
       }
       > .@{table-prefix-cls}-thead > tr > th {
         background-color: transparent;
+      }
+      > .@{table-prefix-cls}-thead > tr {
         border-bottom: @border-width-base @border-style-base @border-color-split;
       }
       > .@{table-prefix-cls}-thead > tr > th.@{table-prefix-cls}-column-sort {
@@ -17882,7 +19085,7 @@ span.@{radio-prefix-cls} + * {
       border-left: 0;
     }
 
-    .@{table-prefix-cls}-thead > tr > th:last-child,
+    .@{table-prefix-cls}-thead > tr:only-child > th:last-child,
     .@{table-prefix-cls}-tbody > tr > td:last-child {
       border-right: none;
     }
@@ -17901,7 +19104,8 @@ span.@{radio-prefix-cls} + * {
   }
 
   tr.@{table-prefix-cls}-expanded-row td > .@{table-prefix-cls}-wrapper {
-    margin: -@table-padding-vertical-sm -@table-padding-horizontal -@table-padding-vertical-sm - 1px;
+    margin: -@table-padding-vertical-sm -@table-padding-horizontal / 2 -@table-padding-vertical-sm -
+      1px;
   }
 }
 
@@ -17912,15 +19116,6 @@ span.@{radio-prefix-cls} + * {
 @table-th-right-cls: ~'@{table-th-cls}-right';
 @table-td-left-cls: ~'@{table-td-cls}-left';
 @table-td-right-cls: ~'@{table-td-cls}-right';
-
-nz-table {
-  .@{table-prefix-cls} {
-    table {
-      border-collapse: separate;
-      border-spacing: 0;
-    }
-  }
-}
 
 .box-shadow-left() {
   .@{table-th-right-cls}-sticky,
@@ -17944,8 +19139,8 @@ nz-table {
 }
 
 .border-right() {
-  .@{table-th-left-cls}-sticky,
-  .@{table-td-left-cls}-sticky {
+  tr > th:first-child.@{table-th-left-cls}-sticky,
+  tr > td:first-child.@{table-td-left-cls}-sticky {
     border-left: @border-width-base @border-style-base @border-color-split;
   }
 }
@@ -17958,6 +19153,15 @@ nz-table {
 
   .@{table-th-right-cls}-sticky + .@{table-th-right-cls}-sticky {
     box-shadow: none;
+  }
+}
+
+.@{table-prefix-cls}-scroll-position-middle,
+.@{table-prefix-cls}-scroll-position-right {
+  table {
+    &.@{table-prefix-cls}-fixed {
+      border-left: none;
+    }
   }
 }
 
@@ -18007,7 +19211,7 @@ nz-table {
   .box-shadow-right;
 }
 
-.@{table-prefix-cls}-bordered {
+.@{table-prefix-cls}-bordered:not(.@{table-prefix-cls}-small) {
   &.@{table-prefix-cls}-scroll-position-middle {
     .border-right;
     .border-left;
@@ -18034,6 +19238,20 @@ nz-table {
 }
 
 .@{table-prefix-cls}-small {
+  &.@{table-prefix-cls}-bordered {
+    .@{table-prefix-cls}-thead > tr > th:last-child {
+      border-right: @border-width-base @border-style-base @border-color-split;
+    }
+
+    .@{table-prefix-cls}-thead > tr:first-child > th:last-child {
+      border-right: none;
+    }
+    
+    .@{table-prefix-cls}-footer {
+      border-right: none;
+    }
+  }
+
   > .@{table-prefix-cls}-content {
     > .@{table-prefix-cls}-scroll > .@{table-prefix-cls}-header > table,
     > .@{table-prefix-cls}-scroll > .@{table-prefix-cls}-body > table,
@@ -18058,11 +19276,23 @@ nz-table {
 // style dependencies
 // deps-lint-skip: menu
 
+a[nz-tab-link] {
+  &::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: transparent;
+    content: '';
+  }
+}
+
 @timeline-prefix-cls: ~'@{ant-prefix}-timeline';
-@timeline-color: @border-color-split;
 
 .@{timeline-prefix-cls} {
   .reset-component;
+
   margin: 0;
   padding: 0;
   list-style: none;
@@ -18076,14 +19306,15 @@ nz-table {
 
     &-tail {
       position: absolute;
-      top: 0.75em;
+      top: 10px;
       left: 4px;
-      height: 100%;
-      border-left: 2px solid @timeline-color;
+      height: calc(100% - 10px);
+      border-left: @timeline-width solid @timeline-color;
     }
 
     &-pending &-head {
       font-size: @font-size-sm;
+      background-color: transparent;
     }
 
     &-pending &-tail {
@@ -18094,21 +19325,28 @@ nz-table {
       position: absolute;
       width: 10px;
       height: 10px;
-      background-color: @component-background;
-      border: 2px solid transparent;
+      background-color: @timeline-dot-bg;
+      border: @timeline-dot-border-width solid transparent;
       border-radius: 100px;
 
       &-blue {
         color: @primary-color;
         border-color: @primary-color;
       }
+
       &-red {
         color: @error-color;
         border-color: @error-color;
       }
+
       &-green {
         color: @success-color;
         border-color: @success-color;
+      }
+
+      &-gray {
+        color: @disabled-color;
+        border-color: @disabled-color;
       }
     }
 
@@ -18131,6 +19369,7 @@ nz-table {
       position: relative;
       top: -(@font-size-base * @line-height-base - @font-size-base) + 1px;
       margin: 0 0 0 18px;
+      word-break: break-word;
     }
 
     &-last {
@@ -18161,18 +19400,16 @@ nz-table {
 
       &-left {
         .@{timeline-prefix-cls}-item-content {
-          left: 50%;
-          width: 50%;
+          left: calc(50% - 4px);
+          width: calc(50% - 14px);
           text-align: left;
         }
       }
 
       &-right {
         .@{timeline-prefix-cls}-item-content {
-          right: 50%;
-          left: -30px;
-          width: 50%;
-          margin-right: 18px;
+          width: calc(50% - 12px);
+          margin: 0;
           text-align: right;
         }
       }
@@ -18184,18 +19421,18 @@ nz-table {
       .@{timeline-prefix-cls}-item-tail,
       .@{timeline-prefix-cls}-item-head,
       .@{timeline-prefix-cls}-item-head-custom {
-        left: 100%;
+        // stylelint-disable-next-line function-calc-no-invalid
+        left: calc(100% - 4px - @timeline-width);
       }
       .@{timeline-prefix-cls}-item-content {
-        right: 0;
-        left: -30px;
-        width: 100%;
+        width: calc(100% - 18px);
       }
     }
   }
 
   &&-pending &-item-last &-item-tail {
     display: block;
+    height: calc(100% - 14px);
     border-left: 2px dotted @timeline-color;
   }
 
@@ -18205,7 +19442,9 @@ nz-table {
 
   &&-reverse &-item-pending {
     .@{timeline-prefix-cls}-item-tail {
+      top: 15px;
       display: block;
+      height: calc(100% - 15px);
       border-left: 2px dotted @timeline-color;
     }
     .@{timeline-prefix-cls}-item-content {
@@ -18214,10 +19453,76 @@ nz-table {
   }
 }
 
+@table-prefix-cls: ~'@{ant-prefix}-table';
+
+.@{transfer-prefix-cls}-customize-list {
+  display: flex;
+
+  .@{transfer-prefix-cls}-operation {
+    flex: none;
+    align-self: center;
+  }
+
+  .@{transfer-prefix-cls}-list {
+    flex: auto;
+    width: auto;
+    height: auto;
+    min-height: @transfer-list-height;
+
+    &-body {
+      &-with-search {
+        padding-top: 0;
+      }
+
+      // Search box in customize mode do not need fix top
+      &-search-wrapper {
+        position: relative;
+        padding-bottom: 0;
+      }
+
+      &-customize-wrapper {
+        padding: 12px;
+      }
+    }
+  }
+
+  // =================== Hook Components ===================
+  .@{table-prefix-cls}-wrapper {
+    .@{table-prefix-cls}-small {
+      border: 0;
+      border-radius: 0;
+
+      > .@{table-prefix-cls}-content {
+        // Header background color
+        > .@{table-prefix-cls}-body > table > .@{table-prefix-cls}-thead > tr > th {
+          background: @table-header-bg;
+        }
+
+        .@{table-prefix-cls}-row:last-child td {
+          border-bottom: @border-width-base @border-style-base @border-color-split;
+        }
+      }
+
+      .@{table-prefix-cls}-body {
+        margin: 0;
+      }
+    }
+
+    .@{table-prefix-cls}-pagination.@{ant-prefix}-pagination {
+      margin: 16px 0 4px;
+    }
+  }
+}
+
 @transfer-prefix-cls: ~'@{ant-prefix}-transfer';
+
+@transfer-header-vertical-padding: (
+    @transfer-header-height - 1px - @font-size-base * @line-height-base
+  ) / 2;
 
 .@{transfer-prefix-cls} {
   .reset-component;
+
   position: relative;
 
   &-disabled {
@@ -18230,8 +19535,8 @@ nz-table {
     position: relative;
     display: inline-block;
     width: 180px;
-    height: 200px;
-    padding-top: 34px;
+    height: @transfer-list-height;
+    padding-top: @transfer-header-height;
     vertical-align: middle;
     border: @border-width-base @border-style-base @border-color-base;
     border-radius: @border-radius-base;
@@ -18244,9 +19549,9 @@ nz-table {
       padding: 0 @control-padding-horizontal-sm;
       &-action {
         position: absolute;
-        top: 4px;
-        right: 4px;
-        bottom: 4px;
+        top: 12px;
+        right: 12px;
+        bottom: 12px;
         width: 28px;
         color: @disabled-color;
         line-height: @input-height-base;
@@ -18269,7 +19574,9 @@ nz-table {
       top: 0;
       left: 0;
       width: 100%;
-      padding: 6px @control-padding-horizontal;
+      // border-top is on the transfer dom. We should minus 1px for this
+      padding: (@transfer-header-vertical-padding - 1px) @control-padding-horizontal
+        @transfer-header-vertical-padding;
       overflow: hidden;
       color: @text-color;
       background: @component-background;
@@ -18279,6 +19586,10 @@ nz-table {
       &-title {
         position: absolute;
         right: 12px;
+      }
+
+      .@{ant-prefix}-checkbox-wrapper + span {
+        padding-left: 8px;
       }
     }
 
@@ -18292,12 +19603,12 @@ nz-table {
         top: 0;
         left: 0;
         width: 100%;
-        padding: 4px;
+        padding: 12px;
       }
     }
 
     &-body-with-search {
-      padding-top: @input-height-base + 8px;
+      padding-top: @input-height-base + 24px;
     }
 
     &-content {
@@ -18319,6 +19630,9 @@ nz-table {
         transition: all 0.3s;
         > span {
           padding-right: 0;
+        }
+        &-text {
+          padding-left: 8px;
         }
       }
 
@@ -18389,6 +19703,232 @@ nz-table {
 
 // style dependencies
 
+@typography-prefix-cls: ~'@{ant-prefix}-typography';
+@typography-title-margin-top: 1.2em;
+
+// =============== Common ===============
+.typography-paragraph() {
+  margin-bottom: 1em;
+}
+
+.typography-title(@fontSize; @lineHeight) {
+  margin-bottom: 0.5em;
+  color: @heading-color;
+  font-weight: @typography-title-font-weight;
+  font-size: @fontSize;
+  line-height: @lineHeight;
+}
+
+.typography-title-1() {
+  .typography-title(@heading-1-size, 1.23);
+}
+.typography-title-2() {
+  .typography-title(@heading-2-size, 1.35);
+}
+.typography-title-3() {
+  .typography-title(@heading-3-size, 1.35);
+}
+.typography-title-4() {
+  .typography-title(@heading-4-size, 1.4);
+}
+
+// =============== Basic ===============
+.@{typography-prefix-cls} {
+  color: @text-color;
+
+  &&-secondary {
+    color: @text-color-secondary;
+  }
+
+  &&-warning {
+    color: @warning-color;
+  }
+
+  &&-danger {
+    color: @error-color;
+  }
+
+  &&-disabled {
+    color: @disabled-color;
+    cursor: not-allowed;
+    user-select: none;
+  }
+
+  // Tag
+  div&,
+  p {
+    .typography-paragraph();
+  }
+
+  h1&,
+  h1 {
+    .typography-title-1();
+  }
+  h2&,
+  h2 {
+    .typography-title-2();
+  }
+  h3&,
+  h3 {
+    .typography-title-3();
+  }
+  h4&,
+  h4 {
+    .typography-title-4();
+  }
+
+  h1&,
+  h2&,
+  h3&,
+  h4& {
+    .@{typography-prefix-cls} + & {
+      margin-top: @typography-title-margin-top;
+    }
+  }
+
+  div,
+  ul,
+  li,
+  p,
+  h1,
+  h2,
+  h3,
+  h4 {
+    + h1,
+    + h2,
+    + h3,
+    + h4 {
+      margin-top: @typography-title-margin-top;
+    }
+  }
+
+  span&-ellipsis {
+    display: inline-block;
+  }
+
+  a {
+    .operation-unit();
+
+    &:active,
+    &:hover {
+      text-decoration: @link-hover-decoration;
+    }
+
+    &[disabled] {
+      color: @disabled-color;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  }
+
+  code {
+    margin: 0 0.2em;
+    padding: 0.2em 0.4em 0.1em;
+    font-size: 85%;
+    background: rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 3px;
+  }
+
+  mark {
+    padding: 0;
+    background-color: @gold-3;
+  }
+
+  u,
+  ins {
+    text-decoration: underline;
+    text-decoration-skip-ink: auto;
+  }
+
+  s,
+  del {
+    text-decoration: line-through;
+  }
+
+  strong {
+    font-weight: 600;
+  }
+
+  // Operation
+  &-expand,
+  &-edit,
+  &-copy {
+    .operation-unit();
+
+    margin-left: 8px;
+  }
+
+  &-copy-success {
+    &,
+    &:hover,
+    &:focus {
+      color: @success-color;
+    }
+  }
+
+  // Text input area
+  &-edit-content {
+    position: relative;
+
+    div& {
+      left: -@input-padding-horizontal - 1px;
+      margin-top: -@input-padding-vertical-base - 1px;
+      // stylelint-disable-next-line function-calc-no-invalid
+      margin-bottom: calc(1em - @input-padding-vertical-base - 2px);
+    }
+
+    &-confirm {
+      position: absolute;
+      right: 10px;
+      bottom: 8px;
+      color: @text-color-secondary;
+      pointer-events: none;
+    }
+  }
+
+  // list
+  ul,
+  ol {
+    margin: 0 0 1em 0;
+    padding: 0;
+
+    li {
+      margin: 0 0 0 20px;
+      padding: 0 0 0 4px;
+    }
+  }
+
+  ul li {
+    list-style-type: circle;
+
+    li {
+      list-style-type: disc;
+    }
+  }
+
+  ol li {
+    list-style-type: decimal;
+  }
+
+  // ============ Ellipsis ============
+  &-ellipsis-single-line {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  &-ellipsis-multiple-line {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    /*! autoprefixer: ignore next */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+// style dependencies
+
 @upload-prefix-cls: ~'@{ant-prefix}-upload';
 @upload-item: ~'@{ant-prefix}-upload-list-item';
 @upload-picture-card-size: 104px;
@@ -18396,6 +19936,7 @@ nz-table {
 
 .@{upload-prefix-cls} {
   .reset-component;
+
   outline: 0;
 
   p {
@@ -18416,8 +19957,13 @@ nz-table {
     display: inline-block;
   }
 
+  &&-disabled {
+    cursor: not-allowed;
+  }
+
   &&-select-picture-card {
     display: table;
+    float: left;
     width: @upload-picture-card-size;
     height: @upload-picture-card-size;
     margin-right: 8px;
@@ -18486,6 +20032,7 @@ nz-table {
         color: @primary-5;
         font-size: 48px;
       }
+
       margin-bottom: 20px;
     }
     p.@{upload-prefix-cls}-text {
@@ -18508,6 +20055,13 @@ nz-table {
     &:hover .@{iconfont-css-prefix}-plus {
       color: @text-color-secondary;
     }
+  }
+
+  &-picture-card-wrapper {
+    .clearfix;
+
+    display: inline-block;
+    width: 100%;
   }
 }
 
@@ -18535,6 +20089,8 @@ nz-table {
 
       > span {
         display: block;
+        width: 100%;
+        height: 100%;
       }
 
       .@{iconfont-css-prefix}-loading,
@@ -18548,6 +20104,7 @@ nz-table {
 
     .@{iconfont-css-prefix}-close {
       .iconfont-size-under-12px(10px);
+
       position: absolute;
       top: 6px;
       right: 4px;
@@ -18638,6 +20195,10 @@ nz-table {
       transform: translate(-50%, -50%);
     }
 
+    .@{upload-item}-image {
+      max-width: 100%;
+    }
+
     .@{upload-item}-thumbnail img {
       display: block;
       width: 48px;
@@ -18680,9 +20241,6 @@ nz-table {
   }
 
   &-picture-card {
-    // https://github.com/ant-design/ant-design/issues/11183
-    float: left;
-
     &.@{upload-prefix-cls}-list::after {
       display: none;
     }
@@ -18750,6 +20308,7 @@ nz-table {
       display: block;
       width: 100%;
       height: 100%;
+      object-fit: cover;
     }
 
     .@{upload-item}-name {
@@ -18912,6 +20471,7 @@ nz-table {
       }
       &[disabled] {
         .disabled;
+
         background-color: transparent;
       }
     }
@@ -18940,6 +20500,14 @@ nz-table {
   }
 }
 
+// https://github.com/ant-design/ant-design/issues/14156
+.@{input-prefix-cls}-group > .@{autocomplete-prefix-cls} {
+  .@{select-prefix-cls}-search__field.@{input-prefix-cls}-affix-wrapper {
+    display: inline;
+    float: none;
+  }
+}
+
 // style dependencies
 
 @cascader-prefix-cls: ~'@{ant-prefix}-cascader';
@@ -18948,8 +20516,11 @@ nz-table {
   .reset-component;
 
   &-input.@{ant-prefix}-input {
-    position: relative;
+    // Keep it static for https://github.com/ant-design/ant-design/issues/16738
+    position: static;
     width: 100%;
+    // https://github.com/ant-design/ant-design/issues/17582
+    padding-right: 24px;
     // Add important to fix https://github.com/ant-design/ant-design/issues/5078
     // because input.less will compile after cascader.less
     background-color: transparent !important;
@@ -18962,6 +20533,7 @@ nz-table {
 
   &-picker {
     .reset-component;
+
     position: relative;
     display: inline-block;
     background-color: @component-background;
@@ -18998,7 +20570,7 @@ nz-table {
       width: 100%;
       height: 20px;
       margin-top: -10px;
-      padding: 0 @control-padding-horizontal;
+      padding: 0 20px 0 @control-padding-horizontal;
       overflow: hidden;
       line-height: 20px;
       white-space: nowrap;
@@ -19046,6 +20618,11 @@ nz-table {
         transform: rotate(180deg);
       }
     }
+  }
+
+  // https://github.com/ant-design/ant-design/pull/12407#issuecomment-424657810
+  &-picker-label:hover + &-input {
+    .hover;
   }
 
   &-picker-small &-picker-clear,
@@ -19134,8 +20711,8 @@ nz-table {
     &-active:not(&-disabled) {
       &,
       &:hover {
-        font-weight: 600;
-        background: @background-color-base;
+        font-weight: @select-item-selected-font-weight;
+        background-color: @background-color-light;
       }
     }
     &-expand {
@@ -19144,8 +20721,9 @@ nz-table {
     }
 
     &-expand &-expand-icon,
-    &-expand &-loading-icon {
+    &-loading-icon {
       .iconfont-size-under-12px(10px);
+
       position: absolute;
       right: @control-padding-horizontal;
       color: @text-color-secondary;
@@ -19166,6 +20744,7 @@ nz-table {
   .@{tree-prefix-cls}-switcher-icon,
   .@{tree-select-prefix-cls}-switcher-icon {
     .iconfont-size-under-12px(10px);
+
     display: inline-block;
     font-weight: bold;
     svg {
@@ -19287,7 +20866,17 @@ nz-table {
 .antCheckboxFn(@checkbox-prefix-cls: ~'@{ant-prefix}-tree-checkbox');
 
 .@{tree-prefix-cls} {
+  /* see https://github.com/ant-design/ant-design/issues/16259 */
+  &-checkbox-checked::after {
+    position: absolute;
+    top: 16.67%;
+    left: 0;
+    width: 100%;
+    height: 66.67%;
+  }
+
   .reset-component;
+
   margin: 0;
   padding: 0;
 
@@ -19349,7 +20938,7 @@ nz-table {
               left: 0;
               display: inline-block;
               width: 24px;
-              height: 24px;
+              height: @tree-title-height;
               color: @primary-color;
               font-size: 14px;
               transform: none;
@@ -19388,21 +20977,24 @@ nz-table {
       cursor: pointer;
       transition: all 0.3s;
       &:hover {
-        background-color: @item-hover-bg;
+        background-color: @tree-node-hover-bg;
       }
       &.@{tree-prefix-cls}-node-selected {
-        background-color: @primary-2;
+        background-color: @tree-node-selected-bg;
       }
     }
     span {
       &.@{tree-prefix-cls}-checkbox {
-        margin: 4px 4px 0 2px;
+        top: initial;
+        height: @tree-title-height;
+        margin: 0 4px 0 2px;
+        padding: ((@tree-title-height - 16px) / 2) 0;
       }
       &.@{tree-prefix-cls}-switcher,
       &.@{tree-prefix-cls}-iconEle {
         display: inline-block;
         width: 24px;
-        height: 24px;
+        height: @tree-title-height;
         margin: 0;
         line-height: @tree-title-height;
         text-align: center;
@@ -19450,11 +21042,6 @@ nz-table {
     }
   }
   &-child-tree {
-    display: none;
-    &-open {
-      display: block;
-    }
-
     // https://github.com/ant-design/ant-design/issues/14958
     > li {
       // Provide additional padding between top child node and parent node
@@ -19512,7 +21099,8 @@ nz-table {
       left: 12px;
       width: 1px;
       height: 100%;
-      margin: 22px 0;
+      height: calc(100% - 22px); // Remove additional height if support
+      margin: 22px 0 0;
       border-left: 1px solid @border-color-base;
       content: ' ';
     }
@@ -19550,36 +21138,23 @@ nz-table {
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
 
-.ant-tree {
-  &.ant-tree-show-line {
-    > nz-tree-node:not(:last-child), .ant-tree-child-tree > nz-tree-node:not(:last-child) {
-      > li:before {
-        content: ' ';
-        width: 1px;
-        border-left: 1px solid @border-color-base;
-        height: 100%;
-        position: absolute;
-        left: 12px;
-        margin: 22px 0;
-      }
-    }
+.ant-tree.ant-tree-show-line nz-tree-node:not(:last-child) > li::before {
+  content: ' ';
+  width: 1px;
+  border-left: 1px solid @border-color-base;
+  height: 100%;
+  position: absolute;
+  left: 12px;
+  margin: 22px 0;
+}
 
-    .ant-tree-child-tree > nz-tree-node:last-child {
-      > li:before {
-        content: ' ';
-        width: 1px;
-        border-left: 0px solid @border-color-base;
-        height: 100%;
-        position: absolute;
-        left: 12px;
-        margin: 22px 0;
-      }
-    }
-  }
+.font-highlight {
+  color: @highlight-color;
+}
 
-  .font-highlight {
-    color: @highlight-color;
-  }
+.@{tree-prefix-cls}-child-tree {
+  // The overflow of the collapse animation in edge and IE is invalid
+  overflow: hidden;
 }
 
 @select-prefix-cls: ~'@{ant-prefix}-select';
@@ -19589,6 +21164,7 @@ nz-table {
 
 .@{select-tree-prefix-cls} {
   .reset-component;
+
   margin: 0;
   margin-top: -4px;
   padding: 0 4px;
@@ -19614,7 +21190,7 @@ nz-table {
       padding: 3px 5px;
       color: @text-color;
       text-decoration: none;
-      border-radius: 2px;
+      border-radius: @border-radius-sm;
       cursor: pointer;
       transition: all 0.3s;
       &:hover {
@@ -19770,11 +21346,21 @@ nz-table {
 
 // style dependencies
 // deps-lint-skip: select
+.ant-tree.ant-select-tree.ant-tree-show-line nz-tree-node:not(:last-child) > li::before {
+  content: ' ';
+  width: 1px;
+  border-left: 1px solid #d9d9d9;
+  height: calc(100% - 16px);
+  position: absolute;
+  left: 12px;
+  margin: 26px 0;
+}
 
 @full-calendar-prefix-cls: ~'@{ant-prefix}-fullcalendar';
 
 .@{full-calendar-prefix-cls} {
   .reset-component;
+
   border-top: @border-width-base @border-style-base @border-color-base;
   outline: none;
 
@@ -19791,7 +21377,7 @@ nz-table {
     margin-left: 8px;
 
     &.@{ant-prefix}-select-sm {
-      min-width: 60px;
+      min-width: 70px;
     }
   }
 
@@ -20048,6 +21634,75 @@ nz-table {
 
 // style dependencies
 
+@result-prefix-cls: ~'@{ant-prefix}-result';
+
+.@{result-prefix-cls} {
+  padding: 48px 32px;
+  // status color
+  &-success &-icon > .anticon {
+    color: @success-color;
+  }
+
+  &-error &-icon > .anticon {
+    color: @error-color;
+  }
+
+  &-info &-icon > .anticon {
+    color: @info-color;
+  }
+
+  &-warning &-icon > .anticon {
+    color: @warning-color;
+  }
+
+  // Exception Status image
+  &-image {
+    width: 250px;
+    height: 295px;
+    margin: auto;
+  }
+
+  &-icon {
+    margin-bottom: 24px;
+    text-align: center;
+
+    > .anticon {
+      font-size: 72px;
+    }
+  }
+
+  &-title {
+    color: @heading-color;
+    font-size: 24px;
+    line-height: 1.8;
+    text-align: center;
+  }
+
+  &-subtitle {
+    color: @text-color-secondary;
+    font-size: 14px;
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  &-extra {
+    margin-top: 32px;
+    text-align: center;
+    > * {
+      margin-right: 8px;
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+
+  &-content {
+    margin-top: 24px;
+    padding: 24px 40px;
+    background-color: @background-color-light;
+  }
+}
+
 // FIXED-CHECK
 // fix: https://github.com/NG-ZORRO/ng-zorro-antd/issues/1360
 // // antd
@@ -20188,15 +21843,15 @@ nz-table {
 
 // Angular
 // router ant
-@router-animation-name:     antFadeIn;
+@router-animation-name: antFadeIn;
 @router-animation-duration: 1s;
 
-// https://github.com/angular/angular/issues/9845
-// 一种路由切换动画的简单实现
+// A simple implementation of a route switching animation
+// ISSUES: https://github.com/angular/angular/issues/9845
 app-layout router-outlet + * {
   display: block;
   // animation-fill-mode: both;
-	animation-name: @router-animation-name; // fadeIn;
+  animation-name: @router-animation-name; // fadeIn;
   animation-duration: @router-animation-duration;
 }
 
@@ -20424,6 +22079,7 @@ a:focus {
   }
 }
 
+// 限定单元格的图像大小
 .@{ant-prefix}-table {
   td {
     > img,
@@ -20437,6 +22093,7 @@ a:focus {
   }
 }
 
+// 表格响应式
 .@{ant-prefix}-table-rep {
   &__title {
     display: none;
@@ -20450,45 +22107,44 @@ a:focus {
 }
 
 @media screen and (max-width: @nz-table-rep-max-width) {
-  .@{ant-prefix}-table {
-    &-rep {
-      &__title {
-        display: inline-block;
-        width: @nz-table-rep-column-name-width;
-        padding-right: @nz-table-rep-column-name-padding-right;
-        color: @nz-table-rep-column-name-color;
-        text-align: @nz-table-rep-column-name-text-align;
-      }
-      &__hide-header-footer {
-        .@{ant-prefix}-table-title,
-        .@{ant-prefix}-table-footer {
-          display: block;
-        }
+  .@{ant-prefix}-table-rep {
+    &__title {
+      display: inline-block;
+      width: @nz-table-rep-column-name-width;
+      padding-right: @nz-table-rep-column-name-padding-right;
+      color: @nz-table-rep-column-name-color;
+      text-align: @nz-table-rep-column-name-text-align;
+    }
+    &__hide-header-footer {
+      .@{ant-prefix}-table-title,
+      .@{ant-prefix}-table-footer {
+        display: block;
       }
     }
-    &-thead {
-      display: none;
-    }
-    &-title {
-      text-align: center;
-      background: @nz-table-rep-header-background;
-    }
-    &-tbody {
-      > tr {
-        &:nth-child(3n) {
-          background: @nz-table-rep-even-background;
-        }
-        > td {
-          display: flex;
-          align-items: center;
-          width: 100%;
-          padding: @nz-table-rep-padding-vertical
-            @nz-table-rep-padding-horizontal;
-          text-align: left !important;
-          border-bottom: none;
+    .@{ant-prefix}-table {
+      &-thead {
+        display: none;
+      }
+      &-title {
+        text-align: center;
+        background: @nz-table-rep-header-background;
+      }
+      &-tbody {
+        > tr {
+          &:nth-child(3n) {
+            background: @nz-table-rep-even-background;
+          }
+          > td {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: @nz-table-rep-padding-vertical @nz-table-rep-padding-horizontal;
+            text-align: left !important;
+            border-bottom: none;
 
-          .@{ant-prefix}-table-rep__title + *:not(.@{ant-prefix}-avatar) {
-            flex: 1;
+            .@{ant-prefix}-table-rep__title + *:not(.@{ant-prefix}-avatar) {
+              flex: 1;
+            }
           }
         }
       }
@@ -20702,14 +22358,6 @@ fieldset {
 .search__form-mixin(@enabled) when(@enabled = true) {
   .search {
     &__form {
-      // FIXED-CHECK
-      // // BUG: https://github.com/NG-ZORRO/ng-zorro-antd/issues/1202
-      // &.@{ant-prefix}-form-inline {
-      //   .@{ant-prefix}-form-item-label,
-      //   .@{ant-prefix}-form-item-control-wrapper {
-      //     padding: 0 !important;
-      //   }
-      // }
       .@{ant-prefix}-form-item {
         display: flex;
         margin-right: 0;
@@ -20852,10 +22500,10 @@ fieldset {
     &-add {
       margin-right: 16px;
     }
-      &-container {
+    &-container {
       nz-card {
         margin: 0 16px 0 0;
-        .remove {
+        @{sf-prefix}__array-remove {
           position: absolute;
           top: -16px;
           right: -16px;
@@ -20873,7 +22521,7 @@ fieldset {
           }
         }
         &:hover {
-          .remove {
+          @{sf-prefix}__array-remove {
             display: block;
           }
         }
@@ -20944,15 +22592,25 @@ fieldset {
         .@{ant-prefix}-form-item {
           display: block !important;
           width: initial !important;
-          margin-right: 0;;
+          margin-right: 0;
         }
       }
-      .@{ant-prefix}-form-item-label, .@{ant-prefix}-form-item-control-wrapper {
+      .@{ant-prefix}-form-item-label,
+      .@{ant-prefix}-form-item-control-wrapper {
         display: block !important;
         width: 100% !important;
         padding: inherit;
         line-height: @form-component-max-height - 0.0001px;
         text-align: left;
+      }
+    }
+  }
+  &__no-colon {
+    .@{ant-prefix}-form-item-label {
+      label {
+        &:after {
+          content: ' ';
+        }
       }
     }
   }
@@ -21201,47 +22859,129 @@ code {
 }
 .all-colors-minin(@enable-all-colors);
 
-.d-none             { display: none !important; }
-.d-block            { display: block !important; }
-.d-inline-block     { display: inline-block !important; }
-.d-flex             { display: flex !important; }
-.d-inline-flex      { display: inline-flex !important; }
+.d-none {
+  display: none !important;
+}
+.d-block {
+  display: block !important;
+}
+.d-inline-block {
+  display: inline-block !important;
+}
+.d-flex {
+  display: flex !important;
+}
+.d-inline-flex {
+  display: inline-flex !important;
+}
 
-.justify-content-start   { justify-content: flex-start !important; }
-.justify-content-end     { justify-content: flex-end !important; }
-.justify-content-center  { justify-content: center !important; }
-.justify-content-between { justify-content: space-between !important; }
-.justify-content-around  { justify-content: space-around !important; }
+.justify-content-start {
+  justify-content: flex-start !important;
+}
+.justify-content-end {
+  justify-content: flex-end !important;
+}
+.justify-content-center {
+  justify-content: center !important;
+}
+.justify-content-between {
+  justify-content: space-between !important;
+}
+.justify-content-around {
+  justify-content: space-around !important;
+}
 
-.align-items-start       { align-items: flex-start !important; }
-.align-items-end         { align-items: flex-end !important; }
-.align-items-center      { align-items: center !important; }
-.align-items-baseline    { align-items: baseline !important; }
-.align-items-stretch     { align-items: stretch !important; }
+.align-items-start {
+  align-items: flex-start !important;
+}
+.align-items-end {
+  align-items: flex-end !important;
+}
+.align-items-center {
+  align-items: center !important;
+}
+.align-items-baseline {
+  align-items: baseline !important;
+}
+.align-items-stretch {
+  align-items: stretch !important;
+}
 
-.align-content-start     { align-content: flex-start !important; }
-.align-content-end       { align-content: flex-end !important; }
-.align-content-center    { align-content: center !important; }
-.align-content-between   { align-content: space-between !important; }
-.align-content-around    { align-content: space-around !important; }
-.align-content-stretch   { align-content: stretch !important; }
+.align-content-start {
+  align-content: flex-start !important;
+}
+.align-content-end {
+  align-content: flex-end !important;
+}
+.align-content-center {
+  align-content: center !important;
+}
+.align-content-between {
+  align-content: space-between !important;
+}
+.align-content-around {
+  align-content: space-around !important;
+}
+.align-content-stretch {
+  align-content: stretch !important;
+}
 
-.align-self-auto         { align-self: auto !important; }
-.align-self-start        { align-self: flex-start !important; }
-.align-self-end          { align-self: flex-end !important; }
-.align-self-center       { align-self: center !important; }
-.align-self-baseline     { align-self: baseline !important; }
-.align-self-stretch      { align-self: stretch !important; }
+.align-self-auto {
+  align-self: auto !important;
+}
+.align-self-start {
+  align-self: flex-start !important;
+}
+.align-self-end {
+  align-self: flex-end !important;
+}
+.align-self-center {
+  align-self: center !important;
+}
+.align-self-baseline {
+  align-self: baseline !important;
+}
+.align-self-stretch {
+  align-self: stretch !important;
+}
 
-.flex-1 { flex: 1 !important; }
-.flex-column { flex-direction: column !important; }
-.flex-column-reverse { flex-direction: column-reverse !important; }
-.flex-wrap { flex-wrap: wrap !important; }
-.flex-nowrap { flex-wrap: nowrap !important; }
-.flex-shrink-0 { flex-shrink: 0 !important; }
-.flex-shrink-1 { flex-shrink: 1 !important; }
-.flex-grow-0 { flex-grow: 0 !important; }
-.flex-grow-1 { flex-grow: 1 !important; }
+.flex-1 {
+  flex: 1 !important;
+}
+.flex-column {
+  flex-direction: column !important;
+}
+.flex-column-reverse {
+  flex-direction: column-reverse !important;
+}
+.flex-wrap {
+  flex-wrap: wrap !important;
+}
+.flex-nowrap {
+  flex-wrap: nowrap !important;
+}
+.flex-shrink-0 {
+  flex-shrink: 0 !important;
+}
+.flex-shrink-1 {
+  flex-shrink: 1 !important;
+}
+.flex-grow-0 {
+  flex-grow: 0 !important;
+}
+.flex-grow-1 {
+  flex-grow: 1 !important;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+}
+.flex-center-between {
+  display: flex;
+  align-content: space-between;
+  align-items: center;
+}
 
 .float-none  { float:none !important; }
 .float-left  { float:left !important; }
@@ -21309,6 +23049,11 @@ code {
 .color-weak {
   display: block;
   filter: invert(80%);
+}
+
+.disabled {
+  color: @disabled-color;
+  pointer-events: none;
 }
 
 .for-each(@positions, {
@@ -21511,14 +23256,8 @@ code {
 }
 .scrollbar-table-mixin(@scrollbar-table-enabled);
 
-@st-prefix: ~'.st';
-
 @{st-prefix} {
   display: block;
-  &__selection {
-    padding-left: 2px;
-    cursor: pointer;
-  }
   &__p-left {
     .@{ant-prefix}-table-pagination {
       display: block;
@@ -21533,10 +23272,51 @@ code {
       text-align: center;
     }
   }
+  // 修复按钮block
+  &__btn {
+    &-sub {
+      @{st-prefix}__btn-text {
+        color: inherit;
+      }
+    }
+    &-disabled {
+      @{st-prefix}__btn-text {
+        color: @st-btn-disabled-color;
+        pointer-events: none;
+      }
+    }
+  }
   // 清除页码底部间距，在大部分列表中会包裹 `nz-card` 导致底部间距过大，若有需求可自行使用 `mb-md` 来调整
-  .@{ant-prefix}-table-pagination.@{ant-prefix}-pagination {
+  .@{ant-prefix}-table ~ nz-pagination > .@{ant-prefix}-pagination {
     margin-bottom: 0;
   }
+
+  &__filter {
+    &-keyword {
+      padding: @layout-gutter;
+    }
+  }
+  // Title
+  .@{ant-prefix}-table-column-title {
+    display: flex;
+    align-items: center;
+  }
+  &__head {
+    &-optional,
+    &-tip {
+      margin-left: 2px;
+      color: @st-title-optional-color;
+    }
+  }
+  // 修复自动定义图标无法高亮问题
+  .@{ant-prefix}-table-thead > tr > th .@{ant-prefix}-table-filter-selected.@{ant-prefix}-table-filter-icon {
+    color: @primary-color;
+  }
+  // 修复过滤图标优先级问题
+  .@{ant-prefix}-table-thead > tr > th .@{ant-prefix}-table-filter-icon {
+    position: absolute !important;
+  }
+
   @media screen and (min-width: @nz-table-rep-min-width) {
     &__width {
       &-strict {
@@ -21551,52 +23331,50 @@ code {
   }
 }
 
-@sv-prefix: ~'.sv';
-@sv-label-color: rgba(0, 0, 0, 0.5);
-@sv-detail-color: @text-color;
-@sv-type-primary-color: @primary-color;
-@sv-type-success-color: @success-color;
-@sv-type-danger-color: @error-color;
-@sv-type-warning-color: @warning-color;
-@sv-bottom: @layout-gutter * 2;
-@sv-default-text: '-';
-@sv-unit-margin: 8px;
-@sv-unit-color: @grey-7;
-
 @{sv-prefix} {
   display: block;
-  + @{sv-prefix} {
+
+  +@{sv-prefix} {
     margin-top: @sv-bottom;
   }
+
   &__container {
     display: block;
+
     // offset the padding-bottom of last row
     .@{ant-prefix}-row {
       margin-bottom: -@sv-bottom;
       overflow: hidden;
     }
   }
+
   &__item {
     &-fixed {
       display: flex;
+
       @{sv-prefix}__label {
         flex: 0 0 auto;
         overflow: hidden;
         text-align: right;
         text-overflow: ellipsis;
       }
+
       @{sv-prefix}__detail {
         flex: 1 0 0;
       }
     }
   }
+
   &__title {
     display: block;
+    float: none;
+    clear: both;
     margin-bottom: @sv-bottom;
     color: @heading-color;
     font-weight: 500;
     font-size: 14px;
   }
+
   &__label {
     display: table-cell;
     // margin-right: 8px;
@@ -21604,6 +23382,7 @@ code {
     color: @sv-label-color;
     line-height: 22px;
     white-space: nowrap;
+
     &:not(@{sv-prefix}__label-empty) {
       &::after {
         position: relative;
@@ -21612,7 +23391,21 @@ code {
         content: ':';
       }
     }
+
+    &-optional {
+      margin-left: @sv-optional-margin;
+      color: @sv-label-optional-color;
+
+      &-no-text {
+        margin-left: 0;
+      }
+
+      >.anticon {
+        margin-left: @sv-optional-margin;
+      }
+    }
   }
+
   &__detail {
     // contents 对 ie, edge 不支持，但对于子组件的支持会更友好
     display: table-cell;
@@ -21622,53 +23415,77 @@ code {
     line-height: 22px;
     word-break: break-all;
   }
+
   &__type {
     &-primary @{sv-prefix}__detail {
       color: @sv-type-primary-color;
     }
+
     &-success @{sv-prefix}__detail {
       color: @sv-type-success-color;
     }
+
     &-danger @{sv-prefix}__detail {
       color: @sv-type-danger-color;
     }
+
     &-warning @{sv-prefix}__detail {
       color: @sv-type-warning-color;
     }
   }
+
   &__default {
     &::before {
       content: @sv-default-text;
     }
 
-    ~ @{sv-prefix}__unit {
+    ~@{sv-prefix}__unit {
       display: none !important;
     }
   }
+
   &__unit {
     display: inline;
     margin-left: @sv-unit-margin;
     color: @sv-unit-color;
   }
+
   &__small {
+
     // offset the padding-bottom of last row
     .@{ant-prefix}-row {
       margin-bottom: -8px;
     }
+
     @{sv-prefix}__title {
       margin-bottom: 12px;
       color: @text-color;
     }
+
     @{sv-prefix}__label,
     @{sv-prefix}__detail {
       padding-bottom: 8px;
     }
   }
+
   &__large {
     @{sv-prefix}__title {
       font-size: 16px;
     }
   }
+
+  &__horizontal {
+    @{sv-prefix}__label-width {
+      display: flex;
+      justify-content: flex-end;
+
+      @{sv-prefix}__label-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+
   &__vertical {
     @{sv-prefix}__label {
       padding-bottom: 8px;
@@ -21681,34 +23498,36 @@ code {
   }
 }
 
-@se-prefix: ~'.se';
-@se-label-color: rgba(0, 0, 0, 0.85);
-@se-compact-bottom: @layout-gutter;
-
 @{se-prefix} {
   &__title {
     display: block;
+    float: none;
+    clear: both;
     color: @heading-color;
-    font-weight: 500;
+    font-weight: 700;
     font-size: 14px;
     line-height: @form-component-max-height - 0.0001px;
   }
+
   &__item {
     &:last-child {
       margin-bottom: 0;
       padding-bottom: 0;
     }
+
     &-empty {
       &::before {
         display: inline-block;
         content: '';
       }
     }
+
     // fix angular & ng-zorro-antd
     .@{ant-prefix}-form-explain {
       display: block;
     }
   }
+
   &__label {
     display: table-cell;
     flex: 0 0 auto;
@@ -21716,30 +23535,47 @@ code {
     color: @se-label-color;
     white-space: nowrap;
     text-align: right;
+
     &-optional {
-      color: rgba(0, 0, 0, 0.45);
+      margin-left: @se-optional-margin;
+      color: @se-label-optional-color;
+
+      &-no-text {
+        margin-left: 0;
+      }
+
+      >.anticon {
+        margin-left: @se-optional-margin;
+      }
     }
   }
+
   &__control {
     flex: 1 0 0;
     width: 100%;
   }
+
   &__compact {
+
     @{se-prefix}__title,
     @{se-prefix}__item {
       margin-bottom: @se-compact-bottom;
     }
+
     .@{ant-prefix}-form-extra {
       display: none;
     }
   }
+
   &__line {
     border-bottom: 1px dashed #e8e8e8;
+
     @{se-prefix}__label,
     @{se-prefix}__control {
       padding-bottom: @se-compact-bottom;
     }
   }
+
   &__hide-label,
   &__inline,
   &__vertical {
@@ -21747,26 +23583,52 @@ code {
       display: none !important;
     }
   }
+
   &__horizontal {
     @{se-prefix}__item {
       display: flex;
+
       &:last-child {
         margin-bottom: 0;
       }
+
+      @{se-prefix}__label {
+        display: flex;
+        justify-content: flex-end;
+
+        &-text {
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+
+      .@{ant-prefix}-form-item {
+        &-required::before {
+          line-height: inherit;
+        }
+
+        &-label>label::after {
+          margin-left: 4px;
+        }
+      }
     }
   }
+
   &__vertical {
     @{se-prefix}__item {
       display: block;
     }
   }
+
   &__inline {
-    @{se-prefix}__label,
+
+    .@{ant-prefix}-form-item-label,
     @{se-prefix}__control {
       flex: none;
       width: initial !important;
       text-align: left;
     }
+
     @{se-prefix}__item {
       &:last-child {
         margin-right: 0;
@@ -21780,10 +23642,21 @@ code {
     &__horizontal {
       @{se-prefix}__item {
         display: block;
+
+        .@{ant-prefix}-form-item-label {
+          width: 100% !important;
+          text-align: left;
+        }
+
+        @{se-prefix}__label {
+          justify-content: normal;
+        }
       }
     }
+
     &__horizontal,
     &__vertical {
+
       @{se-prefix}__label,
       @{se-prefix}__control {
         width: 100% !important;
@@ -21791,8 +23664,6 @@ code {
     }
   }
 }
-
-@avatar-list-prefix: ~'.avatar-list';
 
 @{avatar-list-prefix} {
   display: inline-block;
@@ -21822,12 +23693,12 @@ code {
     height: @avatar-size-sm;
   }
   &__mini {
-    width: 20px;
-    height: 20px;
+    width: @avatar-list-mini-wh;
+    height: @avatar-list-mini-wh;
     .@{ant-prefix}-avatar {
-      width: 20px;
-      height: 20px;
-      line-height: 20px;
+      width: @avatar-list-mini-wh;
+      height: @avatar-list-mini-wh;
+      line-height: @avatar-list-mini-wh;
       &-string {
         font-size: 12px;
         line-height: 18px;
@@ -21840,7 +23711,7 @@ ellipsis {
   display: inline;
 }
 
-.ellipsis {
+@{ellipsis-prefix} {
   display: inline-block;
   width: 100%;
   overflow: hidden;
@@ -21863,13 +23734,12 @@ ellipsis {
   }
 }
 
-.error-collect {
+@{error-collect-prefix} {
   padding-right: 24px;
-  color: #f5222d;
+  color: @error-collect-color;
   cursor: pointer;
 }
 
-@exception-prefix: ~'.exception';
 @{exception-prefix} {
   display: flex;
   align-items: center;
@@ -21951,13 +23821,6 @@ ellipsis {
   }
 }
 
-@footer-toolbar-prefix: ~'.footer-toolbar';
-@footer-toolbar-height: 56px;
-@footer-toolbar-box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.03);
-@footer-toolbar-bg: #fff;
-@footer-toolbar-border-top: 1px solid @border-color-split;
-@footer-toolbar-padding: 0 24px;
-
 @{footer-toolbar-prefix} {
   position: fixed;
   right: 0;
@@ -21977,8 +23840,6 @@ ellipsis {
   }
 }
 
-@full-content-prefix: ~'.full-content';
-
 @{full-content-prefix} {
   display: block;
   height: 100%;
@@ -21991,8 +23852,6 @@ ellipsis {
   // &__hidden-title {
   // }
 }
-
-@global-footer-prefix: ~'.global-footer';
 
 @{global-footer-prefix} {
   display: block;
@@ -22018,8 +23877,6 @@ ellipsis {
     font-size: @font-size-base;
   }
 }
-
-@notice-icon-prefix: ~'.notice-icon';
 
 @{notice-icon-prefix} {
   width: 336px;
@@ -22126,10 +23983,6 @@ ellipsis {
     }
   }
 }
-
-@page-header-prefix: ~'.page-header';
-@page-header-bg: #fff;
-@page-header-wide: 1200px;
 
 @{page-header-prefix} {
   display: block;
@@ -22262,11 +24115,6 @@ ellipsis {
   }
 }
 
-@quick-menu-prefix: ~'.quick-menu';
-@quick-menu-border-width: 1px;
-@quick-menu-ctrl-hw: 50px;
-@quick-menu-border-color: #fff;
-
 @{quick-menu-prefix} {
   position: fixed;
   right: -@quick-menu-border-width;
@@ -22306,9 +24154,7 @@ ellipsis {
   }
 }
 
-@result-extra-bg: #fafafa;
-
-.result {
+@{result-prefix} {
   display: block;
   width: 72%;
   margin: 0 auto;
@@ -22364,40 +24210,64 @@ ellipsis {
   }
 }
 
-@reuse-tab-prefix:          ~'.reuse-tab';
-@reuse-tab-height:          52px;
-@reuse-tab-bg:              #fff;
-@reuse-tab-padding:         8px;
-@reuse-tab-border-color:    #d9d9d9;
-
 @{reuse-tab-prefix} {
   display: block;
-  padding: @reuse-tab-padding;
   background-color: @reuse-tab-bg;
-  border-bottom: 1px solid @reuse-tab-border-color;
   outline: none;
   user-select: none;
-  .@{ant-prefix}-tabs-bar {
-    margin-bottom: 0;
-    border-bottom: none;
-  }
-  .@{ant-prefix}-tabs-nav .@{ant-prefix}-tabs-tab {
-    padding: 0;
-    @{reuse-tab-prefix}__name {
-      display: inline-block;
-      padding: 8px 20px;
-    }
-    @{reuse-tab-prefix}__op {
-      position: absolute;
-      top: 14px;
-      right: 2px;
-      display: none;
-      margin: 0;
-      font-size: 10px;
-    }
-    &:hover {
+  .@{ant-prefix}-tabs {
+    &-nav .@{ant-prefix}-tabs-tab {
       @{reuse-tab-prefix}__op {
-        display: block;
+        position: absolute;
+        display: none;
+        margin: 0;
+        font-size: 10px;
+        color: rgba(0, 0, 0, 0.45);
+      }
+      &:hover {
+        @{reuse-tab-prefix}__op {
+          display: block;
+        }
+      }
+      @{reuse-tab-prefix}__name {
+        &-width {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: inline-block;
+        }
+      }
+    }
+  }
+  &__line {
+    padding: @reuse-tab-padding;
+    border-bottom: 1px solid @reuse-tab-border-color;
+    .@{ant-prefix}-tabs {
+      &-bar {
+        margin-bottom: 0;
+        border-bottom: none;
+      }
+      &-nav .@{ant-prefix}-tabs-tab {
+        padding: 0;
+        @{reuse-tab-prefix}__op {
+          top: 12px;
+          right: 2px;
+        }
+        @{reuse-tab-prefix}__name {
+          display: inline-block;
+          padding: 8px 20px;
+        }
+      }
+    }
+  }
+  &__card {
+    padding-top: @reuse-tab-padding;
+    .@{ant-prefix}-tabs-nav-container {
+      padding: 0 8px;
+    }
+    .@{ant-prefix}-tabs-nav .@{ant-prefix}-tabs-tab {
+      @{reuse-tab-prefix}__op {
+        top: 4px;
+        right: 4px;
       }
     }
   }
@@ -22440,6 +24310,64 @@ ellipsis {
   }
 }
 
+@down-file-prefix: ~'.down-file';
+// - `hidden` 隐藏状态（默认）
+// - `disabled` 禁用状态
+@down-file-not-support-behavior: 'hidden';
+
+@{down-file-prefix} {
+  &__not-support {
+    // @down-file-not-support-behavior
+    .down-file-not-support-behavior-mixin(@value) when (@value = 'disabled') {
+      pointer-events: none;
+    }
+    .down-file-not-support-behavior-mixin(@value) when (@value = 'hidden') {
+      display: none;
+    }
+    .down-file-not-support-behavior-mixin(@down-file-not-support-behavior);
+  }
+}
+
+@loading-prefix: ~'.loading';
+@loading-zindex: 9999;
+@loading-backdrop-bg: rgba(0, 0, 0, 0.15);
+@loading-icon-color: @primary-color;
+@loading-text-color: @primary-color;
+
+@{loading-prefix} {
+  &-backdrop {
+    z-index: @loading-zindex;
+    background-color: @loading-backdrop-bg;
+    opacity: 1;
+  }
+  &-default {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: @loading-zindex + 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    &__icon {
+      margin-bottom: 8px;
+      color: @loading-icon-color;
+      font-size: 24px;
+    }
+    &__text {
+      color: @loading-text-color;
+    }
+    &__custom {
+      width: 64px;
+      height: 64px;
+      fill: rgb(255, 255, 255);
+    }
+  }
+}
+
 g2-chart,
 g2-bar,
 g2-gauge,
@@ -22457,8 +24385,6 @@ g2-bar,
 g2-tag-cloud {
   width: 100%;
 }
-
-@g2-card-prefix: ~'.g2-card';
 
 @{g2-card-prefix} {
   position: relative;
@@ -22525,8 +24451,6 @@ g2-tag-cloud {
   }
 }
 
-@g2-gauge-prefix: ~'.g2-gauge';
-
 @{g2-gauge-prefix} {
   &__desc {
     width: 300px;
@@ -22534,16 +24458,14 @@ g2-tag-cloud {
     text-align: center;
   }
   &__title {
-    color: rgba(0,0,0,0.43);
+    color: rgba(0, 0, 0, 0.43);
     font-size: 14px;
   }
   &__percent {
-    color: rgba(0,0,0,0.85);
+    color: rgba(0, 0, 0, 0.85);
     font-size: 24px;
   }
 }
-
-@g2-mini-progress-prefix: ~'.g2-mini-progress';
 
 @{g2-mini-progress-prefix} {
   position: relative;
@@ -22579,8 +24501,6 @@ g2-tag-cloud {
     }
   }
 }
-
-@g2-pie-prefix: ~'.g2-pie';
 
 @{g2-pie-prefix} {
   position: relative;
@@ -22675,8 +24595,6 @@ g2-tag-cloud {
   }
 }
 
-@g2-radar-prefix: ~'.g2-radar';
-
 @{g2-radar-prefix} {
   display: block;
   &__legend {
@@ -22720,8 +24638,6 @@ g2-tag-cloud {
   }
 }
 
-@g2-water-wave-prefix: ~'.g2-water-wave';
-
 @{g2-water-wave-prefix} {
   position: relative;
   display: inline-block;
@@ -22749,7 +24665,6 @@ g2-tag-cloud {
   }
 }
 
-@number-info-prefix: ~'.number-info';
 @{number-info-prefix} {
   display: block;
   &__title {
@@ -22814,8 +24729,6 @@ g2-tag-cloud {
   }
 }
 
-@trend-prefix: ~'.trend';
-
 @{trend-prefix} {
   display: inline-block;
   font-size: @font-size-base;
@@ -22853,44 +24766,50 @@ g2-tag-cloud {
   }
 }
 
-@alain-default-prefix:                ~'.alain-default';
-@alain-default-zindex:                @zindex-base;
-@alain-default-ease:                  cubic-bezier(.25, 0, .15, 1);
-@alain-default-header-hg:             64px;
-@alain-default-header-bg:             @primary-color;
-@alain-default-header-padding:        @layout-gutter * 2;
+@alain-default-prefix: ~'.alain-default';
+@alain-default-zindex: @zindex-base;
+@alain-default-ease: cubic-bezier(0.25, 0, 0.15, 1);
+@alain-default-header-hg: 64px;
+@alain-default-header-bg: @primary-color;
+@alain-default-header-padding: @layout-gutter * 2;
 @alain-default-header-search-enabled: true;
-@alain-default-header-search-height:  34px;
-@alain-default-header-icon-fs:        18px;
+@alain-default-header-search-height: 34px;
+@alain-default-header-icon-fs: 18px;
 
-@alain-default-aside-wd:                      200px;
-@alain-default-aside-bg:                      #fff;
-@alain-default-aside-scrollbar-width:         0;
-@alain-default-aside-scrollbar-height:        0;
-@alain-default-aside-scrollbar-track-color:   transparent;
-@alain-default-aside-scrollbar-thumb-color:   transparent;
+@alain-default-aside-wd: 200px;
+@alain-default-aside-bg: #fff;
+@alain-default-aside-scrollbar-width: 0;
+@alain-default-aside-scrollbar-height: 0;
+@alain-default-aside-scrollbar-track-color: transparent;
+@alain-default-aside-scrollbar-thumb-color: transparent;
 
-@alain-default-aside-nav-fs:                   14px;
-@alain-default-aside-nav-icon-width:           14px;
-@alain-default-aside-nav-img-wh:               14px;
-@alain-default-aside-nav-padding-top-bottom:   @layout-gutter;
-@alain-default-aside-nav-text-color:           @text-color;
-@alain-default-aside-nav-text-hover-color:     @primary-color;
-@alain-default-aside-nav-group-text-color:     @text-color-secondary;
-@alain-default-aside-nav-selected-text-color:  @primary-color;
-@alain-default-aside-nav-selected-bg:          #fcfcfc;
-@alain-default-aside-nav-item-height:          38px;
-@alain-default-aside-collapsed-wd:             @layout-gutter * 8;
-@alain-default-aside-collapsed-nav-fs:         24px;
-@alain-default-aside-collapsed-nav-img-wh:     24px;
+@alain-default-aside-nav-fs: 14px;
+@alain-default-aside-nav-icon-width: 14px;
+@alain-default-aside-nav-img-wh: 14px;
+@alain-default-aside-nav-padding-top-bottom: @layout-gutter;
+@alain-default-aside-nav-padding-left-right: @layout-gutter * 2;
+@alain-default-aside-nav-text-color: @text-color;
+@alain-default-aside-nav-text-hover-color: @primary-color;
+@alain-default-aside-nav-group-text-color: @text-color-secondary;
+@alain-default-aside-nav-selected-text-color: @primary-color;
+@alain-default-aside-nav-selected-bg: #fcfcfc;
+@alain-default-aside-nav-item-height: 38px;
+@alain-default-aside-nav-depth1-padding-left: @layout-gutter * 3;
+@alain-default-aside-nav-depth2-padding-left: @layout-gutter * 4;
+@alain-default-aside-nav-depth3-padding-left: @layout-gutter * 5;
+@alain-default-aside-nav-depth4-padding-left: @layout-gutter * 6;
 
-@alain-default-content-heading-bg:             #fafbfc;
-@alain-default-content-heading-border:         #efe3e5;
-@alain-default-content-padding:                @layout-gutter * 3;
-@alain-default-content-bg:                     #f5f7fa;
+@alain-default-aside-collapsed-wd: @layout-gutter * 8;
+@alain-default-aside-collapsed-nav-fs: 24px;
+@alain-default-aside-collapsed-nav-img-wh: 24px;
 
-@alain-default-widget-app-icons-enabled:        true;
-@alain-default-aside-user-enabled:              true;
+@alain-default-content-heading-bg: #fafbfc;
+@alain-default-content-heading-border: #efe3e5;
+@alain-default-content-padding: @layout-gutter * 3;
+@alain-default-content-bg: #f5f7fa;
+
+@alain-default-widget-app-icons-enabled: true;
+@alain-default-aside-user-enabled: true;
 
 html {
   height: 100%; // http://updates.html5rocks.com/2013/12/300ms-tap-delay-gone-away
@@ -23284,97 +25203,118 @@ body {
   }
 }
 
-// Main Nav
-@sidebar-nav-prefix-cls: sidebar-nav;
+@sidebar-nav-prefix: ~'.sidebar-nav';
+@sidebar-nav-arrow-width: 10px;
 
-.@{sidebar-nav-prefix-cls} {
+@{sidebar-nav-prefix} {
   display: block;
   margin: 0;
   padding: 0;
   font-size: @alain-default-aside-nav-fs;
+
   &__item {
     position: relative;
     display: flex;
     flex-direction: column;
     border-left: 3px solid transparent;
     transition: border-left-color 0.4s ease;
+
     &-link {
       position: relative;
       display: block;
-      padding: @alain-default-aside-nav-padding-top-bottom @layout-gutter * 2;
+      padding: @alain-default-aside-nav-padding-top-bottom @alain-default-aside-nav-padding-left-right * 2
+        @alain-default-aside-nav-padding-top-bottom @alain-default-aside-nav-padding-left-right;
       overflow: hidden;
       color: @alain-default-aside-nav-text-color;
       white-space: nowrap;
       text-decoration: none !important;
       text-overflow: ellipsis;
       user-select: none;
+
       &:hover {
         color: @alain-default-aside-nav-text-hover-color;
       }
     }
+
     &-icon {
       display: inline-block;
       min-width: @alain-default-aside-nav-icon-width;
       margin-right: @layout-gutter;
       transition: font-size 0.15s @ease-out, margin 0.3s @ease-in-out;
     }
+
     &-img {
       width: @alain-default-aside-nav-img-wh;
       height: @alain-default-aside-nav-img-wh;
     }
+
     &-text {
       opacity: 1;
       transition: opacity 0.3s @ease-in-out, width 0.3s @ease-in-out;
     }
+
     &-disabled {
+      cursor: default;
       opacity: 0.6;
+
       &:hover {
-        color: initial;
+        color: @alain-default-aside-nav-text-color;
       }
     }
   }
+
   // Selected
   &__selected {
     background-color: @alain-default-aside-nav-selected-bg;
     border-left-color: @alain-default-aside-nav-selected-text-color;
-    > .@{sidebar-nav-prefix-cls}__item-link {
+
+    > @{sidebar-nav-prefix}__item-link {
       color: @alain-default-aside-nav-selected-text-color;
     }
   }
+
   // Open Submenu
   &__open {
-    > .@{sidebar-nav-prefix-cls}__sub {
+    > @{sidebar-nav-prefix}__sub {
       display: block;
       animation: fadeIn 0.5s;
     }
-    > .@{sidebar-nav-prefix-cls}__item-link {
-      .@{sidebar-nav-prefix-cls}__sub-arrow {
+
+    > @{sidebar-nav-prefix}__item-link {
+      @{sidebar-nav-prefix}__sub-arrow {
         transform: translateY(-2px);
+
         &::before {
           transform: rotate(45deg) translateX(2px);
         }
+
         &::after {
           transform: rotate(-45deg) translateX(-2px);
         }
       }
     }
   }
+
   &__group-title {
     padding: @alain-default-aside-nav-padding-top-bottom @layout-gutter * 2;
     color: @alain-default-aside-nav-group-text-color;
   }
+
   &__sub {
     display: none;
     overflow: hidden;
-    .@{sidebar-nav-prefix-cls}__item {
+
+    @{sidebar-nav-prefix}__item {
       border-left: 0 !important;
     }
+
     &-arrow {
       position: absolute;
       top: 50%;
-      right: @layout-gutter * 2;
-      width: 10px;
+      right: @alain-default-aside-nav-padding-left-right;
+      width: @sidebar-nav-arrow-width;
       transition: transform 0.3s @ease-in-out;
+
       &::before,
       &::after {
         position: absolute;
@@ -23386,52 +25326,61 @@ body {
         transition: background 0.3s @ease-in-out, transform 0.3s @ease-in-out, top 0.3s @ease-in-out;
         content: '';
       }
+
       &::before {
         transform: rotate(-45deg) translateX(2px);
       }
+
       &::after {
         transform: rotate(45deg) translateX(-2px);
       }
     }
   }
+
   // Badge
   .badge {
     position: absolute;
     right: @layout-gutter * 2;
     @badge-height: @layout-gutter * 2;
+
     &:not(.badge-dot) {
       top: (@alain-default-aside-nav-item-height - @badge-height) / 2;
-      width: @badge-height;
       height: @badge-height;
-      padding: 0;
+      padding: 0 4px;
       overflow: hidden;
       line-height: @badge-height;
     }
+
     &-dot {
       top: (@alain-default-aside-nav-item-height - @layout-gutter) / 2;
     }
   }
+
   // Dept
   &__depth1 {
-    .@{sidebar-nav-prefix-cls}__item-link {
-      padding-left: (@layout-gutter * 3) + @alain-default-aside-nav-icon-width;
+    @{sidebar-nav-prefix}__item-link {
+      padding-left: @alain-default-aside-nav-depth1-padding-left + @alain-default-aside-nav-icon-width;
     }
   }
+
   &__depth2 {
-    .@{sidebar-nav-prefix-cls}__item-link {
-      padding-left: (@layout-gutter * 4) + @alain-default-aside-nav-icon-width;
+    @{sidebar-nav-prefix}__item-link {
+      padding-left: @alain-default-aside-nav-depth2-padding-left + @alain-default-aside-nav-icon-width;
     }
   }
+
   &__depth3 {
-    .@{sidebar-nav-prefix-cls}__item-link {
-      padding-left: (@layout-gutter * 5) + @alain-default-aside-nav-icon-width;
+    @{sidebar-nav-prefix}__item-link {
+      padding-left: @alain-default-aside-nav-depth3-padding-left + @alain-default-aside-nav-icon-width;
     }
   }
+
   &__depth4 {
-    .@{sidebar-nav-prefix-cls}__item-link {
-      padding-left: (@layout-gutter * 6) + @alain-default-aside-nav-icon-width;
+    @{sidebar-nav-prefix}__item-link {
+      padding-left: @alain-default-aside-nav-depth4-padding-left + @alain-default-aside-nav-icon-width;
     }
   }
+
   // Floating
   &__floating {
     position: absolute;
@@ -23441,33 +25390,40 @@ body {
     background-color: @alain-default-aside-bg;
     border: 1px solid @alain-default-content-heading-border;
     border-radius: 4px;
-    .@{sidebar-nav-prefix-cls}__item {
+
+    @{sidebar-nav-prefix}__item {
       &-link {
         padding-left: @layout-gutter * 2;
       }
     }
+
     &-show {
       display: block;
     }
-    .@{sidebar-nav-prefix-cls}__sub {
+
+    @{sidebar-nav-prefix}__sub {
       display: block;
+
       &-arrow {
         display: none;
       }
     }
+
     // Dept
-    .@{sidebar-nav-prefix-cls}__depth2 {
-      .@{sidebar-nav-prefix-cls}__item-link {
+    @{sidebar-nav-prefix}__depth2 {
+      @{sidebar-nav-prefix}__item-link {
         padding-left: @layout-gutter * 3;
       }
     }
-    .@{sidebar-nav-prefix-cls}__depth3 {
-      .@{sidebar-nav-prefix-cls}__item-link {
+
+    @{sidebar-nav-prefix}__depth3 {
+      @{sidebar-nav-prefix}__item-link {
         padding-left: @layout-gutter * 4;
       }
     }
-    .@{sidebar-nav-prefix-cls}__depth4 {
-      .@{sidebar-nav-prefix-cls}__item-link {
+
+    @{sidebar-nav-prefix}__depth4 {
+      @{sidebar-nav-prefix}__item-link {
         padding-left: @layout-gutter * 5;
       }
     }
@@ -23476,34 +25432,41 @@ body {
 
 @media (min-width: @mobile-min) {
   @{alain-default-prefix}__collapsed {
-    .@{sidebar-nav-prefix-cls}:not(.@{sidebar-nav-prefix-cls}__sub) {
-      .@{sidebar-nav-prefix-cls}__item {
+    @{sidebar-nav-prefix}:not(@{sidebar-nav-prefix}__sub) {
+      @{sidebar-nav-prefix}__item {
         border: none;
+
         &-link {
           display: flex;
           justify-content: center;
           padding: (@layout-gutter * 3) 0;
-          .@{sidebar-nav-prefix-cls}__item-icon {
+
+          @{sidebar-nav-prefix}__item-icon {
             margin-right: 0;
             font-size: @alain-default-aside-collapsed-nav-fs;
           }
-          .@{sidebar-nav-prefix-cls}__item-img {
+
+          @{sidebar-nav-prefix}__item-img {
             width: @alain-default-aside-collapsed-nav-img-wh;
             height: @alain-default-aside-collapsed-nav-img-wh;
           }
-          .@{sidebar-nav-prefix-cls}__item-text {
+
+          @{sidebar-nav-prefix}__item-text {
             display: none;
             opacity: 0;
           }
         }
       }
-      .@{sidebar-nav-prefix-cls}__group-title {
+
+      @{sidebar-nav-prefix}__group-title {
         display: none;
       }
     }
-    .@{sidebar-nav-prefix-cls} {
+
+    @{sidebar-nav-prefix} {
       &__sub {
         display: none !important;
+
         &-arrow {
           display: none;
         }
@@ -23653,23 +25616,26 @@ body {
 }
 .alain-default-widget-app-icons-mixin(@alain-default-widget-app-icons-enabled);
 
-@alain-default-user-block-width: @alain-default-aside-wd - (@layout-gutter * 6);
+@alain-default-user-block-margin: @layout-gutter * 3;
 @alain-default-user-block-avatar-hw: @avatar-size-lg;
 
 .alain-default-aside-user-mixin(@enabled) when(@enabled=true) {
   @{alain-default-prefix}__aside-user {
-    display: block !important;
-    width: @alain-default-user-block-width;
-    margin: 0 auto;
-    padding-top: (@layout-gutter * 3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: @alain-default-user-block-margin @alain-default-user-block-margin 0 @alain-default-user-block-margin;
     cursor: pointer;
     .@{ant-prefix}-dropdown-trigger {
       display: flex;
       align-items: center;
     }
     &-info {
-      width: @alain-default-user-block-width - @alain-default-user-block-avatar-hw - @layout-gutter;
+      flex: 1;
+      overflow: hidden;
       color: @text-color;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
     &-avatar {
       margin-right: @layout-gutter;
@@ -23681,6 +25647,7 @@ body {
     @{alain-default-prefix}__collapsed {
       @{alain-default-prefix}__aside-user {
         width: @alain-default-aside-collapsed-wd;
+        margin-left: 0;
         &-info {
           display: none;
         }
