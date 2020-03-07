@@ -99,7 +99,7 @@ export class EventComplexEventListComponent implements OnInit {
       }
     }
   };
-  @ViewChild('st') st: STComponent;
+  @ViewChild('st', { static: true }) st: STComponent;
   columns: STColumn[] = [
     {title: '序号', type: 'no'},
     {title: 'id', index: 'id', iif: () => false},
@@ -121,7 +121,7 @@ export class EventComplexEventListComponent implements OnInit {
       ]
     }
   ];
-  @ViewChild('metast') metast: STComponent;
+  @ViewChild('metast', { static: true }) metast: STComponent;
   metaColumns: STColumn[] = [
     {title: '序号', type: 'no'},
     {title: 'id', index: 'id', iif: () => false},
@@ -136,7 +136,7 @@ export class EventComplexEventListComponent implements OnInit {
       ]
     }
   ];
-  @ViewChild('attributest') attributest: STComponent;
+  @ViewChild('attributest', { static: true }) attributest: STComponent;
   attributeColumns: STColumn[] = [
     {title: '序号', type: 'no'},
     {title: 'id', index: 'id', iif: () => false},
@@ -151,7 +151,7 @@ export class EventComplexEventListComponent implements OnInit {
       ]
     }
   ];
-  @ViewChild('targetst') targetst: STComponent;
+  @ViewChild('targetst', { static: true }) targetst: STComponent;
   targetColumns: STColumn[] = [
     {title: '序号', type: 'no'},
     {title: 'id', index: 'id', iif: () => false},

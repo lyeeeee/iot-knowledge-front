@@ -50,7 +50,7 @@ export class EventMetaEventListComponent implements OnInit {
       }
     }
   };
-  @ViewChild('st') st: STComponent;
+  @ViewChild('st', { static: true }) st: STComponent;
   columns: STColumn[] = [
     {title: '序号', type: 'no'},
     {title: 'id', index: 'id', iif: () => false},
@@ -66,7 +66,7 @@ export class EventMetaEventListComponent implements OnInit {
       ]
     }
   ];
-  @ViewChild('relationst') relationst: STComponent;
+  @ViewChild('relationst', { static: true }) relationst: STComponent;
   relationColumns: STColumn[] = [
     {title: '序号', type: 'no'},
     {title: 'id', index: 'id', iif: () => false},

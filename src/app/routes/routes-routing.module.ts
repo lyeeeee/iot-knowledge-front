@@ -24,10 +24,10 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent, data: { title: '仪表盘' } },
-      { path: 'exception', loadChildren: './exception/exception.module#ExceptionModule' },
+      { path: 'exception', loadChildren: () => import('./exception/exception.module').then(m => m.ExceptionModule) },
       // 业务子模块
-      { path: 'knowledge', loadChildren: './knowledge/knowledge.module#KnowledgeModule' },
-      { path: 'event', loadChildren: './event/event.module#EventModule' }
+      { path: 'knowledge', loadChildren: () => import('./knowledge/knowledge.module').then(m => m.KnowledgeModule) },
+      { path: 'event', loadChildren: () => import('./event/event.module').then(m => m.EventModule) }
     ]
   },
   // 全屏布局

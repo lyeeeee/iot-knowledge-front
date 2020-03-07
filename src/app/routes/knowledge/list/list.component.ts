@@ -61,7 +61,7 @@ export class KnowledgeListComponent implements OnInit {
       },
     }
   };
-  @ViewChild('st') st: STComponent;
+  @ViewChild('st', { static: true }) st: STComponent;
   columns: STColumn[] = [
     {title: '序号', type: 'no'},
     {title: '知识名称', index: 'name'},

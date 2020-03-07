@@ -31,7 +31,7 @@ export class KnowledgeFieldListComponent implements OnInit {
       }
     }
   };
-  @ViewChild('st') st: STComponent;
+  @ViewChild('st', { static: true }) st: STComponent;
   columns: STColumn[] = [
     {title: '序号', type: 'no'},
     {title: 'id', index: 'id',iif:() => false},
