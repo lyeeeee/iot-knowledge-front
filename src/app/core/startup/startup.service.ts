@@ -177,7 +177,29 @@ export class StartupService {
               //   link: '/event/test'
               // }
               ]
-          }
+          }, {
+            text: '知识管理',
+            icon: {type: 'icon', value: 'book'},
+            shortcutRoot: true,
+            children: [
+              {
+                text: '知识管理列表',
+                link: '/knowledge/knowledge-manage'
+              }, {
+                text: '目录管理',
+                icon: {type: 'icon', value: 'book'},
+                children: [{
+                  text: '领域管理',
+                  link: '/knowledge/fieldList'
+                }, {
+                  text: '部门管理',
+                  link: '/knowledge/departmentList'
+                }, {
+                  text: '元知识管理',
+                  link: '/knowledge/metaCatalogueList'
+                }]
+            }]
+          },
         ]
       }
     ]);
