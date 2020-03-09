@@ -3,7 +3,10 @@ import { _HttpClient, ModalHelper } from '@delon/theme';
 import { NzContextMenuService, NzDropdownMenuComponent } from 'ng-zorro-antd/dropdown';
 import {NzFormatEmitEvent, NzTreeNode, NzTreeNodeOptions} from 'ng-zorro-antd/core';
 import {DirectoryService} from "../../../directory.service";
-import {DirectoryDTO, JsonResponse} from "../directory";
+import {DirectoryDTO, DirectoryNode, JsonResponse} from "../directory";
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {error} from "selenium-webdriver";
 
 
 @Component({
@@ -12,9 +15,15 @@ import {DirectoryDTO, JsonResponse} from "../directory";
   styleUrls: ['./knowledgedir-manage.component.css'],
 })
 export class KnowledgeKnowledgedirManageComponent implements OnInit {
-
+  isVisiable:boolean = false;
+  /**
+   * 对目录的操作
+   * */
+  option: string = null;
+  form: FormGroup
   // actived node
   activedNode: NzTreeNode;
+  dropDownMenuNodeText: string;
   nodes = [
     {
       title: 'parent 0',
@@ -54,19 +63,31 @@ export class KnowledgeKnowledgedirManageComponent implements OnInit {
   }
 
   contextMenu($event: MouseEvent, menu: NzDropdownMenuComponent): void {
-    this.nzContextMenuService.create($event, menu);
-  }
-
-  selectDropdown(): void {
-    // do something
+    this.dropDownMenuNodeText = $event['path'][0].innerText;
+    if (this.dropDownMenuNodeText == null ||
+        this.activedNode == null ||
+      (this.dropDownMenuNodeText != this.activedNode.title)) {
+      this.notification.blank(
+        'Alert',
+        '请先左键选中之后，再进行目录添加/删除操作.'
+      );
+    } else {
+      this.nzContextMenuService.create($event, menu);
+    }
+    this.dropDownMenuNodeText = null;
   }
 
   constructor(
     private nzContextMenuService: NzContextMenuService,
-    private directoryService: DirectoryService,) {}
+    private directoryService: DirectoryService,
+    private notification: NzNotificationService,
+    private fb: FormBuilder,) {}
 
   ngOnInit(): void {
     this.getDirectoryNodeData();
+    this.form = this.fb.group({
+      name: [null, [Validators.required]],
+    });
   }
 
   getDirectoryNodeData() {
@@ -79,6 +100,61 @@ export class KnowledgeKnowledgedirManageComponent implements OnInit {
 
       });
   }
+
+  /**
+   *结点操作
+   * */
+  selectDropdown(event: MouseEvent){
+    this.option = event.target['innerText'];
+    if (this.option == '新建同级目录' || this.option == '新建子级目录') {
+      this.isVisiable = true;
+    }
+  }
+
+  /**
+   * 新增结点操作
+   * */
+  submit() {
+    let dirName: string = this.form.value.name;
+    let dirNode = {
+      id: null,
+      nName:dirName,
+      attr:"",
+      owner: "knowledge_class",
+      value: dirName,
+      parentId:-1,
+    };
+    if (this.option == '新建同级目录') {
+      if (this.activedNode.getParentNode() == null) {
+        dirNode.parentId = 11;
+      } else {
+        dirNode.parentId = Number.parseInt(this.activedNode.getParentNode().key);
+      }
+    } else if (this.option == '新建子级目录') {
+      dirNode.parentId = Number.parseInt(this.activedNode.key);
+    }
+    this.directoryService.createNode(dirNode).subscribe(data=> {
+      this.getDirectoryNodeData();
+    });
+    this.handleCancel();
+  }
+  /**
+   * 删除目录
+   * */
+  private confirmDelete(): void {
+    this.directoryService.dropNode(this.activedNode).subscribe(data => {
+      this.getDirectoryNodeData();
+    });
+  }
+  /**
+   * 点击取消按钮
+   * */
+  handleCancel(): void {
+    this.isVisiable = false;
+    this.option = null;
+    this.form.reset();
+  }
+
 
   private generateDataStructure(data: DirectoryDTO[], nzNodes) {
     if (data == null || data.length == 0){

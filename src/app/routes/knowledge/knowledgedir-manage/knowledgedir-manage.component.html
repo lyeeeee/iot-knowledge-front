@@ -10,7 +10,7 @@
 ></nz-tree>
 <ng-template #nzTreeTemplate let-node>
       <span class="custom-node" [class.active]="activedNode?.key === node.key">
-        <span *ngIf="!node.isLeaf" (contextmenu)="contextMenu($event, menu)">
+        <span *ngIf="!node.isLeaf" (contextmenu)="contextMenu($event,menu)">
           <i nz-icon [nzType]="node.isExpanded ? 'folder-open' : 'folder'" (click)="openFolder(node)"></i>
           <span class="folder-name">{{ node.title }}</span>
           <span class="folder-desc">created by {{ node?.origin?.author | lowercase }}</span>
@@ -24,8 +24,30 @@
 </ng-template>
 <nz-dropdown-menu #menu="nzDropdownMenu">
   <ul nz-menu>
-    <li nz-menu-item (click)="selectDropdown()">新建同级目录</li>
-    <li nz-menu-item (click)="selectDropdown()">新建子级目录</li>
-    <li nz-menu-item (click)="selectDropdown()">删除目录</li>
+    <li nz-menu-item (click)="selectDropdown($event)">新建同级目录</li>
+    <li nz-menu-item (click)="selectDropdown($event)">新建子级目录</li>
+    <li nz-menu-item (click)="selectDropdown($event)">
+      <a nz-popconfirm nzPopconfirmTitle="确定删除吗?这会删除所有子目录"
+         [nzIcon]="iconTpl" (nzOnConfirm)="confirmDelete()">删除目录</a>
+    </li>
   </ul>
 </nz-dropdown-menu>
+
+<ng-template #iconTpl>
+  <i nz-icon nzType="question-circle-o" style="color: red;"></i>
+</ng-template>
+<nz-modal
+  [(nzVisible)]="isVisiable"
+  nzTitle="新增目录结构"
+  (nzOnCancel)="handleCancel()"
+  nzFooter=" "
+>
+  <form nz-form [formGroup]="form" se-container="1">
+    <se label="目录名称" error="请输入目录名称" required>
+      <input nz-input formControlName="name" placeholder="请输入目录名称"/>
+    </se>
+    <se>
+      <button nz-button nzType="primary" (click)="submit()">提交</button>
+    </se>
+  </form>
+</nz-modal>
