@@ -15,36 +15,43 @@ import {error} from "selenium-webdriver";
   styleUrls: ['./knowledgedir-manage.component.css'],
 })
 export class KnowledgeKnowledgedirManageComponent implements OnInit {
-  isVisiable:boolean = false;
   /**
-   * 对目录的操作
+   * 表单是否可见
+   * */
+  visual:boolean = false;
+  /**
+   * 对目录的操作，增加同级目录或子目录
    * */
   option: string = null;
+  /**
+   * 添加目录的表单
+   * */
   form: FormGroup
-  // actived node
+  /**
+   * 当前选中结点
+   * */
   activedNode: NzTreeNode;
+  /**
+   * 触发下拉菜单的结点数据值
+   * */
   dropDownMenuNodeText: string;
-  nodes = [
-    {
-      title: 'parent 0',
-      key: '100',
-      author: 'admin',
-      expanded: true,
-      children: [
-        { title: 'leaf 0-0', key: '1000', author: 'admin', isLeaf: true },
-        { title: 'leaf 0-1', key: '1001', author: 'admin', isLeaf: true }
-      ]
-    },
-    {
-      title: 'parent 1',
-      key: '101',
-      author: 'admin',
-      children: [
-        { title: 'leaf 1-0', key: '1010', author: 'admin', isLeaf: true },
-        { title: 'leaf 1-1', key: '1011', author: 'admin', isLeaf: true }
-      ]
-    }
-  ];
+  /**
+   * 目录树结点数据
+   * */
+  nodes = [];
+
+  constructor(
+    private nzContextMenuService: NzContextMenuService,
+    private directoryService: DirectoryService,
+    private notification: NzNotificationService,
+    private fb: FormBuilder,) {}
+
+  ngOnInit(): void {
+    this.getDirectoryNodeData();
+    this.form = this.fb.group({
+      name: [null, [Validators.required]],
+    });
+  }
 
   openFolder(data: NzTreeNode | Required<NzFormatEmitEvent>): void {
     // do something if u want
@@ -76,21 +83,10 @@ export class KnowledgeKnowledgedirManageComponent implements OnInit {
     }
     this.dropDownMenuNodeText = null;
   }
-
-  constructor(
-    private nzContextMenuService: NzContextMenuService,
-    private directoryService: DirectoryService,
-    private notification: NzNotificationService,
-    private fb: FormBuilder,) {}
-
-  ngOnInit(): void {
-    this.getDirectoryNodeData();
-    this.form = this.fb.group({
-      name: [null, [Validators.required]],
-    });
-  }
-
-  getDirectoryNodeData() {
+  /**
+   * 获取所有目录数据
+   * */
+  private getDirectoryNodeData(): void {
     this.directoryService.getAllDirecotory()
       .subscribe(data => {
         let response: JsonResponse = data;
@@ -107,14 +103,14 @@ export class KnowledgeKnowledgedirManageComponent implements OnInit {
   selectDropdown(event: MouseEvent){
     this.option = event.target['innerText'];
     if (this.option == '新建同级目录' || this.option == '新建子级目录') {
-      this.isVisiable = true;
+      this.visual = true;
     }
   }
 
   /**
    * 新增结点操作
    * */
-  submit() {
+  private submit(): void{
     let dirName: string = this.form.value.name;
     let dirNode = {
       id: null,
@@ -149,8 +145,8 @@ export class KnowledgeKnowledgedirManageComponent implements OnInit {
   /**
    * 点击取消按钮
    * */
-  handleCancel(): void {
-    this.isVisiable = false;
+  private handleCancel(): void {
+    this.visual = false;
     this.option = null;
     this.form.reset();
   }

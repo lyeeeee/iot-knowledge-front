@@ -203,7 +203,7 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
   }
 
 //TODO 知识导入、删除、知识图谱
-  addNewKnowledge(item) {
+  addNewKnowledge() {
     // this.modal
     //   .createStatic(FormEditComponent, { i: { id: 0 } })
     //   .subscribe(() => this.st.reload());
@@ -329,7 +329,6 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
 
   handleMetaDir(subDir:DirectoryDTO[], metaDir: SFSchemaEnum[]): void {
     this.handleMetaDirHelper(subDir, metaDir);
-    //console.log(this.metaDirSchema.properties.static.enum);
     this.metaDirSchema.properties.static.enum = this.metaDir;
   }
 
@@ -338,8 +337,6 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
       return;
     }
     else {
-      console.log(this.metaDir);
-      console.log(cur);
       for (let i = 0;i < cur.length; ++i) {
         if (cur[i].child == null || cur[i].child.length == 0) {
           metaDir.push({label: cur[i].cur.value, value: cur[i].cur.id, isLeaf: true});
