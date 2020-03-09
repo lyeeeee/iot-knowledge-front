@@ -11,6 +11,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {NzMessageService, NzModalService, NzNotificationService, UploadFile} from "ng-zorro-antd";
 import {HttpClient} from "@angular/common/http";
 import {DirectoryDTO, DirectoryNode} from "../directory";
+import {DirectoryService} from "../../../directory.service";
 
 @Component({
   selector: 'app-knowledge-knowledge-manage',
@@ -146,7 +147,8 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
               private fb: FormBuilder,
               private modalService: NzModalService,
               private notification: NzNotificationService,
-              private msg: NzMessageService,) {
+              private msg: NzMessageService,
+              private directoryService: DirectoryService,) {
   }
 
   ngOnInit() {
@@ -282,7 +284,7 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
    * 获取所有的领域部门和元目录信息
    * */
   getAllDirecotory() {
-    this.http.get('api/directory/getAllDirectory', {'owner': 'knowledge_class'})
+    this.directoryService.getAllDirecotory()
       .subscribe(data => {
         this.allDirectoryInfo = data['data'];
         this.fillSearchItems(this.allDirectoryInfo);
