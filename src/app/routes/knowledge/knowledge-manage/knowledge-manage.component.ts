@@ -8,14 +8,18 @@ import {
   SFSelectWidgetSchema
 } from '@delon/form';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {NzMessageService, NzModalService, NzNotificationService, UploadFile} from "ng-zorro-antd";
+import {NzCascaderOption, NzMessageService, NzModalService, NzNotificationService, UploadFile} from "ng-zorro-antd";
 import {HttpClient} from "@angular/common/http";
 import {DirectoryDTO, DirectoryNode} from "../directory";
 import {DirectoryService} from "../../../directory.service";
 
+
+
+
 @Component({
   selector: 'app-knowledge-knowledge-manage',
   templateUrl: './knowledge-manage.component.html',
+  styleUrls: ['./knowledge-manage.component.css'],
 })
 export class KnowledgeKnowledgeManageComponent implements OnInit {
 
@@ -26,6 +30,14 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
 
   @ViewChild('st', { static: true }) st: STComponent;
 
+  /**
+   * 存储目录信息
+   * */
+  allDirectoryInfo: DirectoryDTO;
+  /**
+   * 是否显示导入知识弹出框
+   * */
+  uploadVisible = false;//是否显示新增弹出框
   list: any[] = [];
   name: string = '';//知识名称
   field_name: string = '';//所属领域名称
@@ -33,7 +45,7 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
   meta_catalogue_name: string = '';//所属元目录名称
   MetaList: any[] = [];//存放所有元目录
 
-  isVisible = false;//是否显示新增弹出框
+
   sparqlVisible = false;//是否显示sparql弹出框
   resultTable = [{s: '请输入sparQL查询 ', p: ' ', o: ' '}];//sparql查询结果
   displayResult = false;//sparql查询结果是否显示
@@ -41,10 +53,7 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
   form: FormGroup;
   uploading = false;
 
-  /**
-   * 存储目录信息
-   * */
-  allDirectoryInfo: DirectoryDTO;
+
   fieldDir: SFSchemaEnum[] = [];
   departmentDir: SFSchemaEnum[] = [];
   metaDir: SFSchemaEnum[] = [];
@@ -64,6 +73,9 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
     }
   };
 
+  /**
+   * 搜索栏data
+   * */
   knowledgeSchema: SFSchema = {
     ui: {
       width: 200,
@@ -125,6 +137,17 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
     },
   };
 
+
+  /**
+   * 表单级联选择
+   * */
+  options = [];
+  nzOptions: NzCascaderOption[] = this.options;
+  //values: string[] | null = null;
+
+  onChanges(values: string[]): void {
+    //console.log(values, this.values);
+  }
 
   columns: STColumn[] = [
     {title: '序号', type: 'no'},
@@ -204,6 +227,7 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
 
 //TODO 知识导入、删除、知识图谱
   addNewKnowledge() {
+    this.uploadVisible = true;
     // this.modal
     //   .createStatic(FormEditComponent, { i: { id: 0 } })
     //   .subscribe(() => this.st.reload());
@@ -212,13 +236,12 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
 
 //新增弹出框
   add() {
-    this.isVisible = true;
+    this.uploadVisible = true;
   }
 
-//点击取消按钮
+  //点击取消按钮
   handleCancel(): void {
-    this.isVisible = false;//新增弹出框
-    // this.metaEventForm.value.name = null;
+    this.uploadVisible = false;//新增弹出框
     this.form = this.fb.group({//表单内容
       name: [null, [Validators.required]],
       selectMeta: [null, [Validators.required]],
@@ -244,7 +267,7 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
     });
     this.uploading = true;
     this.http.post('api/knowledge/infoList/insertToGraphdb', formData).subscribe(data => {
-      this.isVisible = false;
+      this.uploadVisible = false;
       this.uploading = false;
       this.getList();
     })
@@ -283,15 +306,21 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
   /**
    * 获取所有的领域部门和元目录信息
    * */
-  getAllDirecotory() {
+  private getAllDirecotory(): void{
     this.directoryService.getAllDirecotory()
       .subscribe(data => {
         this.allDirectoryInfo = data['data'];
         this.fillSearchItems(this.allDirectoryInfo);
+        this.options = [];
+        this.handleOptions(this.allDirectoryInfo.child, this.options);
+        this.nzOptions = this.options;
       });
   }
 
-  fillSearchItems(dir: DirectoryDTO): void {
+  /**
+   * 填充搜索栏
+   * */
+  private fillSearchItems(dir: DirectoryDTO): void {
     let tmpDir:DirectoryDTO = dir;
     let queue:DirectoryDTO[] = [];
     let cnt:number = 0;
@@ -320,19 +349,41 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
     this.fieldSchema.properties.field.enum = this.fieldDir;
     this.departmentSchema.properties.department.enum = this.departmentDir;
     // 处理元目录
-    console.log(subDir);
     this.handleMetaDir(subDir, this.metaDir);
     this.sfField.refreshSchema();
     this.sfDeparment.refreshSchema();
     this.sfMetaDir.refreshSchema();
   }
 
-  handleMetaDir(subDir:DirectoryDTO[], metaDir: SFSchemaEnum[]): void {
+  /**
+   * 填充表单级联目录
+   * */
+  private handleOptions(dir: DirectoryDTO[], op:NzCascaderOption[]) : void{
+    if (dir == null || dir.length == 0){
+      return;
+    }
+    else {
+      console.log(op);
+      for (let i = 0;i < dir.length; ++i) {
+        if (dir[i].child == null || dir[i].child.length == 0) {
+          op.push({ value: dir[i].cur.id,label: dir[i].cur.value, isLeaf: true});
+        } else {
+          op.push({value: dir[i].cur.id, label: dir[i].cur.value, children:[]});
+        }
+        this.handleOptions(dir[i].child, op[i].children);
+      }
+    }
+  }
+
+  /**
+   * 填充搜索栏，元目录
+   * */
+  private handleMetaDir(subDir:DirectoryDTO[], metaDir: SFSchemaEnum[]): void {
     this.handleMetaDirHelper(subDir, metaDir);
     this.metaDirSchema.properties.static.enum = this.metaDir;
   }
 
-  handleMetaDirHelper(cur: DirectoryDTO[], metaDir): void {
+  private handleMetaDirHelper(cur: DirectoryDTO[], metaDir): void {
     if (cur == null || cur.length == 0){
       return;
     }

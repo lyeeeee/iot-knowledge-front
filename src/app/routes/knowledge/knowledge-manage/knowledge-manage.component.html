@@ -21,27 +21,31 @@
   <st #st [data]="list" [columns]="columns"></st>
 </nz-card>
 <nz-modal
-  [(nzVisible)]="isVisible"
+  [(nzVisible)]="uploadVisible"
   nzTitle="新增知识"
   (nzOnCancel)="handleCancel()"
   nzFooter=" "
 >
   <form nz-form [formGroup]="form" se-container="1">
-    <se label="所属元目录" error="请选择所属元目录" required>
-      <nz-select formControlName="selectMeta" [nzPlaceHolder]="'请选择所属元目录'" [nzShowSearch]="true">
-        <nz-option *ngFor="let i of MetaList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
-      </nz-select>
+    <se label="所属领域目录" error="请选择所属领域目录" required>
+      <nz-cascader
+        [nzTriggerAction]="'hover'"
+        [nzExpandTrigger]="'hover'"
+        [nzOptions]="nzOptions"
+        (ngModelChange)="onChanges($event)"
+      >
+      </nz-cascader>
     </se>
-    <se label="知识名称" error="请输入知识名称" required>
-      <input nz-input formControlName="name" placeholder="请输入知识名称"/>
+    <se label="知识模型名称" error="请输入知识模型名称" required>
+      <input nz-input formControlName="name" placeholder="请输入知识模型名称"/>
     </se>
     <se label="知识图名称" error="请输入知识图名称" required>
       http://<input nz-input formControlName="graphName" placeholder="请输入知识图名称" style="width: 87%;"/>
     </se>
-    <se label="知识简介" error="请输入知识简介">
-      <input nz-input formControlName="knowledgeSynopsis" placeholder="请输入知识简介"/>
+    <se label="知识模型简介" error="请输入知识模型简介">
+      <input nz-input formControlName="knowledgeSynopsis" placeholder="请输入知识模型简介"/>
     </se>
-    <se label="上传知识" required>
+    <se label="上传知识模型" required>
       <nz-upload [(nzFileList)]="fileList" [nzBeforeUpload]="beforeUpload">
         <button nz-button><i nz-icon nzType="upload"></i><span>点击选择</span></button>
       </nz-upload>
