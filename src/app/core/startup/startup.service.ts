@@ -206,11 +206,11 @@ export class StartupService {
                   },
                   {
                     text: '原子事件管理',
-                    link: '/knowledge/metaevent-manage',
+                    link: '/event/metaevent-manage',
                   },
                   {
                     text: '复杂事件管理',
-                    link: '/knowledge/complexevent-manage',
+                    link: '/event/complexevent-manage',
                   },
                 ],
               },

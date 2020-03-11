@@ -6,8 +6,6 @@ import { KnowledgeDepartmentListComponent } from './department-list/department-l
 import { KnowledgeMetaCatalogueListComponent } from './meta-catalogue-list/meta-catalogue-list.component';
 import { KnowledgeKnowledgeManageComponent } from './knowledge-manage/knowledge-manage.component';
 import { KnowledgeKnowledgedirManageComponent } from './knowledgedir-manage/knowledgedir-manage.component';
-import { KnowledgeMetaeventManageComponent } from './metaevent-manage/metaevent-manage.component';
-import { KnowledgeComplexeventManageComponent } from './complexevent-manage/complexevent-manage.component';
 
 const routes: Routes = [
 
@@ -16,9 +14,7 @@ const routes: Routes = [
   { path: 'departmentList', component: KnowledgeDepartmentListComponent },
   { path: 'metaCatalogueList', component: KnowledgeMetaCatalogueListComponent },
   { path: 'knowledge-manage', component: KnowledgeKnowledgeManageComponent },
-  { path: 'knowledgedir-manage', component: KnowledgeKnowledgedirManageComponent },
-  { path: 'metaevent-manage', component: KnowledgeMetaeventManageComponent },
-  { path: 'complexevent-manage', component: KnowledgeComplexeventManageComponent }];
+  { path: 'knowledgedir-manage', component: KnowledgeKnowledgedirManageComponent },];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

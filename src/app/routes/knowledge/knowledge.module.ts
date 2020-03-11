@@ -8,8 +8,6 @@ import { KnowledgeDepartmentListComponent } from './department-list/department-l
 import { KnowledgeMetaCatalogueListComponent } from './meta-catalogue-list/meta-catalogue-list.component';
 import { KnowledgeKnowledgeManageComponent } from './knowledge-manage/knowledge-manage.component';
 import { KnowledgeKnowledgedirManageComponent } from './knowledgedir-manage/knowledgedir-manage.component';
-import { KnowledgeMetaeventManageComponent } from './metaevent-manage/metaevent-manage.component';
-import { KnowledgeComplexeventManageComponent } from './complexevent-manage/complexevent-manage.component';
 
 const COMPONENTS = [
   KnowledgeListComponent,
@@ -17,9 +15,7 @@ const COMPONENTS = [
   KnowledgeDepartmentListComponent,
   KnowledgeMetaCatalogueListComponent,
   KnowledgeKnowledgeManageComponent,
-  KnowledgeKnowledgedirManageComponent,
-  KnowledgeMetaeventManageComponent,
-  KnowledgeComplexeventManageComponent];
+  KnowledgeKnowledgedirManageComponent,];
 const COMPONENTS_NOROUNT = [];
 
 @NgModule({

@@ -11,6 +11,7 @@ import { UserRegisterResultComponent } from './passport/register-result/register
 // single pages
 import { CallbackComponent } from './callback/callback.component';
 import { UserLockComponent } from './passport/lock/lock.component';
+import {DatePipe} from "@angular/common";
 
 const COMPONENTS = [
   DashboardComponent,
@@ -30,6 +31,7 @@ const COMPONENTS_NOROUNT = [];
     ...COMPONENTS,
     ...COMPONENTS_NOROUNT
   ],
+  providers: [DatePipe],
   entryComponents: COMPONENTS_NOROUNT
 })
 export class RoutesModule {}

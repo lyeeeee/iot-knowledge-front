@@ -4,17 +4,21 @@ import { EventRoutingModule } from './event-routing.module';
 import { EventMetaEventListComponent } from './meta-event-list/meta-event-list.component';
 import { EventComplexEventListComponent } from './complex-event-list/complex-event-list.component';
 import { EventTestComponent } from './test/test.component';
+import { EventMetaeventManageComponent } from './metaevent-manage/metaevent-manage.component';
+import { EventComplexeventManageComponent } from './complexevent-manage/complexevent-manage.component';
 
 const COMPONENTS = [
   EventMetaEventListComponent,
   EventComplexEventListComponent,
-  EventTestComponent];
+  EventTestComponent,
+  EventMetaeventManageComponent,
+  EventComplexeventManageComponent];
 const COMPONENTS_NOROUNT = [];
 
 @NgModule({
   imports: [
     SharedModule,
-    EventRoutingModule
+    EventRoutingModule,
   ],
   declarations: [
     ...COMPONENTS,
