@@ -234,7 +234,7 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
     // alert(item.id);
   }
 
-//新增弹出框
+  //新增弹出框
   add() {
     this.uploadVisible = true;
   }
@@ -274,8 +274,9 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
   }
 
   submit() {
-    // console.log(this.form.value);
-    this.http.post('api/knowledge/infoList/insertToMysql', {
+    console.log(this.fileList);
+    console.log(this.form.value.selectMeta);
+    this.http.post('api/knowledge/upload', {
       metaId: this.form.value.selectMeta,
       name: this.form.value.name,
       graphName: 'http://' + this.form.value.graphName,
@@ -284,8 +285,8 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
       if (data.success) {
         this.handleUpload()
       }
-      // this.isVisible = false;
-      // this.getList();
+      this.uploadVisible = false;
+      this.getList();
     })
   }
 
@@ -363,14 +364,13 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
       return;
     }
     else {
-      console.log(op);
       for (let i = 0;i < dir.length; ++i) {
-        if (dir[i].child == null || dir[i].child.length == 0) {
+        if (dir[i].child == null || dir[i].child.length == 0 || dir[i].cur.nName == '部门') {
           op.push({ value: dir[i].cur.id,label: dir[i].cur.value, isLeaf: true});
         } else {
           op.push({value: dir[i].cur.id, label: dir[i].cur.value, children:[]});
+          this.handleOptions(dir[i].child, op[i].children);
         }
-        this.handleOptions(dir[i].child, op[i].children);
       }
     }
   }

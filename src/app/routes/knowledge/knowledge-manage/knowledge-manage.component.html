@@ -28,7 +28,7 @@
 >
   <form nz-form [formGroup]="form" se-container="1">
     <se label="所属领域目录" error="请选择所属领域目录" required>
-      <nz-cascader
+      <nz-cascader formControlName="selectMeta"
         [nzTriggerAction]="'hover'"
         [nzExpandTrigger]="'hover'"
         [nzOptions]="nzOptions"
