@@ -238,6 +238,7 @@ export class EventMetaEventListComponent implements OnInit {
   getIotList() {
     this.http.get('api/metaEvent/infoList/getIotList', {}).subscribe(data => {
       this.iotList = data;
+      console.log(this.iotList);
     })
   }
 

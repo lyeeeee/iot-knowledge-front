@@ -3,7 +3,12 @@ import { _HttpClient, ModalHelper } from '@delon/theme';
 import { STColumn, STComponent } from '@delon/abc/table';
 import { SFSchema } from '@delon/form';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {NzNotificationService} from "ng-zorro-antd";
+import {NzCascaderOption, NzNotificationService} from "ng-zorro-antd";
+import {DirectoryService} from "../../../directory.service";
+import {DirectoryDTO} from "../../knowledge/directory";
+import {EventService} from "../../../event.service";
+import {KnowledgeMetaEvent, MetaEventAttrRelation} from "../event";
+import {PubsubService} from "../../../pubsub.service";
 
 @Component({
   selector: 'app-event-metaevent-manage',
@@ -11,22 +16,25 @@ import {NzNotificationService} from "ng-zorro-antd";
 })
 export class EventMetaeventManageComponent implements OnInit {
   list: any[] = [];
-  relationList: any[] = [];//对应关系List
   insertMetaEventIsVisible;//是否显示新增原子事件弹出框
   deleteMetaEventIsVisible;//是否显示删除原子事件弹出框
   relationIsVisible;//是否显示对应关系弹出框
-  addRelationIsVisible;//是否显示新增对应关系弹出框
+  /**
+   * 是否显示新增对应关系弹出框
+   * */
+  addRelationIsVisible;
+
   deleteRelationIsVisible;//是否显示删除对应关系弹出框
   name = '';//原子事件名称
   metaEventName: any[] = [];//存放所有已存在的原子事件名称，更新及新增时检查是否已存在
   metaEventUpdateId = '';//修改原子事件id
-  metaEventDeleteId = '';//删除原子事件id
-  relationDeleteId = '';//删除对应关系id
-  relationId = '';//设置对应关系的原子事件的id
+  metaEventDeleteId: number = null;//删除原子事件id
+  relationDeleteId: number = null;//删除对应关系id
+  metaEventId: number = null;//设置对应关系的原子事件的id
   selectList: any[] = [];//存放所有级联查询数据
   selectValues: any[] | null = null;
 
-  iotList: any[] = [];//知识List
+  topicList: any[] = ['1','1'];//知识List
   systemList: any[] = [];//系统List
   subsitesList: any[] = [];//子站List
   subsystemList: any[] = [];//子系统List
@@ -38,6 +46,18 @@ export class EventMetaeventManageComponent implements OnInit {
   checkedSubsystem = '';//当前选中的子系统
   checkedEquipment = '';//当前选中的设备
   checkedAttribute = '';//当前选中的属性
+  /**
+   * 知识的属性列表
+   * */
+  knowledgeAttributeMap: Map<string, string> = null;
+
+  /**
+   * 事件的属性列表
+   * */
+  topicAttributeMap: Map<string, string> = null;
+
+  knowledgeAttributeList: any[] = [];
+  topicAttributeList: any[] = [];
 
   metaEventForm: FormGroup;
   relationForm: FormGroup;
@@ -50,13 +70,18 @@ export class EventMetaeventManageComponent implements OnInit {
       }
     }
   };
+
+  /**
+   * 显示原子事件的，动态json schema
+   * */
   @ViewChild('st', { static: true }) st: STComponent;
   columns: STColumn[] = [
     {title: '序号', type: 'no'},
     {title: 'id', index: 'id', iif: () => false},
     {title: '原子事件名称', index: 'name'},
     {title: '原子事件简介', index: 'synopsis'},
-    {title: '创建时间', index: 'insertTime'},
+    {title: '知识名称', index: 'knowledge'},
+    {title: '主题', index: 'topic'},
     {
       title: '操作',
       buttons: [
@@ -66,15 +91,20 @@ export class EventMetaeventManageComponent implements OnInit {
       ]
     }
   ];
+
+  /**
+   * 属性绑定关系list
+   * */
+  relationList: any[] = [];
+
   @ViewChild('relationst', { static: true }) relationst: STComponent;
   relationColumns: STColumn[] = [
     {title: '序号', type: 'no'},
     {title: 'id', index: 'id', iif: () => false},
-    {title: '系统', index: 'iotSystem'},
-    {title: '子站', index: 'subsites'},
-    {title: '子系统', index: 'subsystem'},
-    {title: '设备', index: 'equipment'},
-    {title: '属性', index: 'attribute'},
+    {title: '知识属性', index: 'knowledgeAttribute'},
+    {title: '知识属性数据类型', index: 'knowledgeAttributeType'},
+    {title: '主题属性', index: 'topicAttribute'},
+    {title: '主题属性数据类型', index: 'topicAttributeType'},
     {
       title: '操作',
       buttons: [
@@ -83,119 +113,148 @@ export class EventMetaeventManageComponent implements OnInit {
     }
   ];
 
+  /**
+   * 表单级联选择
+   * */
+  options = [];
+  nzOptions: NzCascaderOption[] = this.options;
+
+  allDirectoryInfo: DirectoryDTO;
+
   constructor(private http: _HttpClient,
               private modal: ModalHelper,
               private fb: FormBuilder,
-              private notification: NzNotificationService,) {
+              private notification: NzNotificationService,
+              private directoryService: DirectoryService,
+              private eventService: EventService,
+              private pubsubService: PubsubService) {
   }
 
   ngOnInit() {
     //进入页面获取列表数据
-    this.getList();
+    this.getMetaEventList();
     this.metaEventForm = this.fb.group({
       name: [null, [Validators.required]],
       synopsis: [null, [Validators.required]],
-    });
-    this.relationForm = this.fb.group({
       selectIot: [null, [Validators.required]],
-      selectSystem: [null, [Validators.required]],
-      selectSubsites: [null, [Validators.required]],
-      selectSubsystem: [null, [Validators.required]],
-      selectEquipment: [null, [Validators.required]],
-      selectAttribute: [null, [Validators.required]],
-      // selectField: [null, [Validators.required]],
+      selectTopic: [null, [Validators.required]],
     });
+    // this.relationForm = this.fb.group({
+    //   selectIot: [null, [Validators.required]],
+    //   selectSystem: [null, [Validators.required]],
+    //   selectSubsites: [null, [Validators.required]],
+    //   selectSubsystem: [null, [Validators.required]],
+    //   selectEquipment: [null, [Validators.required]],
+    //   selectAttribute: [null, [Validators.required]],
+    // });
+    this.relationForm = this.fb.group({
+      selectKnowledgeAttr: [null, [Validators.required]],
+      selectTopicAttr: [null, [Validators.required]],
+    });
+    this.getAllDirectory();
   }
 
-  //调用后台接口获取list数据
-  getList() {
+  /**
+   * 获取原子事件列表
+   * */
+  private getMetaEventList(): void{
     this.metaEventName = [];
-    this.http.get('api/metaEvent/infoList', {
+    this.http.get('api/metaevent/getAll', {
       name: this.name
     }).subscribe(data => {
+      data = data.data;
       this.list = Array(data.length)
         .fill({}).map((item: any, idx: number) => {
           this.metaEventName.push(data[idx].name);
           return {
             name: data[idx].name,
             synopsis: data[idx].synopsis,
-            insertTime: data[idx].insertTime,
+            knowledge: data[idx].knowledge,
+            topic: data[idx].topic,
             id: data[idx].id,
           }
         })
     })
   }
 
-  //搜索按钮
+  /**
+   * 搜索按钮
+   * */
   queryList(event) {
     this.name = event.name;
-    this.getList();
+    this.getMetaEventList();
   }
 
-  //删除原子事件
-  deleteMetaEvent(item) {
+  /**
+   * 删除原子事件
+   * */
+  private deleteMetaEvent(item): void{
     this.deleteMetaEventIsVisible = true;
     this.metaEventDeleteId = item.id;
   }
 
-  //确认删除后提交
-  deleteMetaEventSubmit() {
+  /**
+   * 确认删除后提交
+   * */
+  private deleteMetaEventSubmit(): void {
     this.deleteMetaEventIsVisible = false;
-    this.http.delete('api/metaEvent/infoList/deleteMetaEvent/' + this.metaEventDeleteId).subscribe(data => {
-      this.getList();//重新获取数据刷新列表
+    this.eventService.deleteMetaEvent(this.metaEventDeleteId).subscribe(data => {
+      this.getMetaEventList();//重新获取数据刷新列表
       this.notification.create("success",
         '提示',
         '删除成功！'
       );
-      this.metaEventDeleteId = '';//删除成功后置空
-    })
+      this.metaEventDeleteId = null;//删除成功后置空
+    });
   }
 
-  //新增原子事件取消按钮
-  handleCancel(): void {
+  /**
+   * 处理新增原子事件取消事件
+   * */
+  private handleCancel(): void {
     this.insertMetaEventIsVisible = false;
     this.deleteMetaEventIsVisible = false;
     this.metaEventForm = this.fb.group({
       name: [null, [Validators.required]],
       synopsis: [null, [Validators.required]],
+      selectIot: [null, [Validators.required]],
+      selectTopic: [null, [Validators.required]],
     });
   }
 
-  //新增原子事件弹出框
-  addMetaEvent(item) {
+  /**
+   * 弹出新增原子事件表单
+   * */
+  private addMetaEvent(item): void {
     this.insertMetaEventIsVisible = true;
+    this.getTopicList();
   }
 
-  //原子事件新增或修改  提交到后台
-  submitMetaEvent() {
-    //检查是否存在
-    if (!this.checkMetaEventName(this.metaEventForm.value.name)) {
-      this.notification.create("error",
-        '提示', this.metaEventForm.value.name + '已存在！'
-      );
-      return;
-    }
-    //不存在则新增或修改
-    this.http.post('api/metaEvent/infoList/insertMetaEvent', {
-      name: this.metaEventForm.value.name,
-      synopsis: this.metaEventForm.value.synopsis,
-      id: this.metaEventUpdateId,
-    }).subscribe(data => {
-      this.insertMetaEventIsVisible = false;
-      this.getList();
-      this.metaEventUpdateId = '';
-    })
+  /**
+   * 原子事件新增或修改,提交到后台
+   * */
+  private submitMetaEvent(): void {
+    let metaEvent: KnowledgeMetaEvent = new KnowledgeMetaEvent();
+    metaEvent.name = this.metaEventForm.value.name;
+    metaEvent.synopsis = this.metaEventForm.value.synopsis;
+    metaEvent.topic = this.metaEventForm.value.selectTopic;
+    metaEvent.knowledgeId = this.metaEventForm.value.selectIot[this.metaEventForm.value.selectIot.length-1];
+    console.log(metaEvent);
+    this.eventService.addMetaEvent(metaEvent).subscribe(data => {
+       let msg = data['body'].msg;
+       if (msg != 'success') {
+         this.notification.create("error",
+           '提示', msg
+         );
+       } else {
+         this.insertMetaEventIsVisible = false;
+         this.getMetaEventList();
+         this.metaEventUpdateId = '';
+       }
+
+    });
   }
 
-  //遍历检查原子事件name中是否存在
-  checkMetaEventName(name) {
-    for (const metaEventName of this.metaEventName) {
-      if (name === metaEventName) {
-        return false;
-      }
-    }
-    return true;
-  }
 
   //修改弹出框（使用新增的弹出框，把值赋上即可）
   updateMetaEvent(item) {
@@ -207,122 +266,154 @@ export class EventMetaeventManageComponent implements OnInit {
     this.metaEventUpdateId = item.id;
   }
 
-  //打开对应关系弹出框
-  addOrUpdateRelation(item) {
+  /**
+   * 打开新增对应关系弹出框
+   * */
+  private addOrUpdateRelation(item): void {
     this.relationIsVisible = true;
-    this.relationId = item.id;
+    this.metaEventId = item.id;
     this.getRelationList();//获取对应关系列表
-    this.getIotList();//获取知识列表
+    this.getTopicList();//获取知识列表
+    this.getKnowledgeAttributeList(this.metaEventId);
+    this.getTopicAttributeList(item.topic);
   }
 
-  //获取对应关系列表
-  getRelationList() {
-    this.http.get('api/metaEvent/infoList/getRelationList', {
-      relationId: this.relationId
-    }).subscribe(data => {
-      console.log(data);
-      this.relationList = Array(data.length)
+  /**
+   * 增加属性映射时，获取知识的属性
+   * */
+  private getKnowledgeAttributeList(metaEventId: number): void {
+    this.eventService.getKnowledgeAttribute(metaEventId).subscribe(data => {
+      this.knowledgeAttributeList = data.data;
+    });
+  }
+
+  /**
+   * 增加属性映射时，获取主题的属性
+   * */
+  private getTopicAttributeList(topic: string): void {
+    this.pubsubService.getTopicAttribute(topic).subscribe(data => {
+      this.topicAttributeMap = data;
+      this.topicAttributeList = [];
+      for (let i in this.topicAttributeMap) {
+        this.topicAttributeList.push(i);
+      }
+      this.relationst.reload();
+    });
+  }
+
+  /**
+   * 获取原子事件的属性绑定关系列表
+   * */
+  private getRelationList(): void {
+    this.eventService.getAllRelation(this.metaEventId).subscribe(data => {
+      let list:MetaEventAttrRelation[] = data['data'];
+      this.relationList = Array(list.length)
         .fill({}).map((item: any, idx: number) => {
           return {
-            equipment: data[idx].equipment,
-            attribute: data[idx].attribute,
-            iotSystem: data[idx].iotSystem,
-            subsites: data[idx].subsites,
-            subsystem: data[idx].subsystem,
-            id: data[idx].id,
+            topicAttribute: list[idx].topicAttribute,
+            topicAttributeType: list[idx].topicAttributeType,
+            knowledgeAttribute: list[idx].knowledgeAttribute,
+            knowledgeAttributeType: list[idx].knowledgeAttributeType,
+            id: list[idx].id,
           }
         })
-    })
+    });
   }
 
-  getIotList() {
-    this.http.get('api/metaEvent/infoList/getIotList', {}).subscribe(data => {
-      this.iotList = data;
-    })
+  /**
+   * 获取发布订阅所有主题列表
+   * */
+  private getTopicList():void {
+    this.pubsubService.getAllTopic().subscribe(data => {
+      this.topicList = data;
+    });
   }
 
-  //对应关系的取消按钮方法
-  relationHandleCancel(): void {
+  /**
+   * 原子事件属性绑定界面取消按钮方法
+   * */
+  private relationHandleCancel(): void {
     this.relationIsVisible = false;
-    this.relationId = '';
+    this.metaEventId = null;
   }
 
-  //新增对应关系
-  addRelation() {
+  /**
+   * 弹出新增对应关系窗口
+   * */
+  private addRelation(): void {
     this.addRelationIsVisible = true;
     //获取所有级联查询数据
     // this.http.get('api/metaEvent/infoList/getSelect', {}).subscribe(data => {
     //   this.selectList = data;
-    // })
+    // });
   }
 
-  //新增对应关系的取消按钮方法
-  addRelationHandleCancel(): void {
+  /**
+   * 处理新增对应关系的取消按钮方法
+   * */
+  private addRelationHandleCancel(): void {
     this.addRelationIsVisible = false;
     this.relationForm = this.fb.group({
-      selectIot: [null, [Validators.required]],
-      selectSystem: [null, [Validators.required]],
-      selectSubsites: [null, [Validators.required]],
-      selectSubsystem: [null, [Validators.required]],
-      selectEquipment: [null, [Validators.required]],
-      selectAttribute: [null, [Validators.required]],
-      // selectField: [null, [Validators.required]],
+      selectKnowledgeAttr: [null, [Validators.required]],
+      selectTopicAttr: [null, [Validators.required]],
     });
     this.cleanChecked();
   }
 
-  cleanChecked() {
+  private cleanChecked(): void {
     this.checkedIot = '';//当前选中的知识
     this.checkedIot_system = '';//当前选中的系统
     this.checkedSubsites = '';//当前选中的子站
     this.checkedSubsystem = '';//当前选中的子系统
     this.checkedEquipment = '';//当前选中的设备
     this.checkedAttribute = '';//当前选中的属性
-    this.systemList = [];//系统List
-    this.subsitesList = [];//子站List
-    this.subsystemList = [];//子系统List
     this.equipmentList = [];//设备List
     this.attributeList = [];//属性List
   }
 
-  //提交保存对应关系
-  submitRelation() {
-    this.http.post('api/metaEvent/infoList/addRelation', {
-      graphName: this.checkedIot,
-      iotSystem: this.checkedIot_system,
-      subsites: this.checkedSubsites,
-      subsystem: this.checkedSubsystem,
-      equipment: this.checkedEquipment,
-      attribute: this.checkedAttribute,
-      metaEventId: this.relationId,
-    }).subscribe(data => {
+  /**
+   * 提交保存对应关系
+   * */
+  private submitRelation(): void {
+    let metaEventAttrRelation:MetaEventAttrRelation = new MetaEventAttrRelation();
+    metaEventAttrRelation.knowledgeAttribute = this.relationForm.value.selectKnowledgeAttr;
+    metaEventAttrRelation.topicAttribute = this.relationForm.value.selectTopicAttr;
+    metaEventAttrRelation.topicAttributeType = this.topicAttributeMap[metaEventAttrRelation.topicAttribute];
+    metaEventAttrRelation.metaEventId = this.metaEventId;
+    this.eventService.addMetaEventAttrRelation(metaEventAttrRelation).subscribe(data => {
       this.addRelationHandleCancel();
       this.getRelationList();
-    })
+    });
   }
 
-  //删除对应关系
-  deleteRelation(item) {
+  /**
+   * 删除对应关系
+   * */
+  private deleteRelation(item): void {
     this.deleteRelationIsVisible = true;
     this.relationDeleteId = item.id;
   }
 
-  //删除对应关系取消按钮方法
-  deleteRelationHandleCancel(): void {
+  /**
+   * 删除对应关系取消按钮方法
+   * */
+  private deleteRelationHandleCancel(): void {
     this.deleteRelationIsVisible = false;
   }
 
-//删除对应关系提交
-  deleteRelationSubmit() {
+  /**
+   * 删除对应关系提交
+   * */
+  private deleteRelationSubmit():void {
     this.deleteRelationIsVisible = false;
-    this.http.delete('api/metaEvent/infoList/deleteRelation/' + this.relationDeleteId).subscribe(data => {
+    this.eventService.deleteRelation(this.relationDeleteId).subscribe(data => {
       this.getRelationList();//重新获取数据刷新列表
       this.notification.create("success",
         '提示',
         '删除成功！'
       );
-      this.relationDeleteId = '';//删除成功后置空
-    })
+      this.relationDeleteId = null;//删除成功后置空
+    });
   }
 
   //当选择的知识改变时，去后台拉取对应的系统
@@ -380,4 +471,33 @@ export class EventMetaeventManageComponent implements OnInit {
     this.checkedAttribute = e;
   }
 
+  private onChanges(e) :void {
+
+  }
+
+  private getAllDirectory() :void {
+      this.directoryService.getAllDirecotory()
+      .subscribe(data => {
+      this.allDirectoryInfo = data['data'];
+      this.options = [];
+      this.handleOptions(this.allDirectoryInfo.child, this.options);
+      this.nzOptions = this.options;
+    });
+  }
+
+  private handleOptions(dir: DirectoryDTO[], op:NzCascaderOption[]) : void{
+    if (dir == null || dir.length == 0){
+      return;
+    }
+    else {
+      for (let i = 0;i < dir.length; ++i) {
+        if (dir[i].child == null || dir[i].child.length == 0) {
+          op.push({ value: dir[i].cur.id,label: dir[i].cur.value, isLeaf: true});
+        } else {
+          op.push({value: dir[i].cur.id, label: dir[i].cur.value, children:[]});
+          this.handleOptions(dir[i].child, op[i].children);
+        }
+      }
+    }
+  }
 }

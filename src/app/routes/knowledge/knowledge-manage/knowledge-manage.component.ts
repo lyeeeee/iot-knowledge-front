@@ -5,7 +5,7 @@ import {
   SFComponent,
   SFSchema,
   SFSchemaEnum,
-  SFSelectWidgetSchema
+  SFSelectWidgetSchema, SFUISchema, SFUISchemaItem, SFUISchemaItemRun
 } from '@delon/form';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {NzCascaderOption, NzMessageService, NzModalService, NzNotificationService, UploadFile} from "ng-zorro-antd";
@@ -126,6 +126,7 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
   metaDirSchema: SFSchema = {
     ui: {
       width: 250,
+      expandTrigger:'hover',
     },
     properties: {
       static: {
@@ -274,16 +275,32 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
   }
 
   submit() {
-    console.log(this.fileList);
-    console.log(this.form.value.selectMeta);
-    this.http.post('api/knowledge/upload', {
-      metaId: this.form.value.selectMeta,
-      name: this.form.value.name,
-      graphName: 'http://' + this.form.value.graphName,
-      knowledgeSynopsis: this.form.value.knowledgeSynopsis,
-    }).subscribe(data => {
-      if (data.success) {
-        this.handleUpload()
+    const formData = new FormData();
+    formData.append('metaId', this.form.value.selectMeta);
+    formData.append('name', this.form.value.name);
+    formData.append('graphName', this.form.value.graphName);
+    formData.append('knowledgeSynopsis', this.form.value.knowledgeSynopsis);
+    this.fileList.forEach((file: any) => {
+      formData.append('file', file);
+    });
+
+    // this.http.post('api/knowledge/upload', {
+    //   metaId: this.form.value.selectMeta,
+    //   name: this.form.value.name,
+    //   graphName: 'http://' + this.form.value.graphName,
+    //   knowledgeSynopsis: this.form.value.knowledgeSynopsis,
+    // }).subscribe(data => {
+    //   if (data.msg) {
+    //     console.log("success");
+    //     this.handleUpload()
+    //   }
+    //   this.uploadVisible = false;
+    //   this.getList();
+    // })
+    this.http.post('api/knowledge/upload', formData).subscribe(data => {
+      if (data.msg) {
+        console.log("success");
+        //this.handleUpload()
       }
       this.uploadVisible = false;
       this.getList();

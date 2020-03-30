@@ -3,10 +3,14 @@
     <button (click)="addMetaEvent()" nz-button nzType="primary">新增原子事件</button>
   </ng-template>
 </page-header>
+
+<!--搜索框-->
 <nz-card>
   <sf mode="search" [schema]="searchSchema" (formSubmit)="queryList($event)" (formReset)="st.reset($event)"></sf>
+  <!--原子事件数据-->
   <st #st [data]="list" [columns]="columns"></st>
 </nz-card>
+
 <!--新增原子事件弹出框-->
 <nz-modal
   [(nzVisible)]="insertMetaEventIsVisible"
@@ -21,10 +25,19 @@
     <se label="原子事件简介" error="请输入原子事件简介" required>
       <input nz-input formControlName="synopsis" placeholder="请输入原子事件简介"/>
     </se>
-    <se label="请选择对应知识" error="请选择对应知识" required>
-      <nz-select formControlName="selectIot" [nzPlaceHolder]="'请选择知识'" [nzShowSearch]="true"
+    <se label="请选择对应的知识" error="请选择对应知识" required>
+      <nz-cascader formControlName="selectIot"
+                   [nzTriggerAction]="'hover'"
+                   [nzExpandTrigger]="'hover'"
+                   [nzOptions]="nzOptions"
+                   (ngModelChange)="onChanges($event)"
+      >
+      </nz-cascader>
+    </se>
+    <se label="请选择主题" error="请选择主题" required>
+      <nz-select formControlName="selectTopic" [nzPlaceHolder]="'请选择主题'" [nzShowSearch]="true"
                  (ngModelChange)="iotChange($event)">
-        <nz-option *ngFor="let i of iotList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+        <nz-option *ngFor="let i of topicList" [nzLabel]="i" [nzValue]="i"></nz-option>
       </nz-select>
     </se>
     <se>
@@ -32,11 +45,14 @@
     </se>
   </form>
 </nz-modal>
+
 <!--删除确认弹出框-->
 <nz-modal [(nzVisible)]="deleteMetaEventIsVisible" nzTitle="提示" (nzOnCancel)="handleCancel()"
           (nzOnOk)="deleteMetaEventSubmit()">
   确定要删除此原子事件吗？
 </nz-modal>
+
+
 <!--对应关系弹出框-->
 <nz-modal [(nzVisible)]="relationIsVisible"
           nzTitle="原子事件与属性的对应" (nzOnCancel)="relationHandleCancel()"
@@ -47,6 +63,8 @@
     <st #relationst [data]="relationList" [columns]="relationColumns"></st>
   </nz-card>
 </nz-modal>
+
+
 <!--新增对应关系弹出框-->
 <nz-modal
   [(nzVisible)]="addRelationIsVisible"
@@ -56,51 +74,25 @@
   nzWidth="800px"
 >
   <form nz-form [formGroup]="relationForm" (ngSubmit)="submitRelation()" se-container="1">
-    <!--<se label="请选择系统" error="请选择系统" required>-->
-      <!--<nz-select formControlName="selectSystem" [nzPlaceHolder]="'请选择系统'" [nzShowSearch]="true"-->
-                 <!--(ngModelChange)="systemChange($event)" >-->
-        <!--<nz-option *ngFor="let i of systemList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>-->
-      <!--</nz-select>-->
-    <!--</se>-->
-    <!--<se label="请选择子站" error="请选择子站" required>-->
-      <!--<nz-select formControlName="selectSubsites" [nzPlaceHolder]="'请选择子站'" [nzShowSearch]="true"-->
-                 <!--(ngModelChange)="subsitesChange($event)" >-->
-        <!--<nz-option *ngFor="let i of subsitesList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>-->
-      <!--</nz-select>-->
-    <!--</se>-->
-    <!--<se label="请选择子系统" error="请选择子系统" required>-->
-      <!--<nz-select formControlName="selectSubsystem" [nzPlaceHolder]="'请选择子系统'" [nzShowSearch]="true"-->
-                 <!--(ngModelChange)="subsystemChange($event)" >-->
-        <!--<nz-option *ngFor="let i of subsystemList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>-->
-      <!--</nz-select>-->
-    <!--</se>-->
-    <!--<se label="请选择设备" error="请选择设备" required>-->
-      <!--<nz-select formControlName="selectEquipment" [nzPlaceHolder]="'请选择设备'" [nzShowSearch]="true"-->
-                 <!--(ngModelChange)="equipmentChange($event)" >-->
-        <!--<nz-option *ngFor="let i of equipmentList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>-->
-      <!--</nz-select>-->
-    <!--</se>-->
     <se label="请选择知识属性" error="请选择知识属性" required>
-      <nz-select formControlName="selectAttribute" [nzPlaceHolder]="'请选择属性'" [nzShowSearch]="true"
+      <nz-select formControlName="selectKnowledgeAttr" [nzPlaceHolder]="'请选择属性'" [nzShowSearch]="true"
                  (ngModelChange)="attributeChange($event)" >
-        <nz-option *ngFor="let i of attributeList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+        <nz-option *ngFor="let i of knowledgeAttributeList" [nzLabel]="i" [nzValue]="i"></nz-option>
       </nz-select>
     </se>
     <se label="请选择事件属性" error="请选择事件属性" required>
-      <nz-select formControlName="selectAttribute" [nzPlaceHolder]="'请选择属性'" [nzShowSearch]="true"
+      <nz-select formControlName="selectTopicAttr" [nzPlaceHolder]="'请选择属性'" [nzShowSearch]="true"
                  (ngModelChange)="attributeChange($event)" >
-        <nz-option *ngFor="let i of attributeList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+        <nz-option *ngFor="let i of topicAttributeList" [nzLabel]="i" [nzValue]="i"></nz-option>
       </nz-select>
     </se>
-
-    <!--<se label="请选择关联" error="请选择要关联的设备属性" required>-->
-    <!--<nz-cascader formControlName="selectField" [nzOptions]="selectList" [(ngModel)]="selectValues"> </nz-cascader>-->
-    <!--</se>-->
     <se>
       <button nz-button nzType="primary" [disabled]="relationForm.invalid" type="submit">提交</button>
     </se>
   </form>
 </nz-modal>
+
+
 <nz-modal [(nzVisible)]="deleteRelationIsVisible" nzTitle="提示" (nzOnCancel)="deleteRelationHandleCancel()"
           (nzOnOk)="deleteRelationSubmit()">
   确定要删除此对应关系吗？
