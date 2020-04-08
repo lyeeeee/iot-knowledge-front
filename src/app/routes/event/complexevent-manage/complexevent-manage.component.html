@@ -33,6 +33,24 @@
   确定要删除此复杂事件吗？
 </nz-modal>
 
+<!--新增原子事件逻辑关系弹出框-->
+<nz-modal
+  [(nzVisible)]="insertMetaEventLogicRelationIsVisible"
+  nzTitle="新增原子事件逻辑关系"
+  (nzOnCancel)="handleMetaEventLogicRelationCancel()"
+  nzFooter=" "
+  nzWidth="800px"
+>
+  <form nz-form [formGroup]="metaEventLogicRelationForm" (ngSubmit)="submitMetaEventLogicRelation()" se-container="1">
+    <se label="原子事件逻辑关系" error="原子事件逻辑关系" required>
+      <input nz-input formControlName="logicRelation" placeholder="原子事件逻辑关系"/>
+    </se>
+    <se>
+      <button nz-button nzType="primary" [disabled]="metaEventLogicRelationForm.invalid" type="submit">提交</button>
+    </se>
+  </form>
+</nz-modal>
+
 
 <!--所选原子事件弹出框-->
 <nz-modal [(nzVisible)]="addMetaIsVisible"
@@ -53,21 +71,18 @@
 >
   <form nz-form [formGroup]="metaForm" (ngSubmit)="submitMeta()" se-container="1">
 
-    <!--<se label="请选择原子事件范围" error="请选择原子事件范围" required>-->
-    <!--<nz-select formControlName="selectMeta" [nzPlaceHolder]="'请选择原子事件范围'" [nzShowSearch]="true"-->
-    <!--(ngModelChange)="metaChange($event)">-->
-    <!--<nz-option *ngFor="let i of allMetaList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>-->
-    <!--</nz-select>-->
-    <!--</se>-->
-    <se label="原子事件范围单位" error="请选择原子事件范围单位" required>
-      <nz-select formControlName="selectMeta" [nzPlaceHolder]="'原子事件范围单位'" [nzShowSearch]="true"
-                 (ngModelChange)="metaEventCompanyChange($event)">
-        <nz-option *ngFor="let i of metaEventCompanyList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+    <se label="原子事件范围" error="请输入原子事件范围" required>
+      <input nz-input formControlName="metaEventRange" placeholder="请输入原子事件范围"/>
+    </se>
+    <se label="原子事件" error="请选择原子事件" required>
+      <nz-select formControlName="selectMeta" [nzPlaceHolder]="'原子事件'" [nzShowSearch]="true"
+                 (ngModelChange)="metaEventChange($event)">
+        <nz-option *ngFor="let i of metaEventList" [nzLabel]="i.name" [nzValue]="i.id"></nz-option>
       </nz-select>
     </se>
     <se label="属性" error="请选择属性" required>
       <nz-select formControlName="metaAttribute" [nzPlaceHolder]="'属性'" [nzShowSearch]="true">
-        <nz-option *ngFor="let i of metaAttributeList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
+        <nz-option *ngFor="let i of metaAttributeList" [nzLabel]="i.topicAttribute" [nzValue]="i.topicAttribute"></nz-option>
       </nz-select>
     </se>
     <se label="请选择对应关系" error="请选择对应关系" required>
@@ -75,7 +90,7 @@
         <nz-option *ngFor="let i of relationList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
       </nz-select>
     </se>
-    <se label="值(设备号)" error="请输入值" required>
+    <se label="值" error="请输入值" required>
       <input nz-input formControlName="metaEventValue" placeholder="请输入值"/>
     </se>
     <se>
@@ -157,26 +172,30 @@
 >
   <form nz-form [formGroup]="targetForm" (ngSubmit)="submitTarget()" se-container="1">
 
-    <se label="请选择目标" error="请选择目标" required>
-      <!--<input nz-input formControlName="targetName" placeholder="请输入名称"/>-->
-      <!--<nz-select formControlName="targetName" [nzPlaceHolder]="'请选择目标'" [nzShowSearch]="true">-->
-      <!--<nz-option *ngFor="let i of targetNameList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>-->
-      <!--</nz-select>-->
-      <nz-cascader formControlName="targetName" [nzOptions]="targetNameList"> </nz-cascader>
+    <se label="原子事件" error="请选择原子事件" required>
+      <nz-select formControlName="selectMeta" [nzPlaceHolder]="'原子事件'" [nzShowSearch]="true"
+                 (ngModelChange)="metaEventChange($event)">
+        <nz-option *ngFor="let i of metaEventList" [nzLabel]="i.name" [nzValue]="i.id"></nz-option>
+      </nz-select>
+    </se>
+    <se label="属性" error="请选择属性" required>
+      <nz-select formControlName="metaAttribute" [nzPlaceHolder]="'属性'" [nzShowSearch]="true">
+        <nz-option *ngFor="let i of metaAttributeList" [nzLabel]="i.topicAttribute" [nzValue]="i.topicAttribute"></nz-option>
+      </nz-select>
     </se>
     <se label="请选择对应关系" error="请选择对应关系" required>
-      <nz-select formControlName="targetRelation" [nzPlaceHolder]="'请选择对应关系'" [nzShowSearch]="true"
-                 (ngModelChange)="relationChange($event)">
+      <nz-select formControlName="targetRelation" [nzPlaceHolder]="'请选择对应关系'" [nzShowSearch]="true">
         <nz-option *ngFor="let i of relationList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
       </nz-select>
     </se>
     <se label="值" error="请输入值" required>
       <input nz-input formControlName="targetValue" placeholder="请输入值"/>
     </se>
-    <se label="与其他事件关系" error="请选择类型" required>
-      <nz-select formControlName="selectAndOrNot" [nzPlaceHolder]="'请选择类型'" [nzShowSearch]="true">
-        <nz-option *ngFor="let i of andOrNotList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
-      </nz-select>
+    <se label="时间窗口" error="请输入值">
+      <input nz-input formControlName="timeWindow" placeholder="请输入值"/>
+    </se>
+    <se label="长度窗口" error="请输入值">
+      <input nz-input formControlName="lenWindow" placeholder="请输入值"/>
     </se>
     <se>
       <button nz-button nzType="primary" [disabled]="targetForm.invalid" type="submit">提交</button>
@@ -186,4 +205,22 @@
 <nz-modal [(nzVisible)]="deleteTargetIsVisible" nzTitle="提示" (nzOnCancel)="deleteTargetHandleCancel()"
           (nzOnOk)="deleteTargetSubmit()">
   确定要删除此目标吗？
+</nz-modal>
+
+<!--新增目标逻辑关系弹出框-->
+<nz-modal
+  [(nzVisible)]="insertTargetLogicRelationIsVisible"
+  nzTitle="新增目标逻辑关系"
+  (nzOnCancel)="handleTargetLogicRelationCancel()"
+  nzFooter=" "
+  nzWidth="800px"
+>
+  <form nz-form [formGroup]="targetLogicRelationForm" (ngSubmit)="submitTargetLogicRelation()" se-container="1">
+    <se label="目标逻辑关系" error="目标逻辑关系" required>
+      <input nz-input formControlName="logicRelation" placeholder="目标逻辑关系"/>
+    </se>
+    <se>
+      <button nz-button nzType="primary" [disabled]="targetLogicRelationForm.invalid" type="submit">提交</button>
+    </se>
+  </form>
 </nz-modal>
