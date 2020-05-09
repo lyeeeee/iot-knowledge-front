@@ -150,6 +150,8 @@ export class EventMetaeventManageComponent implements OnInit {
     this.relationForm = this.fb.group({
       selectKnowledgeAttr: [null, [Validators.required]],
       selectTopicAttr: [null, [Validators.required]],
+      deviceName: [null, [Validators.required]],
+      dataName: [null, [Validators.required]],
     });
     this.getAllDirectory();
   }
@@ -356,6 +358,8 @@ export class EventMetaeventManageComponent implements OnInit {
     this.relationForm = this.fb.group({
       selectKnowledgeAttr: [null, [Validators.required]],
       selectTopicAttr: [null, [Validators.required]],
+      deviceName: [null, [Validators.required]],
+      dataName: [null, [Validators.required]],
     });
     this.cleanChecked();
   }
@@ -380,6 +384,8 @@ export class EventMetaeventManageComponent implements OnInit {
     metaEventAttrRelation.topicAttribute = this.relationForm.value.selectTopicAttr;
     metaEventAttrRelation.topicAttributeType = this.topicAttributeMap[metaEventAttrRelation.topicAttribute];
     metaEventAttrRelation.metaEventId = this.metaEventId;
+    metaEventAttrRelation.deviceName = this.relationForm.value.deviceName;
+    metaEventAttrRelation.dataName = this.relationForm.value.dataName;
     this.eventService.addMetaEventAttrRelation(metaEventAttrRelation).subscribe(data => {
       this.addRelationHandleCancel();
       this.getRelationList();

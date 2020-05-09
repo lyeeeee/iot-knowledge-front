@@ -14,6 +14,8 @@ export class MetaEventAttrRelation {
   metaEventId: number;
   topicAttribute: string;
   topicAttributeType: string;
+  deviceName: string;
+  dataName: string;
 }
 
 export class KnowledgeComplexEvent {
@@ -22,6 +24,8 @@ export class KnowledgeComplexEvent {
   synopsis: string;
   relation:string;
   targetRelation: string;
+  idRelation: string;
+  idTargetRelation : string;
 }
 
 export class KnowledgeComplexSubEvent {
@@ -45,4 +49,21 @@ export class KnowledgeComplexTarget {
   relationValue: string;
   timeWindow: string;
   lenWindow: number;
+}
+export class KnowledgeComplexSubEventRelation{
+  id: number;
+  insertTime: string;
+  relationName: string;
+  complexEventId: number;
+  relationIdName: string;
+  type: number;
+}
+
+export class KnowledgeComplexTargetRelation{
+  id: number;
+  insertTime: string;
+  relationName: string;
+  complexEventId: number;
+  targetIdName: string;
+  type: number;
 }

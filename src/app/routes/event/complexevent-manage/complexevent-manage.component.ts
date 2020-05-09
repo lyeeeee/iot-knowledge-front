@@ -7,8 +7,8 @@ import {NzNotificationService} from "ng-zorro-antd";
 import {DatePipe} from "@angular/common";
 import {
   KnowledgeComplexEvent,
-  KnowledgeComplexSubEvent,
-  KnowledgeComplexTarget,
+  KnowledgeComplexSubEvent, KnowledgeComplexSubEventRelation,
+  KnowledgeComplexTarget, KnowledgeComplexTargetRelation,
   KnowledgeMetaEvent,
   MetaEventAttrRelation
 } from "../event";
@@ -26,7 +26,7 @@ export class EventComplexeventManageComponent implements OnInit {
   insertComplexEventIsVisible;//是否显示新增复杂事件弹出框
   deleteComplexEventIsVisible;//是否显示删除复杂事件弹出框
   addMetaIsVisible;//是否显示选择元知识弹出框
-  saveMetaIsVisible;//是否显示新增选择元知识弹出框
+  saveMetaIsVisible = false;//是否显示新增选择元知识弹出框
   deleteMetaIsVisible;//是否显示删除选择元知识弹出框
   addAttributeIsVisible;//是否显示添加属性弹出框
   saveAttributeIsVisible;//是否显示新增添加属性弹出框
@@ -36,7 +36,15 @@ export class EventComplexeventManageComponent implements OnInit {
   deleteTargetIsVisible;//是否显示删目标弹出框
 
   name = '';//复杂事件名称
-  complexEventName: any[] = [];//存放所有已存在的复杂事件名称，更新及新增时检查是否已存在
+  /**
+   * 存放所有已存在的复杂事件名称，更新及新增时检查是否已存在
+   * */
+  complexEventName: any[] = [];
+  /**
+   * 存放所有的复杂事件 map
+   * */
+  complexEvents: Map<number, KnowledgeComplexEvent> = new Map<number, KnowledgeComplexEvent>();
+
   complexEventUpdateId = null;//修改复杂事件id
   /**
    * 保存删除复杂事件id
@@ -51,18 +59,53 @@ export class EventComplexeventManageComponent implements OnInit {
    * */
   deleteMetaId = null;
   deleteAttributeId = '';//要删除的属性关系的id
-  deleteTargetId = '';
+  /**
+   * 要删除的目标的id
+   * */
+  deleteTargetId = null;
   attributeRelationInfo = '';//属性关系展示信息
   metaEventCompany = '';//原子事件范围单位展示信息
   relationList: any[] = [{value: 0, label: "小于"}, {value: 1, label: "小于等于"}, {value: 2, label: "等于"},
     {value: 3, label: "大于等于"}, {value: 4, label: "大于"},{value:5 ,label:"between"},
     {value:6, label:"不等于"},{value:7, label:"in"}];
+  /**
+   * 存放子事件列表
+   * */
   metaEventList: KnowledgeMetaEvent[] = [];
   /**
    * 存放选择原子事件id同，名称的对应关系
    * */
   metaEventMap: Map<number,string> = new Map<number, string>();
-  metaEventRangeList: any[] = [];
+  /**
+   * 子事件关系列表
+   * */
+  subEventRelationList: KnowledgeComplexSubEventRelation[] = [];
+  /**
+   * 子事件关系map
+   * */
+  subEventRelationMap: Map<number, KnowledgeComplexSubEventRelation> = new Map<number, KnowledgeComplexSubEventRelation>();
+  /**
+   * 子事件关系表单所用
+   * */
+  lrelationList: any[] = [{value: "1", label: "与"}, {value: "2", label: "或"}];
+
+  /**
+   * 当前子事件逻辑关系
+   * */
+  fullLogicRelation: string = null;
+  /**
+   * 当前目标逻辑关系
+   * */
+  fullTargetLogicRelation: string = null;
+  /**
+   * 目标关系列表
+   * */
+  targetRelationList: KnowledgeComplexTargetRelation[] = [];
+  /**
+   * 目标关系map
+   * */
+  targetRelationMap: Map<number, KnowledgeComplexTargetRelation> = new Map<number, KnowledgeComplexTargetRelation>();
+
   checkCompany = "";
   checkRange = "";
   typeList: any[] = [{value: "2", label: "目标"}, {value: "1", label: "属性"}];
@@ -147,7 +190,7 @@ export class EventComplexeventManageComponent implements OnInit {
         {text: '编辑目标', click: (item: any) => this.addOrUpdateTarget(item)},
         {text: '修改', click: (item: any) => this.updateComplexEvent(item)},
         {text: '删除', click: (item: any) => this.deleteComplexEvent(item)},
-        {text: '报警', click: (item: any) => this.createNotification("error")},
+        {text: '监控推理', click: (item: any) => this.deduce(item)},
         {text: '原子事件关系', click: (item: any) => this.addLogicRelation(item)},
         {text: '目标关系', click: (item: any) => this.addTargetRelation(item)},
         // {text: '报警', click: (item: any) => this.aaaa()},
@@ -247,10 +290,14 @@ export class EventComplexeventManageComponent implements OnInit {
       lenWindow:[null],
     });
     this.metaEventLogicRelationForm = this.fb.group({
-      logicRelation: [null, [Validators.required]],
+      formulaA: [null, [Validators.required]],
+      formulaB: [null, [Validators.required]],
+      lrelation: [null, [Validators.required]],
     });
     this.targetLogicRelationForm = this.fb.group({
-      logicRelation: [null, [Validators.required]],
+      formulaA: [null, [Validators.required]],
+      formulaB: [null, [Validators.required]],
+      lrelation: [null, [Validators.required]],
     });
     //this.warn();
 
@@ -275,9 +322,12 @@ export class EventComplexeventManageComponent implements OnInit {
     this.complexEventName = [];
     this.eventService.getAllComplexEvent(this.name).subscribe(data => {
       let events = data.data;
+      this.complexEventName = [];
+      this.complexEvents.clear();
       this.list = Array(events.length)
         .fill({}).map((item: any, idx: number) => {
           this.complexEventName.push(events[idx].name);
+          this.complexEvents.set(events[idx].id, events[idx]);
           return {
             name: events[idx].name,
             synopsis: events[idx].synopsis,
@@ -475,17 +525,18 @@ export class EventComplexeventManageComponent implements OnInit {
     });
   }
 
-  //删除所选原子事件
+  /**
+   * 删除所选原子事件
+   * */
   private deleteMeta(item): void {
     this.deleteMetaIsVisible = true;
     this.deleteMetaId = item.id;
-    console.log(item);
   }
 
   //删除所选原子事件取消按钮方法
   deleteMetaHandleCancel(): void {
     this.deleteMetaIsVisible = false;
-    this.deleteMetaId = '';
+    this.deleteMetaId = null;
   }
 
   /**
@@ -722,11 +773,12 @@ export class EventComplexeventManageComponent implements OnInit {
     });
   }
 
-  //删除所选目标关系
-  deleteTarget(item) {
+  /**
+   * 删除所选目标关系
+   * */
+  private deleteTarget(item): void {
     this.deleteTargetIsVisible = true;
     this.deleteTargetId = item.id;
-    console.log(item);
   }
 
   //删除所选目标关系取消按钮方法
@@ -735,17 +787,19 @@ export class EventComplexeventManageComponent implements OnInit {
     this.deleteTargetId = '';
   }
 
-  //删除所选目标关系提交
+  /**
+   * 删除所选目标关系提交
+   * */
   deleteTargetSubmit() {
     this.deleteTargetIsVisible = false;
-    this.http.delete('api/complexEvent/infoList/deleteTarget/' + this.deleteTargetId).subscribe(data => {
+    this.eventService.deleteComplexTarget(this.deleteTargetId).subscribe(data => {
       this.getTargetList();//重新获取数据刷新列表
       this.notification.create("success",
         '提示',
         '删除成功！'
       );
-      this.deleteTargetId = '';//删除成功后置空
-    })
+      this.deleteTargetId = null;//删除成功后置空
+    });
   }
 
 //--------------------------------------
@@ -827,18 +881,25 @@ export class EventComplexeventManageComponent implements OnInit {
     this.stopTimer = true;
   }
 
+  /**
+   * 开始推理复杂事件
+   * */
+  private deduce(item): void {
+    // this.notification.create(
+    //   //error，warning,info
+    //   type,
+    //   '站点报警',//标题
+    //   '<table border="1"><tr><td>系统</td><td>子站</td><td>子系统</td><td>设备</td></tr><tr><td>1111111</td><td>222222222222</td><td>3333</td><td>444444</td></tr></table>',//在这里写表格内容
+    //   {
+    //     nzStyle: {width: '470px', marginLeft: '-100px', color: 'red'},//弹出框的样式，分别是宽度，左距离，颜色
+    //     nzDuration: 0,//显示时间，单位是毫秒，0为一直显示，不自动关闭
+    //   }
+    // );
+    this.complexId = item.id;
+    this.eventService.deduce(this.complexId).subscribe(data => {
 
-  private createNotification(type: string): void {
-    this.notification.create(
-      //error，warning,info
-      type,
-      '站点报警',//标题
-      '<table border="1"><tr><td>系统</td><td>子站</td><td>子系统</td><td>设备</td></tr><tr><td>1111111</td><td>222222222222</td><td>3333</td><td>444444</td></tr></table>',//在这里写表格内容
-      {
-        nzStyle: {width: '470px', marginLeft: '-100px', color: 'red'},//弹出框的样式，分别是宽度，左距离，颜色
-        nzDuration: 0,//显示时间，单位是毫秒，0为一直显示，不自动关闭
-      }
-    );
+    });
+    this.complexId = null;
   }//nzDuration是毫秒
 
   /**
@@ -847,6 +908,14 @@ export class EventComplexeventManageComponent implements OnInit {
   private addLogicRelation(item): void {
     this.insertMetaEventLogicRelationIsVisible = true;
     this.complexId = item.id;
+    this.fullLogicRelation = this.complexEvents.get(this.complexId).relation;
+    this.eventService.getAllSubEventRelation(this.complexId).subscribe(data => {
+      this.subEventRelationList = data.data;
+      this.subEventRelationMap.clear();
+      this.subEventRelationList.forEach((a)=> {
+        this.subEventRelationMap.set(a.id, a);
+      })
+    });
   }
 
   /**
@@ -855,6 +924,14 @@ export class EventComplexeventManageComponent implements OnInit {
   private addTargetRelation(item): void {
     this.insertTargetLogicRelationIsVisible = true;
     this.complexId = item.id;
+    this.fullTargetLogicRelation = this.complexEvents.get(this.complexId).targetRelation;
+    this.eventService.getAllTargetRelation(this.complexId).subscribe(data => {
+      this.targetRelationList = data.data;
+      this.targetRelationMap.clear();
+      this.targetRelationList.forEach((a)=> {
+        this.targetRelationMap.set(a.id, a);
+      })
+    });
   }
   /**
    * 编辑原子事件关系表单取消
@@ -863,7 +940,9 @@ export class EventComplexeventManageComponent implements OnInit {
     this.insertMetaEventLogicRelationIsVisible = false;
     this.complexId = null;
     this.metaEventLogicRelationForm = this.fb.group({
-      logicRelation: [null, [Validators.required]],
+      formulaA: [null, [Validators.required]],
+      formulaB: [null, [Validators.required]],
+      lrelation: [null, [Validators.required]],
     });
   }
 
@@ -874,27 +953,85 @@ export class EventComplexeventManageComponent implements OnInit {
     this.insertTargetLogicRelationIsVisible = false;
     this.complexId = null;
     this.targetLogicRelationForm = this.fb.group({
-      logicRelation: [null, [Validators.required]],
+      formulaA: [null, [Validators.required]],
+      formulaB: [null, [Validators.required]],
+      lrelation: [null, [Validators.required]],
     });
   }
   /**
    * 处理原子事件逻辑关系提交
    * */
   private submitMetaEventLogicRelation(): void{
-    this.eventService.addMetaEventRelation(this.complexId, this.metaEventLogicRelationForm.value.logicRelation)
+    let left = this.metaEventLogicRelationForm.value.formulaA;
+    let right = this.metaEventLogicRelationForm.value.formulaB;
+    let lr = this.metaEventLogicRelationForm.value.lrelation;
+
+    this.eventService.addMetaEventRelation(left,right,lr,this.complexId)
       .subscribe(data => {
+        /**
+         * 重新获取复杂事件列表
+         * */
         this.getList();
+        /**
+         * 重新获取子事件关系列表
+         * */
+        this.eventService.getAllSubEventRelation(this.complexId).subscribe(data => {
+          this.subEventRelationList = data.data;
+          this.subEventRelationMap.clear();
+          this.subEventRelationList.forEach((a)=> {
+            this.subEventRelationMap.set(a.id, a);
+          })
+          this.handleMetaEventLogicRelationCancel();
+        });
       });
-    this.handleMetaEventLogicRelationCancel();
   }
   /**
    * 处理目标逻辑关系提交
    * */
   private submitTargetLogicRelation(): void{
-    this.eventService.addTargetRelation(this.complexId, this.targetLogicRelationForm.value.logicRelation)
+    let left = this.targetLogicRelationForm.value.formulaA;
+    let right = this.targetLogicRelationForm.value.formulaB;
+    let lr = this.targetLogicRelationForm.value.lrelation;
+
+    this.eventService.addTargetRelation(left,right,lr,this.complexId)
       .subscribe(data => {
+        /**
+         * 重新获取复杂事件列表
+         * */
         this.getList();
+        /**
+         * 重新获取目标关系列表
+         * */
+        this.eventService.getAllTargetRelation(this.complexId).subscribe(data => {
+          this.targetRelationList = data.data;
+          this.targetRelationMap.clear();
+          this.targetRelationList.forEach((a)=> {
+            this.targetRelationMap.set(a.id, a);
+          })
+          this.handleTargetLogicRelationCancel();
+        });
       });
-    this.handleTargetLogicRelationCancel();
+  }
+
+  private resetSubEventRelation($event: MouseEvent): void {
+    this.eventService.deleteSubEventRelation(this.complexId).subscribe(data => {
+      if (data.message == 'success') {
+        this.notification.create("success",
+          '提示',
+          '删除成功！'
+        );
+      }
+    });
+  }
+
+  private resetTargetRelation($event: MouseEvent): void {
+    this.eventService.deleteTargetRelation(this.complexId).subscribe(data => {
+      if (data.message == 'success') {
+        this.notification.create("success",
+          '提示',
+          '删除成功！'
+        );
+      }
+    });
   }
 }

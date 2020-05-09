@@ -86,6 +86,12 @@
         <nz-option *ngFor="let i of topicAttributeList" [nzLabel]="i" [nzValue]="i"></nz-option>
       </nz-select>
     </se>
+    <se label="设备名称" error="请输入设备名称" required>
+      <input nz-input formControlName="deviceName" placeholder="请输入设备名称"/>
+    </se>
+    <se label="数据名称" error="请输入数据名称" required>
+      <input nz-input formControlName="dataName" placeholder="请输入数据名称"/>
+    </se>
     <se>
       <button nz-button nzType="primary" [disabled]="relationForm.invalid" type="submit">提交</button>
     </se>

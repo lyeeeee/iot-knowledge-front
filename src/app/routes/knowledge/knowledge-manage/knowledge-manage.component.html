@@ -6,17 +6,17 @@
 <nz-card>
   <div nz-row nzGutter="32">
     <nz-col nzXs="24" nzSm="12" nzMd="8" nzLg="5">
-      <sf #sfKnowledge mode="search" [schema]="knowledgeSchema" (formReset)="st.reset($event)" ></sf>
+      <sf #sfKnowledge mode="search" [schema]="knowledgeSchema" (formReset)="st.reset($event)" (formChange)="knowledgeSchemaFormChange($event)"></sf>
     </nz-col>
     <nz-col nzXs="24" nzSm="12" nzMd="8" nzLg="5">
-      <sf #sfField mode="search" [schema]="fieldSchema" (formReset)="st.reset($event)"></sf>
+      <sf #sfField mode="search" [schema]="fieldSchema" (formReset)="st.reset($event)" (formChange)="fieldSchemaFormChange($event)"></sf>
     </nz-col>
     <nz-col nzXs="24" nzSm="12" nzMd="8" nzLg="5">
-      <sf #sfDeparment mode="search" [schema]="departmentSchema" (formReset)="st.reset($event)"></sf>
+      <sf #sfDeparment mode="search" [schema]="departmentSchema" (formReset)="st.reset($event)" (formChange)="departmentSchemaFormChange($event)"></sf>
     </nz-col>
     <nz-col nzXs="24" nzSm="12" nzMd="8" nzLg="9">
       <sf #sfMetaDir mode="search" [schema]="metaDirSchema" (formSubmit)="queryList($event)"
-          (formReset)="st.reset($event)"
+          (formReset)="st.reset($event)" (formChange)="metaDirSchemaFormChange($event)"
       expandTrigger="hover">
       </sf>
     </nz-col>

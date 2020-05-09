@@ -87,8 +87,8 @@ export class EventService {
     return this.http.delete<JsonResponse>('api/complexevent/deleteSubEvent',{'complexSubEventId': id});
   }
 
-  public addMetaEventRelation(id: number, relation:string): Observable<JsonResponse> {
-    return this.http.get<JsonResponse>('api/complexevent/addMetaEventRelation',{'complexEventId':id, 'relation':relation});
+  public addMetaEventRelation(left, right, lr, complexId): Observable<JsonResponse> {
+    return this.http.get<JsonResponse>('api/complexevent/addMetaEventRelation',{'left':left, 'right':right, 'lr':lr,'complexId':complexId});
   }
 
   public addComplexTarget(target: KnowledgeComplexTarget): Observable<JsonResponse> {
@@ -102,7 +102,31 @@ export class EventService {
     return this.http.get<JsonResponse>('api/complexevent/getAllTarget',{'complexEventId': id});
   }
 
-  public addTargetRelation(id: number, relation:string): Observable<JsonResponse> {
-    return this.http.get<JsonResponse>('api/complexevent/addTargetRelation',{'complexEventId':id, 'relation':relation});
+  public addTargetRelation(left, right, lr, complexId): Observable<JsonResponse> {
+    return this.http.get<JsonResponse>('api/complexevent/addTargetRelation',{'left':left, 'right':right, 'lr':lr,'complexId':complexId});
+  }
+
+  public getAllSubEventRelation(id: number): Observable<JsonResponse> {
+    return this.http.get<JsonResponse>('api/complexevent/getAllSubEventRelation',{'complexEventId': id});
+  }
+
+  public getAllTargetRelation(id: number): Observable<JsonResponse> {
+    return this.http.get<JsonResponse>('api/complexevent/getAllTargetRelation',{'complexEventId': id});
+  }
+
+  public deleteComplexTarget(id: number): Observable<JsonResponse>{
+    return this.http.delete<JsonResponse>('api/complexevent/deleteTarget',{'complexTargetId': id});
+  }
+
+  public deleteSubEventRelation(id: number): Observable<JsonResponse>{
+    return this.http.delete<JsonResponse>('api/complexevent/deleteSubEventRelation',{'complexEventId': id});
+  }
+
+  public deleteTargetRelation(id: number): Observable<JsonResponse>{
+    return this.http.delete<JsonResponse>('api/complexevent/deleteTargetRelation',{'complexEventId': id});
+  }
+
+  public deduce(id: number): Observable<JsonResponse> {
+    return this.http.get<JsonResponse>('api/complexevent/deduce',{'complexEventId': id});
   }
 }

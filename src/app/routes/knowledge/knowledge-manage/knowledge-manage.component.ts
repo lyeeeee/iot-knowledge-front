@@ -12,6 +12,7 @@ import {NzCascaderOption, NzMessageService, NzModalService, NzNotificationServic
 import {HttpClient} from "@angular/common/http";
 import {DirectoryDTO, DirectoryNode} from "../directory";
 import {DirectoryService} from "../../../directory.service";
+import {KnowledgeDetail} from "../knowledge";
 
 
 
@@ -39,10 +40,14 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
    * */
   uploadVisible = false;//是否显示新增弹出框
   list: any[] = [];
+
+
   name: string = '';//知识名称
-  field_name: string = '';//所属领域名称
-  department_name: string = '';//所属部门名称
-  meta_catalogue_name: string = '';//所属元目录名称
+  field_name: number = null;//所属领域名称
+  department_name: number = null;//所属部门名称
+  meta_catalogue_name: number = null;//所属元目录名称
+
+
   MetaList: any[] = [];//存放所有元目录
 
 
@@ -96,7 +101,7 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
         type: 'string',
         title: '领域',
         enum: [],
-        default: '                ',
+        default: null,
         ui: {
           widget: 'select',
         } as SFSelectWidgetSchema,
@@ -112,11 +117,8 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
         type: 'string',
         title: '部门',
         enum: [
-          { label: '待支付', value: 'WAIT_BUYER_PAY' },
-          { label: '已支付', value: 'TRADE_SUCCESS' },
-          { label: '交易完成', value: 'TRADE_FINISHED' },
         ],
-        default: 'WAIT_BUYER_PAY',
+        default: null,
         ui: {
           widget: 'select',
         } as SFSelectWidgetSchema,
@@ -152,18 +154,18 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
 
   columns: STColumn[] = [
     {title: '序号', type: 'no'},
-    {title: '知识名称', index: 'name'},
-    {title: '所属领域', index: 'field_name'},
-    {title: '所属部门', index: 'department_name'},
-    {title: '所属元目录', index: 'meta_catalogue_name'},
-    {title: '简介', index: 'knowledge_synopsis'},
-    {
-      title: '操作',
-      buttons: [
-        {text: 'SparQL查询', click: (item: any) => this.sparqlSelect(item)},
-        // {text: '知识图谱', type: 'static', click: 'reload'},
-      ]
-    }
+    {title: '知识名称', index: 'knowledgeName'},
+    {title: '所属领域', index: 'field'},
+    {title: '所属部门', index: 'department'},
+    {title: '所属元目录', index: 'metaDir'},
+    {title: '简介', index: 'knowledgeSynopsis'},
+    // {
+    //   title: '操作',
+    //   buttons: [
+    //     {text: 'SparQL查询', click: (item: any) => this.sparqlSelect(item)},
+    //     // {text: '知识图谱', type: 'static', click: 'reload'},
+    //   ]
+    // }
   ];
   constructor(private http: _HttpClient,
               private https: HttpClient,
@@ -179,7 +181,7 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
     this.sfKnowledge.button = "none";
     this.sfDeparment.button = "none";
     this.sfField.button = "none";
-    this.getList();
+    this.getList(null, null, null, null,);
     this.form = this.fb.group({
       name: [null, [Validators.required]],
       selectMeta: [null, [Validators.required]],
@@ -196,34 +198,27 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
   }
 
   //调用后台接口获取list数据
-  getList() {
-    this.http.get('api/knowledge/infoList', {
-      name: this.name,
-      field_name: this.field_name,
-      department_name: this.department_name,
-      meta_catalogue_name: this.meta_catalogue_name
-    }).subscribe(data => {
-      this.list = Array(data.length)
+  private getList(knowledgeName: string, field: number, department: number, metaDir: number) {
+    this.directoryService.getAllKnowledge(knowledgeName, field, department, metaDir).subscribe(data => {
+      let ret = data.data;
+      this.list = Array(ret.length)
         .fill({}).map((item: any, idx: number) => {
           return {
-            name: data[idx].name,
-            field_name: data[idx].fieldName,
-            department_name: data[idx].departmentName,
-            meta_catalogue_name: data[idx].metaCatalogueName,
-            knowledge_synopsis: data[idx].knowledgeSynopsis,
+            knowledgeName: ret[idx].knowledgeName,
+            field: ret[idx].field,
+            department: ret[idx].department,
+            metaDir: ret[idx].metaDir,
+            knowledgeSynopsis: ret[idx].knowledgeSynopsis,
           }
         })
-    })
+    });
   }
 
-//搜索按钮
-  queryList(event) {
-    this.name = event.name;
-    this.field_name = event.field_name;
-    this.department_name = event.department_name;
-    this.meta_catalogue_name = event.meta_catalogue_name;
-    // console.log(this.name+'---'+this.field_name+'----'+this.department_name+"----"+this.meta_catalogue_name);
-    this.getList();
+  /**
+   * 搜索按钮
+   * */
+  private queryList(event) {
+    this.getList(this.name, this.field_name, this.department_name, this.meta_catalogue_name);
   }
 
 //TODO 知识导入、删除、知识图谱
@@ -270,7 +265,7 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
     this.http.post('api/knowledge/infoList/insertToGraphdb', formData).subscribe(data => {
       this.uploadVisible = false;
       this.uploading = false;
-      this.getList();
+      this.getList(null, null, null, null);
     })
   }
 
@@ -303,7 +298,7 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
         //this.handleUpload()
       }
       this.uploadVisible = false;
-      this.getList();
+      this.getList(null, null, null, null);
     })
   }
 
@@ -414,5 +409,21 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
         this.handleMetaDirHelper(cur[i].child, metaDir[i].children);
       }
     }
+  }
+
+  knowledgeSchemaFormChange(event) {
+    this.name = event.name;
+  }
+
+  fieldSchemaFormChange(event) {
+    this.field_name = event.field;
+  }
+
+  departmentSchemaFormChange(event) {
+    this.department_name  = event.department;
+  }
+
+  metaDirSchemaFormChange(event) {
+    this.meta_catalogue_name = event.static[event.static.length-1];
   }
 }

@@ -15,14 +15,14 @@ export class DirectoryService {
   /**
    * 获取所有的领域部门和元目录信息
    * */
-  getAllDirecotory(): Observable<JsonResponse> {
+  public getAllDirecotory(): Observable<JsonResponse> {
     return this.http.get<JsonResponse>('api/directory/getAllDirectory', {'owner': ['knowledge_class','knowledge']},);
   }
 
   /**
    * 创建结点
    * */
-  createNode(node: DirectoryNode): Observable<any> {
+  public createNode(node: DirectoryNode): Observable<any> {
     return this.http.post<any>('api/directory/add', JSON.stringify(node),null,{
       headers: this.headers,
       observe: 'response',
@@ -31,8 +31,26 @@ export class DirectoryService {
   /**
    * 删除当前节点
    * */
-  dropNode(nodeActived: NzTreeNode): Observable<any> {
+  public dropNode(nodeActived: NzTreeNode): Observable<any> {
     let nodeId: string = nodeActived.key;
     return this.http.delete('api/directory/delete',{'nodeId': nodeId, 'cascade':true});
+  }
+
+  public getAllKnowledge(knowledgeName: string, field: number, department: number, metaDir: number): Observable<JsonResponse> {
+    let param = new Object();
+    if (knowledgeName != null) {
+      param['knowledgeName'] = knowledgeName;
+    }
+    if (field != null) {
+      param['field'] = field;
+    }
+    if (department != null) {
+      param['department'] = department;
+    }
+    if (metaDir != null) {
+      param['metaDir'] = metaDir;
+    }
+    return this.http.get<JsonResponse>('api/knowledge/getAllKnowledge',
+      param,);
   }
 }
