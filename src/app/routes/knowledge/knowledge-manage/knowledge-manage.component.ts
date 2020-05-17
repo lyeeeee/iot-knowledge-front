@@ -404,7 +404,7 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
         if (cur[i].child == null || cur[i].child.length == 0) {
           metaDir.push({label: cur[i].cur.value, value: cur[i].cur.id, isLeaf: true});
         } else {
-          metaDir.push({label: cur[i].cur.value, value: cur[i].cur.id, children:[]});
+          metaDir.push({label: cur[i].cur.value, value: cur[i].cur.id, children:[], isLeaf: true});
         }
         this.handleMetaDirHelper(cur[i].child, metaDir[i].children);
       }

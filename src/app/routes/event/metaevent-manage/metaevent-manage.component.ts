@@ -25,7 +25,10 @@ export class EventMetaeventManageComponent implements OnInit {
   addRelationIsVisible;
 
   deleteRelationIsVisible;//是否显示删除对应关系弹出框
-  name = '';//原子事件名称
+  /**
+   * 原子事件名称
+   * */
+  name: string = null;
   metaEventName: any[] = [];//存放所有已存在的原子事件名称，更新及新增时检查是否已存在
   metaEventUpdateId = '';//修改原子事件id
   metaEventDeleteId: number = null;//删除原子事件id
@@ -161,9 +164,11 @@ export class EventMetaeventManageComponent implements OnInit {
    * */
   private getMetaEventList(): void{
     this.metaEventName = [];
-    this.http.get('api/metaevent/getAll', {
-      name: this.name
-    }).subscribe(data => {
+    let param = new Object();
+    if (this.name != null) {
+      param['name'] = this.name;
+    }
+    this.http.get('api/metaevent/getAll', param).subscribe(data => {
       data = data.data;
       this.list = Array(data.length)
         .fill({}).map((item: any, idx: number) => {
@@ -176,7 +181,8 @@ export class EventMetaeventManageComponent implements OnInit {
             id: data[idx].id,
           }
         })
-    })
+      this.name = null;
+    });
   }
 
   /**

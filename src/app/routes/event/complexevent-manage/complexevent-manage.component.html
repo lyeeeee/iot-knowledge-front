@@ -48,7 +48,7 @@
 <!--新增子事件弹出框-->
 <nz-modal
   [(nzVisible)]="saveMetaIsVisible"
-  nzTitle="新增原子事件范围"
+  nzTitle="新增/修改原子事件"
   (nzOnCancel)="saveMetaHandleCancel()"
   nzFooter=" "
   nzWidth="800px"
@@ -121,7 +121,7 @@
       <button nz-button nzType="primary" [disabled]="metaEventLogicRelationForm.invalid" type="submit">提交</button>
     </se>
     <se>
-      <button nz-button (click)="resetSubEventRelation($event)">清除当前逻辑关系</button>
+      <button nz-button (click)="resetSubEventRelation($event)" type="button">清除当前逻辑关系</button>
     </se>
   </form>
 </nz-modal>
@@ -216,7 +216,7 @@
       <button nz-button nzType="primary" [disabled]="targetLogicRelationForm.invalid" type="submit">提交</button>
     </se>
     <se>
-      <button nz-button (click)="resetTargetRelation($event)">清除当前逻辑关系</button>
+      <button nz-button (click)="resetTargetRelation($event)" type="button">清除当前逻辑关系</button>
     </se>
   </form>
 </nz-modal>

@@ -3,7 +3,6 @@ import { _HttpClient, ModalHelper } from '@delon/theme';
 import { STColumn, STComponent } from '@delon/abc/table';
 import { SFSchema } from '@delon/form';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {NzNotificationService} from "ng-zorro-antd";
 import {DatePipe} from "@angular/common";
 import {
   KnowledgeComplexEvent,
@@ -13,12 +12,14 @@ import {
   MetaEventAttrRelation
 } from "../event";
 import {EventService} from "../../../event.service";
+import {NzNotificationService} from "ng-zorro-antd";
 
 @Component({
   selector: 'app-event-complexevent-manage',
   templateUrl: './complexevent-manage.component.html',
 })
 export class EventComplexeventManageComponent implements OnInit {
+
   list: any[] = [];
   metaList: any[] = [];//所选知识列表
   attributeList: any[] = [];//对应关系列表
@@ -34,8 +35,10 @@ export class EventComplexeventManageComponent implements OnInit {
   addTargetIsVisible;//是否显示添加目标弹出框
   saveTargetIsVisible;//是否显示新增目标弹出框
   deleteTargetIsVisible;//是否显示删目标弹出框
-
-  name = '';//复杂事件名称
+  /**
+   * 复杂事件名称
+   * */
+  name = null;
   /**
    * 存放所有已存在的复杂事件名称，更新及新增时检查是否已存在
    * */
@@ -50,7 +53,7 @@ export class EventComplexeventManageComponent implements OnInit {
    * 保存删除复杂事件id
    * */
   complexEventDeleteId = null;
-  complexId = null;
+  complexId: number = null;
   allMetaList: any[] = [];//存放所有原子事件
   checkMeta = '';//所选原子事件
   checkRelation = '';//所选属性关系
@@ -191,6 +194,7 @@ export class EventComplexeventManageComponent implements OnInit {
         {text: '修改', click: (item: any) => this.updateComplexEvent(item)},
         {text: '删除', click: (item: any) => this.deleteComplexEvent(item)},
         {text: '监控推理', click: (item: any) => this.deduce(item)},
+        {text: '停止', click: (item: any) => this.stopDeduce(item)},
         {text: '原子事件关系', click: (item: any) => this.addLogicRelation(item)},
         {text: '目标关系', click: (item: any) => this.addTargetRelation(item)},
         // {text: '报警', click: (item: any) => this.aaaa()},
@@ -213,6 +217,7 @@ export class EventComplexeventManageComponent implements OnInit {
       title: '操作',
       buttons: [
         {text: '删除', click: (item: any) => this.deleteMeta(item)},
+        {text: '修改', click: (item: any) => this.editMeta(item)},
       ]
     }
   ];
@@ -246,9 +251,25 @@ export class EventComplexeventManageComponent implements OnInit {
       title: '操作',
       buttons: [
         {text: '删除', click: (item: any) => this.deleteTarget(item)},
+        {text: '修改', click: (item: any) => this.editTarget(item)},
       ]
     }
   ];
+
+  /**
+   * 用于保存修改子事件的id
+   * */
+  editSubEventId : number = null;
+
+  /**
+   * 用于保存修改目标的id
+   * */
+  editTargetId : number = null;
+
+  /**
+   * 是否已经开启查询推理结果的定时器
+   * */
+  timerStarted : boolean = false;
 
   constructor(private notification: NzNotificationService,
               private fb: FormBuilder,
@@ -336,6 +357,7 @@ export class EventComplexeventManageComponent implements OnInit {
             targetRelation: events[idx].targetRelation,
           }
         })
+      this.name = null;
     });
   }
 
@@ -354,7 +376,7 @@ export class EventComplexeventManageComponent implements OnInit {
   }
 
   /**
-   * 确认删除复杂事件后提交
+   * 确认删除复杂事件,提交
    * */
   private deleteComplexEventSubmit(): void {
     this.deleteComplexEventIsVisible = false;
@@ -493,6 +515,7 @@ export class EventComplexeventManageComponent implements OnInit {
   //新增所选原子事件的取消按钮方法
   saveMetaHandleCancel(): void {
     this.saveMetaIsVisible = false;
+    this.editSubEventId = null;
     this.metaForm = this.fb.group({
       metaEventRange:[null, [Validators.required]],
       selectMeta: [null, [Validators.required]],
@@ -508,7 +531,7 @@ export class EventComplexeventManageComponent implements OnInit {
   }
 
   /**
-   * 提交保存所选原子事件
+   * 提交或修改保存所选原子事件
    * */
   private submitMeta(): void {
     let subEvent: KnowledgeComplexSubEvent = new KnowledgeComplexSubEvent();
@@ -519,6 +542,8 @@ export class EventComplexeventManageComponent implements OnInit {
     subEvent.subeventId = this.metaForm.value.selectMeta;
     subEvent.subeventName = this.metaEventMap.get(subEvent.subeventId);
     subEvent.subeventRange = this.metaForm.value.metaEventRange;
+    if (this.editSubEventId != null) subEvent.id = this.editSubEventId;
+    this.editSubEventId = null;
     this.eventService.addComplexSubEvent(subEvent).subscribe(data => {
       this.saveMetaHandleCancel();
       this.getMetaList();
@@ -605,7 +630,7 @@ export class EventComplexeventManageComponent implements OnInit {
   //所选属性关系的取消按钮方法
   addAttributeHandleCancel(): void {
     this.addAttributeIsVisible = false;
-    this.complexId = '';
+    this.complexId = null;
   }
 
   //新增所选属性关系
@@ -724,7 +749,7 @@ export class EventComplexeventManageComponent implements OnInit {
 //所选目标关系的取消按钮方法
   addTargetHandleCancel(): void {
     this.addTargetIsVisible = false;
-    this.complexId = '';
+    this.complexId = null;
   }
 
   //新增所选目标关系
@@ -737,6 +762,7 @@ export class EventComplexeventManageComponent implements OnInit {
    * */
   private saveTargetHandleCancel(): void {
     this.saveTargetIsVisible = false;
+    this.editTargetId = null;
     this.targetForm = this.fb.group({
       //selectAndOrNot: [null, [Validators.required]],
       selectMeta: [null, [Validators.required]],
@@ -767,6 +793,8 @@ export class EventComplexeventManageComponent implements OnInit {
     target.subeventName = this.metaEventMap.get(target.subeventId);
     target.timeWindow = this.targetForm.value.timeWindow;
     target.lenWindow = this.targetForm.value.lenWindow;
+    if (this.editTargetId != null) target.id = this.editTargetId;
+    this.editTargetId = null;
     this.eventService.addComplexTarget(target).subscribe(data => {
       this.saveTargetHandleCancel();
       this.getTargetList();
@@ -803,29 +831,44 @@ export class EventComplexeventManageComponent implements OnInit {
   }
 
 //--------------------------------------
-  warn() {
+  warn(complexId : number) {
     // setInterval()
+    if (this.timerMap.has(complexId)) return;
     let timer = setInterval(() => {
-      this.http.get('api/warn/warn', {}).subscribe(data => {
-        console.log(data);
-        if(data.type === "1"){
-          if(this.warnType  === 1){
-            this.warnType = 2;
-            this.warn1();
-          }
-        }
-        if(data.type === "2"){
-          if(this.warnType  === 2){
-            this.warnType = 0;//结束
-            this.warn2();
-          }
-        }
-        if (this.stopTimer == true) {
-          clearInterval(timer);
-          this.stopTimer = false;
-        }
-      })
-    }, 2000)
+      this.http.get('api/complexevent/getDeduceResult', {}).subscribe(data => {
+        let complexEvents: KnowledgeComplexEvent[] = data.data;
+        // if(data.type === "1"){
+        //   if(this.warnType  === 1){
+        //     this.warnType = 2;
+        //     this.warn1();
+        //   }
+        // }
+        // if(data.type === "2"){
+        //   if(this.warnType  === 2){
+        //     this.warnType = 0;//结束
+        //     this.warn2();
+        //   }
+        // }
+        // if (this.stopTimer == true) {
+        //   clearInterval(timer);
+        //   this.stopTimer = false;
+        // }
+        complexEvents.forEach(e => {
+          this.notification.create(
+            //error，warning,info
+            "error",
+            '站点报警',//标题
+            '<table border="1"><tr><td>系统</td><td>复杂事件</td><td>复杂事件说明</td><td>站点</td></tr>' +
+            '<tr bgcolor="87cefa"><td>授时系统</td><td>'+ e.name+'</td><td>'+e.synopsis+'</td><td>北京站</td></tr></table>',//在这里写表格内容
+            {
+              nzStyle: {width: '800px', marginLeft: '-400px'},//弹出框的样式，分别是宽度，左距离，颜色
+              nzDuration: 20000,//显示时间，单位是毫秒，0为一直显示，不自动关闭
+            }
+          );
+        });
+      });
+    }, 5000);
+    this.timerMap.set(this.complexId, timer);
   }
 
   warn1() {
@@ -884,6 +927,7 @@ export class EventComplexeventManageComponent implements OnInit {
   /**
    * 开始推理复杂事件
    * */
+  timerMap : Map<number, NodeJS.Timer> = new Map<number, NodeJS.Timer>();
   private deduce(item): void {
     // this.notification.create(
     //   //error，warning,info
@@ -897,8 +941,16 @@ export class EventComplexeventManageComponent implements OnInit {
     // );
     this.complexId = item.id;
     this.eventService.deduce(this.complexId).subscribe(data => {
-
+      let id :number = data.data;
+      this.notification.blank(
+        'Success',
+        '复杂事件:' + this.complexEvents.get(id).name + ' 开始推理'
+      );
     });
+    if (this.timerStarted == false) {
+      this.timerStarted = true;
+      this.warn(this.complexId);
+    }
     this.complexId = null;
   }//nzDuration是毫秒
 
@@ -1033,5 +1085,28 @@ export class EventComplexeventManageComponent implements OnInit {
         );
       }
     });
+  }
+
+  private stopDeduce(item) : void {
+    this.eventService.stopDeduce(item.id).subscribe(data => {
+      let id :number = data.data;
+      this.notification.blank(
+        'Success',
+        '复杂事件:' + this.complexEvents.get(id).name + ' 停止推理'
+      );
+    });
+    let timer: NodeJS.Timer = this.timerMap.get(item.id);
+    clearInterval(Number(timer));
+    this.timerMap.delete(item.id);
+  }
+
+  private editMeta(item) : void {
+    this.editSubEventId = item.id;
+    this.saveMetaIsVisible = true;
+  }
+
+  private editTarget(item) : void {
+    this.editTargetId = item.id;
+    this.saveTargetIsVisible = true;
   }
 }

@@ -57,7 +57,11 @@ export class EventService {
   }
 
   public getAllComplexEvent(name: string): Observable<JsonResponse> {
-    return this.http.get<JsonResponse>('api/complexevent/getAll',{'name': name});
+    let param = new Object();
+    if (name != null) {
+      param['name'] = name;
+    }
+    return this.http.get<JsonResponse>('api/complexevent/getAll',param);
   }
 
   public getAllMetaEvent(): Observable<JsonResponse> {
@@ -128,5 +132,9 @@ export class EventService {
 
   public deduce(id: number): Observable<JsonResponse> {
     return this.http.get<JsonResponse>('api/complexevent/deduce',{'complexEventId': id});
+  }
+
+  public stopDeduce(id: number): Observable<JsonResponse> {
+    return this.http.get<JsonResponse>('api/complexevent/stopDeduce',{'complexEventId': id});
   }
 }
