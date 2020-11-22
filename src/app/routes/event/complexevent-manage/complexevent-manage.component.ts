@@ -5,7 +5,7 @@ import {
   FormProperty,
   SFComponent, SFRadioWidgetSchema,
   SFSchema,
-  SFSchemaEnum, SFSelectWidgetSchema, SFStringWidgetSchema,
+  SFSchemaEnum, SFSchemaEnumType, SFSelectWidgetSchema, SFStringWidgetSchema,
   SFTextareaWidgetSchema,
   SFTransferWidgetSchema
 } from '@delon/form';
@@ -256,11 +256,11 @@ export class EventComplexeventManageComponent implements OnInit {
       btn2: {
         type: 'string',
         title: '是否完整定义',
-        enum: ['是', '否'],
+        enum: [{label :'是', value:1}, {label:'否', value:0}],
         ui: {
           widget: 'radio',
         } as SFRadioWidgetSchema,
-        default: '是',
+        default: 1,
       },
       globalFormula: {
         type: 'string',
@@ -287,11 +287,38 @@ export class EventComplexeventManageComponent implements OnInit {
           { label: '待支付', value: 'WAIT_BUYER_PAY', otherData: 1 },
         ],
         ui: {
+          change: (value, orgData) => this.loadKnowledgeProp(value, orgData),
+          widget: 'select',
+        } as SFSelectWidgetSchema,
+      },
+      props: {
+        type: 'string',
+        title: '选取知识属性',
+        enum: [
+        ],
+        ui: {
           widget: 'select',
         } as SFSelectWidgetSchema,
       },
     },
   };
+  /**
+   * 加载设备对应的属性
+   * */
+  private knowledgeProps:SFSchemaEnumType[] = [];
+  private loadKnowledgeProp(value, orgData): void {
+      this.eventService.getKnowledgeAttributeByUri(value).subscribe(data => {
+          let props:string[] = data.data;
+          this.knowledgeProps = [];
+          props.forEach((prop : string) => {
+            this.knowledgeProps.push({ label: prop, value: prop});
+          });
+          const propProperty = this.sfinsertFormula.getProperty('/props');
+          propProperty.schema.enum = this.knowledgeProps;
+          propProperty.widget.reset(this.knowledgeProps[0]);
+          console.log(this.knowledgeProps);
+      });
+  }
 
 
   /**
@@ -1314,7 +1341,8 @@ export class EventComplexeventManageComponent implements OnInit {
   }
 
   appendKnowledgesRelation() {
-    this.sfinsertFormula.setValue("/relation", this.sfinsertFormula.getValue("/relation") + this.knowledgeIdNameMap.get(Number(this.sfinsertFormula.getValue("/knowledge"))));
+    this.sfinsertFormula.setValue("/relation",
+      this.sfinsertFormula.getValue("/relation") + this.knowledgeIdNameMap.get(Number(this.sfinsertFormula.getValue("/knowledge"))));
   }
 
   private insertFormulaForComplexEvent(): void {
@@ -1348,7 +1376,15 @@ export class EventComplexeventManageComponent implements OnInit {
   }
 
   submitForSelectKnowledge($event: MouseEvent) {
-
+    let field:string = this.sfSelectedKnowledge.getValue("/field");
+    let department:string = this.sfSelectedKnowledge.getValue("/department");
+    let dir:string = this.sfSelectedKnowledge.getValue("/metaDir");
+    let s:string = this.sfSelectedKnowledge.getValue("/s");
+    let p:string = this.sfSelectedKnowledge.getValue("/p");
+    let o:string = this.sfSelectedKnowledge.getValue("/o");
+    this.eventService.saveKnowledgeByRange(field, department, dir, s, p, o).subscribe(data => {
+        console.log(data.data);
+    });
   }
 
 
@@ -1356,23 +1392,6 @@ export class EventComplexeventManageComponent implements OnInit {
   selectCompletedFormulaIsVisiable: boolean = false;
   /**
    * 选择增加未完成公式
-   * if (targets[idx].attributeRelation === '0') {
-            this.attributeRelationInfo = "小于"
-          } else if (targets[idx].attributeRelation === '1') {
-            this.attributeRelationInfo = "小于等于"
-          } else if (targets[idx].attributeRelation === '2') {
-            this.attributeRelationInfo = "等于"
-          } else if (targets[idx].attributeRelation === '3') {
-            this.attributeRelationInfo = "大于等于"
-          } else if (targets[idx].attributeRelation === '4') {
-            this.attributeRelationInfo = "大于"
-          } else if (targets[idx].attributeRelation === '5') {
-            this.attributeRelationInfo = "between"
-          } else if (targets[idx].attributeRelation === '6') {
-            this.attributeRelationInfo = "不等于"
-          } else if (targets[idx].attributeRelation === '7') {
-            this.attributeRelationInfo = "in"
-          }
    * */
   @ViewChild('sfUncompletedSelectFomula', { static: true }) sfUncompletedSelectFomula: SFComponent;
   selectUncompletedFomulaSchema: SFSchema = {

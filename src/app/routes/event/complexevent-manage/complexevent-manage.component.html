@@ -268,7 +268,6 @@
   nzFooter=" "
   nzWidth="800px"
 >
-  <!--<sf #sfSelectedKnowledge mode="" [schema]="selectKnowledgeSchema" (formSubmit)="saveKnowledgeForComplexEvent($event)" (formReset)="st.reset($event)"></sf>-->
   <sf #sfSparalSelectedKnowledge [schema]="sparqlSelectedKnowledgeSchema" [button]="null">
     <button type="submit" nz-button [disabled]="!sfSparalSelectedKnowledge.valid" (click)="saveKnowledgeForComplexEvent($event)">保存</button>
     <button (click)="sfSparalSelectedKnowledge.reset()" type="button" nz-button>重置</button>

@@ -30,6 +30,11 @@ export class EventService {
     return this.http.get<JsonResponse>('api/knowledge/getKnowledgeProperty', {'metaEventId': metaEventId},);
   }
 
+  public getKnowledgeAttributeByUri(knowledgeUri: string): Observable<JsonResponse> {
+    return this.http.get<JsonResponse>('api/knowledge/getKnowledgePropertyByUri', {'knowledgeUri': knowledgeUri},);
+  }
+
+
   public addMetaEventAttrRelation(metaEventAttrRelation: MetaEventAttrRelation) : Observable<JsonResponse> {
     return this.http.post<JsonResponse>('api/metaevent/addRelation', JSON.stringify(metaEventAttrRelation),null,{
       headers: this.directoryService.headers,
@@ -155,6 +160,25 @@ export class EventService {
   }
 
   public addFolumaKnowledge(foluma:KnowledgeFomula):Observable<JsonResponse> {
-    return this.http.post<JsonResponse>('api/complexevent/addFolumaKnowledge', {'knowledgeFoluma': foluma});
+    console.log(foluma)
+    return this.http.post<JsonResponse>('api/complexevent/addFolumaKnowledge', JSON.stringify(foluma), null, {
+      headers: this.directoryService.headers,
+      observe: 'response',
+    });
+  }
+
+  public saveKnowledgeByRange(field:string, department:string, metaDir:string, s:string, p:string, o:string ):Observable<JsonResponse> {
+    let body = new Object();
+    if (field != null) body['field'] = field;
+    if (department != null) body['department'] = department;
+    if (metaDir != null) body['metaDir'] = metaDir;
+    if (s != null) body['s'] = s;
+    if (p != null) body['p'] = p;
+    if (o != null) body['o'] = o;
+    return this.http.post<JsonResponse>('api/complexevent/saveKnowledgeByRange',
+      JSON.stringify(body), null, {
+      headers: this.directoryService.headers,
+      observe: 'response',
+    });
   }
 }
