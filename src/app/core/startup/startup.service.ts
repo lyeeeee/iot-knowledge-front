@@ -123,16 +123,16 @@ export class StartupService {
         text: '主导航',
         group: true,
         children: [
-          // {
-          //   text: '仪表盘',
-          //   link: '/dashboard',
-          //   icon: {type: 'icon', value: 'appstore'}
-          // },
-          // {
-          //   text: '快捷菜单',
-          //   icon: {type: 'icon', value: 'rocket'},
-          //   shortcutRoot: true
-          // },
+          {
+            text: '仪表盘',
+            link: '/dashboard',
+            icon: {type: 'icon', value: 'appstore'}
+          },
+          {
+            text: '快捷菜单',
+            icon: {type: 'icon', value: 'rocket'},
+            shortcutRoot: true
+          },
           {
             text: '首页',
             link: '/dashboard', //首页路径
@@ -146,25 +146,18 @@ export class StartupService {
             children: [
               {
                 text: '知识管理列表',
-                link: '/knowledge/list',
+                link: '/knowledge/knowledge-manage',
               },
+            ],
+          },
+          {
+            text: '目录管理',
+            icon: { type: 'icon', value: 'book' },
+            shortcutRoot: true,
+            children: [
               {
-                text: '目录管理',
-                icon: { type: 'icon', value: 'book' },
-                children: [
-                  {
-                    text: '领域管理',
-                    link: '/knowledge/fieldList',
-                  },
-                  {
-                    text: '部门管理',
-                    link: '/knowledge/departmentList',
-                  },
-                  {
-                    text: '元知识管理',
-                    link: '/knowledge/metaCatalogueList',
-                  },
-                ],
+                text: '目录树管理',
+                link: '/knowledge/knowledgedir-manage',
               },
             ],
           },
@@ -175,44 +168,11 @@ export class StartupService {
             children: [
               {
                 text: '原子事件管理',
-                link: '/event/meta-event-list',
+                link: '/event/metaevent-manage',
               },
               {
                 text: '复杂事件管理',
-                link: '/event/complex-event-list',
-              },
-              // {
-              //   text: '报警测试',
-              //   link: '/event/test'
-              // }
-            ],
-          },
-          {
-            text: '知识管理',
-            icon: { type: 'icon', value: 'book' },
-            shortcutRoot: true,
-            children: [
-              {
-                text: '知识管理列表',
-                link: '/knowledge/knowledge-manage',
-              },
-              {
-                text: '目录管理',
-                icon: { type: 'icon', value: 'book' },
-                children: [
-                  {
-                    text: '目录树管理',
-                    link: '/knowledge/knowledgedir-manage',
-                  },
-                  {
-                    text: '原子事件管理',
-                    link: '/event/metaevent-manage',
-                  },
-                  {
-                    text: '复杂事件管理',
-                    link: '/event/complexevent-manage',
-                  },
-                ],
+                link: '/event/complexevent-manage',
               },
             ],
           },

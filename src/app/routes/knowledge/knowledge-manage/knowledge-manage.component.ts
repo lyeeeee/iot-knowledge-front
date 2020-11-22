@@ -167,6 +167,30 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
     //   ]
     // }
   ];
+
+
+  modelManageVisiable: boolean = false;
+  modelManagelist = [];
+  /**
+   * 模型展示框
+   * */
+  @ViewChild('st', { static: true }) stModelManage: STComponent;
+  modelManageColumns: STColumn[] = [
+    {title: '序号', type: 'no'},
+    {title: 'id', index: 'id', iif: () => false},
+    {title: '模型名称', index: 'model_name'},
+    {title: '模型简介', index: 'knowledge_synopsis'},
+    {title: '模型文件名称', index: 'file_name'},
+    {title: '模型图id', index: 'graph_id'},
+    {
+      title: '操作',
+      buttons: [
+        {text: '删除模型', click: (item: any) => this.deleteModel(item)},
+      ]
+    }
+  ];
+
+
   constructor(private http: _HttpClient,
               private https: HttpClient,
               private modal: ModalHelper,
@@ -425,5 +449,43 @@ export class KnowledgeKnowledgeManageComponent implements OnInit {
 
   metaDirSchemaFormChange(event) {
     this.meta_catalogue_name = event.static[event.static.length-1];
+  }
+  /**
+   * 展示模型窗口显示
+   * */
+  private modelManage(): void {
+    this.modelManageVisiable = true;
+    this.getAllModel();
+  }
+
+  private getAllModel(): void {
+    this.directoryService.getAllModel().subscribe(data => {
+      let files = data.data;
+      this.modelManagelist = Array(files.length)
+        .fill({}).map((item: any, idx: number) => {
+          return {
+            id: files[idx].id,
+            model_name: files[idx].modelName,
+            knowledge_synopsis: files[idx].knowledgeSynopsis,
+            file_name: files[idx].fileName,
+            graph_id: 'http://' + files[idx].graphId,
+          }
+        })
+    });
+  }
+  /**
+   * 关闭展示模型窗口
+   * */
+  private handlModelManageCancel(): void {
+    this.modelManageVisiable = false;
+  }
+  /**
+   * 删除模型
+   * */
+  private deleteModel(item: any) {
+    let id = item.id;
+    this.directoryService.deleteModel(id).subscribe(data => {
+      this.getAllModel();
+    });
   }
 }

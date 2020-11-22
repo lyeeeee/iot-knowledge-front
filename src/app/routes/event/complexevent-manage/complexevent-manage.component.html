@@ -9,6 +9,8 @@
   <sf mode="search" [schema]="searchSchema" (formSubmit)="queryList($event)" (formReset)="st.reset($event)"></sf>
   <st #st [data]="list" [columns]="columns"></st>
 </nz-card>
+
+
 <!--新增复杂事件弹出框-->
 <nz-modal
   [(nzVisible)]="insertComplexEventIsVisible"
@@ -29,6 +31,8 @@
     </se>
   </form>
 </nz-modal>
+
+
 <!--删除复杂事件确认弹出框-->
 <nz-modal [(nzVisible)]="deleteComplexEventIsVisible" nzTitle="提示" (nzOnCancel)="handleCancel()"
           (nzOnOk)="deleteComplexEventSubmit()">
@@ -45,6 +49,8 @@
     <st #metast [data]="metaList" [columns]="metaColumns"></st>
   </nz-card>
 </nz-modal>
+
+
 <!--新增子事件弹出框-->
 <nz-modal
   [(nzVisible)]="saveMetaIsVisible"
@@ -82,11 +88,15 @@
     </se>
   </form>
 </nz-modal>
+
+
 <!--删除子事件确认弹出框-->
 <nz-modal [(nzVisible)]="deleteMetaIsVisible" nzTitle="提示" (nzOnCancel)="deleteMetaHandleCancel()"
           (nzOnOk)="deleteMetaSubmit()">
   确定要删除此原子事件范围吗？
 </nz-modal>
+
+
 <!--新增原子事件逻辑关系弹出框-->
 <nz-modal
   [(nzVisible)]="insertMetaEventLogicRelationIsVisible"
@@ -127,7 +137,6 @@
 </nz-modal>
 
 
-
 <!--现有目标弹出框-->
 <nz-modal [(nzVisible)]="addTargetIsVisible"
           nzTitle="编辑目标" (nzOnCancel)="addTargetHandleCancel()"
@@ -137,6 +146,32 @@
     <st #targetst [data]="targetList" [columns]="targetColumns"></st>
   </nz-card>
 </nz-modal>
+
+<!--添加未完成公式弹出框-->
+<nz-modal
+  [(nzVisible)]="selectUncompletedFormulaIsVisiable"
+  nzTitle="添加未完成公式目标"
+  (nzOnCancel)="selectUncompletedFormulaHandleCancel()"
+  nzFooter=" "
+  nzWidth="800px"
+>
+  <sf #sfUncompletedSelectFomula [schema]="selectUncompletedFomulaSchema" (formSubmit)="submitForSelectKnowledge($event)">
+  </sf>
+</nz-modal>
+
+<!--添加已完成公式弹出框-->
+<nz-modal
+  [(nzVisible)]="selectCompletedFormulaIsVisiable"
+  nzTitle="添加已完成公式目标"
+  (nzOnCancel)="selectCompletedFormulaHandleCancel()"
+  nzFooter=" "
+  nzWidth="800px"
+>
+  <sf #sfCompletedSelectFomula [schema]="selectCompletedFomulaSchema" (formSubmit)="submitForSelectKnowledge($event)">
+  </sf>
+</nz-modal>
+
+
 <!--新增目标弹出框-->
 <nz-modal
   [(nzVisible)]="saveTargetIsVisible"
@@ -177,11 +212,15 @@
     </se>
   </form>
 </nz-modal>
+
+
 <!--确认删除目标弹出框-->
 <nz-modal [(nzVisible)]="deleteTargetIsVisible" nzTitle="提示" (nzOnCancel)="deleteTargetHandleCancel()"
           (nzOnOk)="deleteTargetSubmit()">
   确定要删除此目标吗？
 </nz-modal>
+
+
 <!--新增目标逻辑关系弹出框-->
 <nz-modal
   [(nzVisible)]="insertTargetLogicRelationIsVisible"
@@ -221,62 +260,53 @@
   </form>
 </nz-modal>
 
-
-
-
-
-
-
-
-
-<!--===============================以下暂时无用=============================================-->
-
-
-<!--所选对应关系弹出框-->
-<nz-modal [(nzVisible)]="addAttributeIsVisible"
-          nzTitle="编辑属性" (nzOnCancel)="addAttributeHandleCancel()"
-          nzFooter=" " nzWidth="1200px">
-  <button (click)="addAttribute()" nz-button nzType="primary" style="margin: 0 20px 20px;">新增属性</button>
-  <nz-card>
-    <st #attributest [data]="attributeList" [columns]="attributeColumns"></st>
-  </nz-card>
-</nz-modal>
-<!--新增对应关系弹出框-->
+<!--sparql选择知识弹出框-->
 <nz-modal
-  [(nzVisible)]="saveAttributeIsVisible"
-  nzTitle="新增属性"
-  (nzOnCancel)="saveAttributeHandleCancel()"
+  [(nzVisible)]="sparqlSelectKnowledgeIsVisible"
+  nzTitle="新增/修改原子事件"
+  (nzOnCancel)="spqralSelectKnowledgeHandleCancel()"
   nzFooter=" "
   nzWidth="800px"
 >
-  <form nz-form [formGroup]="attributeForm" (ngSubmit)="submitAttribute()" se-container="1">
-
-    <!--<se label="请选择类型" error="请选择类型" required>-->
-    <!--<nz-select formControlName="selectType" [nzPlaceHolder]="'请选择类型'" [nzShowSearch]="true"-->
-    <!--(ngModelChange)="typeChange($event)">-->
-    <!--<nz-option *ngFor="let i of typeList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>-->
-    <!--</nz-select>-->
-    <!--</se>-->
-    <se label="名称" error="请输入名称" required>
-      <input nz-input formControlName="attributeName" placeholder="请输入名称"/>
-    </se>
-    <se label="请选择对应关系" error="请选择对应关系" required>
-      <nz-select formControlName="attributeRelation" [nzPlaceHolder]="'请选择对应关系'" [nzShowSearch]="true"
-                 (ngModelChange)="relationChange($event)">
-        <nz-option *ngFor="let i of relationList" [nzLabel]="i.label" [nzValue]="i.value"></nz-option>
-      </nz-select>
-    </se>
-    <se label="值" error="请输入值" required>
-      <input nz-input formControlName="attributeValue" placeholder="请输入值"/>
-    </se>
-    <se>
-      <button nz-button nzType="primary" [disabled]="attributeForm.invalid" type="submit">提交</button>
-    </se>
-  </form>
+  <!--<sf #sfSelectedKnowledge mode="" [schema]="selectKnowledgeSchema" (formSubmit)="saveKnowledgeForComplexEvent($event)" (formReset)="st.reset($event)"></sf>-->
+  <sf #sfSparalSelectedKnowledge [schema]="sparqlSelectedKnowledgeSchema" [button]="null">
+    <button type="submit" nz-button [disabled]="!sfSparalSelectedKnowledge.valid" (click)="saveKnowledgeForComplexEvent($event)">保存</button>
+    <button (click)="sfSparalSelectedKnowledge.reset()" type="button" nz-button>重置</button>
+    <button (click)="getKnowledgeBySparql($event)" type="button" nz-button>查询</button>
+    <button (click)="getAllSelectedKnowledge($event)" type="button" nz-button>已选知识</button>
+  </sf>
 </nz-modal>
-<nz-modal [(nzVisible)]="deleteAttributeIsVisible" nzTitle="提示" (nzOnCancel)="deleteAttributeHandleCancel()"
-          (nzOnOk)="deleteAttributeSubmit()">
-  确定要删除此属性吗？
+
+
+<!--选择知识弹出框-->
+<nz-modal
+  [(nzVisible)]="selectKnowledgeIsVisible"
+  nzTitle="新增/修改原子事件"
+  (nzOnCancel)="selectKnowledgeHandleCancel()"
+  nzFooter=" "
+  nzWidth="800px"
+>
+  <sf #sfSelectedKnowledge [schema]="selectedKnowledgeSchema" [button]="null">
+    <button type="submit" nz-button [disabled]="!sfSelectedKnowledge.valid" (click)="submitForSelectKnowledge($event)">添加范围内知识</button>
+    <button (click)="sfSelectedKnowledge.reset()" type="button" nz-button>重置</button>
+    <button (click)="deleteKnowledges()" type="button" nz-button>删除已有知识</button>
+  </sf>
+</nz-modal>
+
+
+<!--插入公式弹出框-->
+<nz-modal
+  [(nzVisible)]="insertFormulaIsVisiable"
+  nzTitle="新增/修改原子事件"
+  (nzOnCancel)="insertFormulaHandleCancel()"
+  nzFooter=" "
+  nzWidth="800px"
+>
+  <sf #sfinsertFormula [schema]="insertFormulaSchema" [button]="null">
+    <button type="submit" nz-button [disabled]="!sfinsertFormula.valid" (click)="insertFormulaForComplexEvent($event)">提交</button>
+    <button (click)="sfinsertFormula.reset()" type="button" nz-button>重置</button>
+    <button (click)="appendKnowledgesRelation()" type="button" nz-button>添加知识变量</button>
+  </sf>
 </nz-modal>
 
 

@@ -26,6 +26,7 @@
   <ul nz-menu>
     <li nz-menu-item (click)="selectDropdown($event)">新建同级目录</li>
     <li nz-menu-item (click)="selectDropdown($event)">新建子级目录</li>
+    <li nz-menu-item (click)="selectDropdown($event)">重命名</li>
     <li nz-menu-item (click)="selectDropdown($event)">
       <a nz-popconfirm nzPopconfirmTitle="确定删除吗?这会删除所有子目录"
          [nzIcon]="iconTpl" (nzOnConfirm)="confirmDelete()">删除目录</a>
@@ -38,7 +39,7 @@
 </ng-template>
 <nz-modal
   [(nzVisible)]="visual"
-  nzTitle="新增目录结构"
+  nzTitle="新增/修改目录结构"
   (nzOnCancel)="handleCancel()"
   nzFooter=" "
 >

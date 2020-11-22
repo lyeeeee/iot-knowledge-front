@@ -67,3 +67,12 @@ export class KnowledgeComplexTargetRelation{
   targetIdName: string;
   type: number;
 }
+
+export class KnowledgeFomula{
+  id: number;
+  fomulaName: string;
+  isGlobal: number;
+  isComplete: number;
+  foluma: string;
+  relation: string;
+}

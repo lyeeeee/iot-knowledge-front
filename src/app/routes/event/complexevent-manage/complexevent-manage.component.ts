@@ -1,18 +1,31 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { _HttpClient, ModalHelper } from '@delon/theme';
 import { STColumn, STComponent } from '@delon/abc/table';
-import { SFSchema } from '@delon/form';
+import {
+  FormProperty,
+  SFComponent, SFRadioWidgetSchema,
+  SFSchema,
+  SFSchemaEnum, SFSelectWidgetSchema, SFStringWidgetSchema,
+  SFTextareaWidgetSchema,
+  SFTransferWidgetSchema
+} from '@delon/form';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {DatePipe} from "@angular/common";
 import {
   KnowledgeComplexEvent,
   KnowledgeComplexSubEvent, KnowledgeComplexSubEventRelation,
-  KnowledgeComplexTarget, KnowledgeComplexTargetRelation,
+  KnowledgeComplexTarget, KnowledgeComplexTargetRelation, KnowledgeFomula,
   KnowledgeMetaEvent,
   MetaEventAttrRelation
 } from "../event";
 import {EventService} from "../../../event.service";
 import {NzNotificationService} from "ng-zorro-antd";
+import {NzTransferModule} from "ng-zorro-antd/transfer";
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { of } from 'rxjs';
+import { delay } from 'rxjs/operators';
+import {DirectoryService} from "../../../directory.service";
+import {KnowledgeDetail, KnowledgeKnowledge} from "../../knowledge/knowledge";
 
 @Component({
   selector: 'app-event-complexevent-manage',
@@ -109,29 +122,8 @@ export class EventComplexeventManageComponent implements OnInit {
    * */
   targetRelationMap: Map<number, KnowledgeComplexTargetRelation> = new Map<number, KnowledgeComplexTargetRelation>();
 
-  checkCompany = "";
   checkRange = "";
-  typeList: any[] = [{value: "2", label: "目标"}, {value: "1", label: "属性"}];
-  andOrNotList: any[] = [{value: "1", label: "与"}, {value: "2", label: "或"}, {value: "3", label: "非"}];
-  // targetNameList: any[] = [{value: "00", label: "失锁"}, {value: "01", label: "自动重锁"}, {value: "02", label: "重锁失败"}];
-  targetNameList: any[] = [{
-    label: "链路光纤故障",
-    value: "0",
-    "children": [{label: "失锁", value: "00", isLeaf: true}, {label: "自动重锁", value: "01", isLeaf: true}, {
-      label: "重锁失败",
-      value: "02",
-      isLeaf: true
-    }]
-  },
-    {
-      label: "2故障",
-      value: "1",
-      "children": [{label: "10", value: "10", isLeaf: true}, {label: "11", value: "11", isLeaf: true}, {
-        label: "12",
-        value: "12",
-        isLeaf: true
-      }]
-    }];
+
   metaAttributeList: MetaEventAttrRelation[] = [];
 
   checktype = "";
@@ -151,6 +143,11 @@ export class EventComplexeventManageComponent implements OnInit {
    * 是否展示编辑目标逻辑关系
    * */
   insertTargetLogicRelationIsVisible: boolean = false;
+
+  /**
+   * 是否展示选择知识
+   * */
+  sparqlSelectKnowledgeIsVisible: boolean = false;
 
   /**
    * 编辑原子事件逻辑关系表单
@@ -174,6 +171,129 @@ export class EventComplexeventManageComponent implements OnInit {
       }
     }
   };
+
+  /**
+   * sparql选择增加知识的动态表单
+   * */
+  @ViewChild('sfSparalSelectedKnowledge', { static: true }) sfSparalSelectedKnowledge: SFComponent;
+  sparqlSelectedKnowledgeSchema: SFSchema = {
+    properties: {
+      remark1: {
+        type: 'string',
+        title: 'SPARQL',
+        ui: {
+          widget: 'textarea',
+          autosize: { minRows: 5, maxRows: 20 },
+        } as SFTextareaWidgetSchema,
+        default:'model1|SELECT ?s\n' +
+          'WHERE {\n' +
+          '    ?s ?p ?o.\n' +
+          '}',
+      },
+      remark2: {
+        type: 'string',
+        title: 'KNOWLEDGE',
+        ui: {
+          widget: 'textarea',
+          autosize: { minRows: 10, maxRows: 20 },
+        } as SFTextareaWidgetSchema,
+      },
+    },
+  };
+
+  /**
+   * 选择增加知识的动态表单
+   * */
+  @ViewChild('sfSelectedKnowledge', { static: true }) sfSelectedKnowledge: SFComponent;
+  selectedKnowledgeSchema: SFSchema = {
+    properties: {
+      field: {
+        type: 'string',
+        title: '领域',
+      },
+      department: {
+        type: 'string',
+        title: '部门',
+      },
+      metaDir: {
+        type: 'string',
+        title: '元目录',
+      },
+      s: {
+        type: 'string',
+        title: '主语',
+      },
+      p: {
+        type: 'string',
+        title: '谓词',
+      },
+      o: {
+        type: 'string',
+        title: '宾语',
+      },
+    },
+  };
+
+  /**
+   * 插入公式的动态表单
+   * */
+  @ViewChild('sfinsertFormula', { static: true }) sfinsertFormula: SFComponent;
+  insertFormulaSchema: SFSchema = {
+    properties: {
+      name: {
+        type: 'string',
+        title: '公式名',
+      },
+      btn1: {
+        type: 'string',
+        title: '是否全局',
+        enum: [{label :'是', value:1}, {label:'否', value:0}],
+        ui: {
+          widget: 'radio',
+        } as SFRadioWidgetSchema,
+        default: 1,
+      },
+      btn2: {
+        type: 'string',
+        title: '是否完整定义',
+        enum: ['是', '否'],
+        ui: {
+          widget: 'radio',
+        } as SFRadioWidgetSchema,
+        default: '是',
+      },
+      globalFormula: {
+        type: 'string',
+        title: '公式文本',
+        default: '',
+        ui: {
+          widget: 'textarea',
+          autosize: { minRows: 10, maxRows: 20 },
+        } as SFTextareaWidgetSchema,
+      },
+      relation: {
+        type: 'string',
+        title: '关联变量',
+        default: '',
+        ui: {
+          widget: 'textarea',
+          autosize: { minRows: 10, maxRows: 20 },
+        } as SFTextareaWidgetSchema,
+      },
+      knowledge: {
+        type: 'string',
+        title: '选取知识',
+        enum: [
+          { label: '待支付', value: 'WAIT_BUYER_PAY', otherData: 1 },
+        ],
+        ui: {
+          widget: 'select',
+        } as SFSelectWidgetSchema,
+      },
+    },
+  };
+
+
   /**
    * 复杂事件展示框
    * */
@@ -191,13 +311,17 @@ export class EventComplexeventManageComponent implements OnInit {
         {text: '选择原子事件', click: (item: any) => this.addOrUpdateMeta(item)},
         // {text: '编辑属性', click: (item: any) => this.addOrUpdateAttribute(item)},
         {text: '编辑目标', click: (item: any) => this.addOrUpdateTarget(item)},
+        {text: '添加未完成公式', click: (item: any) => this.addUncompletedFormula(item)},
+        {text: '添加已完成公式', click: (item: any) => this.addCompletedFormula(item)},
         {text: '修改', click: (item: any) => this.updateComplexEvent(item)},
         {text: '删除', click: (item: any) => this.deleteComplexEvent(item)},
         {text: '监控推理', click: (item: any) => this.deduce(item)},
         {text: '停止', click: (item: any) => this.stopDeduce(item)},
         {text: '原子事件关系', click: (item: any) => this.addLogicRelation(item)},
         {text: '目标关系', click: (item: any) => this.addTargetRelation(item)},
-        // {text: '报警', click: (item: any) => this.aaaa()},
+        {text: '选择知识', click: (item: any) => this.selectKnowledge(item)},
+        {text: 'SPARQL选择', click: (item: any) => this.sparqlSelectKnowledge(item)},
+        {text: '插入公式知识', click: (item: any) => this.insertFormula(item)},
       ]
     }
   ];
@@ -276,7 +400,9 @@ export class EventComplexeventManageComponent implements OnInit {
               private modal: ModalHelper,
               private http: _HttpClient,
               private datePipe: DatePipe,
-              private eventService: EventService) {
+              private eventService: EventService,
+              private msg: NzMessageService,
+              private directoryService: DirectoryService) {
   }
 
   ngOnInit() {
@@ -525,11 +651,6 @@ export class EventComplexeventManageComponent implements OnInit {
     });
   }
 
-  //选择的原子事件
-  metaChange(e) {
-    this.checkMeta = e;
-  }
-
   /**
    * 提交或修改保存所选原子事件
    * */
@@ -695,11 +816,6 @@ export class EventComplexeventManageComponent implements OnInit {
     })
   }
 
-  typeChange(e) {
-    this.checktype = e;
-  }
-
-  //目标target--------------------------------------------------
 
   //打开目标关系弹出框
   addOrUpdateTarget(item) {
@@ -859,7 +975,7 @@ export class EventComplexeventManageComponent implements OnInit {
             "error",
             '站点报警',//标题
             '<table border="1"><tr><td>系统</td><td>复杂事件</td><td>复杂事件说明</td><td>站点</td></tr>' +
-            '<tr bgcolor="87cefa"><td>授时系统</td><td>'+ e.name+'</td><td>'+e.synopsis+'</td><td>北京站</td></tr></table>',//在这里写表格内容
+            '<tr bgcolor="87cefa"><td>授时系统</td><td>'+ e.name+'</td><td>'+e.synopsis+'</td><td>西安站</td></tr></table>',//在这里写表格内容
             {
               nzStyle: {width: '800px', marginLeft: '-400px'},//弹出框的样式，分别是宽度，左距离，颜色
               nzDuration: 20000,//显示时间，单位是毫秒，0为一直显示，不自动关闭
@@ -879,7 +995,7 @@ export class EventComplexeventManageComponent implements OnInit {
       "error",
       '站点报警',//标题
       '<table border="1"><tr><td>系统</td><td>子站</td><td>子系统</td><td>设备</td><td>故障等级</td><td>值</td><td>时间</td><td>类型</td></tr>' +
-      '<tr bgcolor="87cefa"><td>授时系统</td><td>北京站</td><td>光纤光频传递分系统</td><td>光频传递系统接收设备1</td><td>低</td><td>55</td><td>'+time+'</td><td>单一复杂事件</td></tr></table>',//在这里写表格内容
+      '<tr bgcolor="87cefa"><td>授时系统</td><td>西安站</td><td>光纤光频传递分系统</td><td>光频传递系统接收设备1</td><td>低</td><td>55</td><td>'+time+'</td><td>单一复杂事件</td></tr></table>',//在这里写表格内容
       {
         nzStyle: {width: '800px', marginLeft: '-400px'},//弹出框的样式，分别是宽度，左距离，颜色
         nzDuration: 20000,//显示时间，单位是毫秒，0为一直显示，不自动关闭
@@ -947,10 +1063,7 @@ export class EventComplexeventManageComponent implements OnInit {
         '复杂事件:' + this.complexEvents.get(id).name + ' 开始推理'
       );
     });
-    if (this.timerStarted == false) {
-      this.timerStarted = true;
-      this.warn(this.complexId);
-    }
+    this.warn(this.complexId);
     this.complexId = null;
   }//nzDuration是毫秒
 
@@ -1096,8 +1209,10 @@ export class EventComplexeventManageComponent implements OnInit {
       );
     });
     let timer: NodeJS.Timer = this.timerMap.get(item.id);
-    clearInterval(Number(timer));
-    this.timerMap.delete(item.id);
+    if (timer != null) {
+      clearInterval(Number(timer));
+      this.timerMap.delete(item.id);
+    }
   }
 
   private editMeta(item) : void {
@@ -1108,5 +1223,250 @@ export class EventComplexeventManageComponent implements OnInit {
   private editTarget(item) : void {
     this.editTargetId = item.id;
     this.saveTargetIsVisible = true;
+  }
+
+  // knowledgeTotal: SFSchemaEnum[] = [];
+  //   // knowledgeCur: any[] = [];
+  //   // private freshSelectedKnowledge(id: number): void {
+  //   //   this.directoryService.getAllKnowledge(null, null, null, null).subscribe(data=> {
+  //   //       let knowledges:KnowledgeDetail[] = data.data;
+  //   //       this.eventService.getSelectedKnowledge(id).subscribe(selectedData=> {
+  //   //           let selectedKnowledges:KnowledgeDetail[] = selectedData.data;
+  //   //           let diff:KnowledgeDetail[] = knowledges.filter(k => !selectedKnowledges.includes(k));
+  //   //           knowledges.forEach(k => {
+  //   //             this.knowledgeTotal.push({title:k.knowledgeName, value:k.knowledgeId});
+  //   //           });
+  //   //
+  //   //           diff.forEach(d => {
+  //   //             this.knowledgeCur.push(d.knowledgeId);
+  //   //           });
+  //   //           this.selectKnowledgeSchema.properties.roles.enum = this.knowledgeTotal;
+  //   //           this.selectKnowledgeSchema.properties.roles.default = this.knowledgeCur;
+  //   //           this.sfSelectedKnowledge.refreshSchema();
+  //   //       });
+  //   //   });
+  //   // }
+
+  private sparqlSelectKnowledge(item) : void {
+    this.sparqlSelectKnowledgeIsVisible = true;
+    this.complexId = item.id;
+  }
+
+  private spqralSelectKnowledgeHandleCancel(): void {
+    this.sparqlSelectKnowledgeIsVisible = false;
+    this.complexId = null;
+  }
+
+  private saveKnowledgeForComplexEvent(item): void {
+    let s:string = this.sfSparalSelectedKnowledge.getValue("/remark2");
+    if (s == null) s = "";
+    let arr:string[] = s.split("\n");
+    if (s == "") arr = [];
+    let knowledgeIds:number[] = [];
+    arr.forEach(item=> {
+      knowledgeIds.push(Number(item.substring(item.indexOf("(") + 1, item.length-1)));
+    });
+    console.log(knowledgeIds);
+    this.eventService.saveKnowledgeForEvent(this.complexId, knowledgeIds).subscribe();
+  }
+
+  private getAllSelectedKnowledge(item): void {
+    this.eventService.getSelectedKnowledge(this.complexId).subscribe(data=>{
+      let knowledges: KnowledgeKnowledge[] = data.data;
+      let s: string = "";
+      knowledges.forEach(k=>{s += k.knowledgeName + "(" + k.id+")" + "\n"});
+      this.sfSparalSelectedKnowledge.setValue("/remark2", s);
+    });
+  }
+
+  private getKnowledgeBySparql(item): void {
+    this.eventService.getKnowledgeBySparsql(this.sfSparalSelectedKnowledge.getValue("/remark1")).subscribe(data=> {
+      let knowledges:KnowledgeKnowledge[] = data.data;
+      let s: string = "";
+      knowledges.forEach(k=>{s += k.knowledgeName + "(" + k.id+")" + "\n"});
+      this.sfSparalSelectedKnowledge.setValue("/remark2", s);
+    });
+  }
+
+  insertFormulaIsVisiable: boolean = false;
+
+  knowledgeShow: any = [];
+  knowledgeIdNameMap: Map<number, string> = new Map<number, string>();
+  private insertFormula(item): void {
+    this.insertFormulaIsVisiable = true;
+    this.complexId = item.id;
+    this.eventService.getAllKnowledge().subscribe(data => {
+      let knowledges:KnowledgeKnowledge[] = data.data;
+      knowledges.forEach(k => {
+        this.knowledgeShow.push({label:k.knowledgeUri, value:k.id});
+        this.knowledgeIdNameMap.set(k.id, k.knowledgeUri);
+      });
+      this.insertFormulaSchema.properties.knowledge.enum = this.knowledgeShow;
+      this.sfinsertFormula.refreshSchema();
+    });
+  }
+
+  private insertFormulaHandleCancel(): void {
+    this.insertFormulaIsVisiable = false;
+    this.complexId = null;
+    this.knowledgeShow = [];
+    this.knowledgeIdNameMap = new Map<number, string>();
+  }
+
+  appendKnowledgesRelation() {
+    this.sfinsertFormula.setValue("/relation", this.sfinsertFormula.getValue("/relation") + this.knowledgeIdNameMap.get(Number(this.sfinsertFormula.getValue("/knowledge"))));
+  }
+
+  private insertFormulaForComplexEvent(): void {
+    let f: KnowledgeFomula = new KnowledgeFomula();
+    f.fomulaName = this.sfinsertFormula.getValue("/name");
+    f.isGlobal = this.sfinsertFormula.getValue("/btn1");
+    f.isComplete = this.sfinsertFormula.getValue("/btn2");
+    f.foluma = this.sfinsertFormula.getValue("/globalFormula");
+    f.relation = this.sfinsertFormula.getValue("/relation");
+    this.eventService.addFolumaKnowledge(f).subscribe(data => {
+
+    });
+  }
+
+
+  selectKnowledgeIsVisible: boolean = false;
+
+  private selectKnowledge(item):void {
+    this.selectKnowledgeIsVisible = true;
+    this.complexId = item.id;
+  }
+
+  private selectKnowledgeHandleCancel(): void {
+    this.selectKnowledgeIsVisible = false;
+    this.complexId = null;
+  }
+
+
+  deleteKnowledges() {
+    this.eventService.saveKnowledgeForEvent(this.complexId, []).subscribe();
+  }
+
+  submitForSelectKnowledge($event: MouseEvent) {
+
+  }
+
+
+  selectUncompletedFormulaIsVisiable: boolean = false;
+  selectCompletedFormulaIsVisiable: boolean = false;
+  /**
+   * 选择增加未完成公式
+   * if (targets[idx].attributeRelation === '0') {
+            this.attributeRelationInfo = "小于"
+          } else if (targets[idx].attributeRelation === '1') {
+            this.attributeRelationInfo = "小于等于"
+          } else if (targets[idx].attributeRelation === '2') {
+            this.attributeRelationInfo = "等于"
+          } else if (targets[idx].attributeRelation === '3') {
+            this.attributeRelationInfo = "大于等于"
+          } else if (targets[idx].attributeRelation === '4') {
+            this.attributeRelationInfo = "大于"
+          } else if (targets[idx].attributeRelation === '5') {
+            this.attributeRelationInfo = "between"
+          } else if (targets[idx].attributeRelation === '6') {
+            this.attributeRelationInfo = "不等于"
+          } else if (targets[idx].attributeRelation === '7') {
+            this.attributeRelationInfo = "in"
+          }
+   * */
+  @ViewChild('sfUncompletedSelectFomula', { static: true }) sfUncompletedSelectFomula: SFComponent;
+  selectUncompletedFomulaSchema: SFSchema = {
+    properties: {
+      fomulaName: {
+        type: 'string',
+        title: '已完成公式选择',
+        enum: [
+          { label: '光频稳定度平方公式', value: 'WAIT_BUYER_PAY', otherData: 1 },
+        ],
+        default: 'WAIT_BUYER_PAY',
+        ui: {
+          widget: 'select',
+          change: (value, orgData) => console.log(value, orgData),
+        } as SFSelectWidgetSchema,
+      },
+      relation: {
+        type: 'string',
+        title: '对应关系',
+        enum: [
+          { label: '小于', value: 0 },
+          { label: '小于等于', value: 1 },
+          { label: '等于', value: 2 },
+          { label: '大于等于', value: 3 },
+          { label: '大于', value: 4 },
+          { label: 'between', value: 5 },
+          { label: '不等于', value: 6 },
+          { label: 'in', value: 7 },
+        ],
+        ui: {
+          widget: 'select',
+        } as SFSelectWidgetSchema,
+      },
+      value: {
+        type: 'string',
+        title: '值(范围)',
+      },
+      remark: {
+        type: 'string',
+        title: '已添加公式',
+        ui: {
+          widget: 'textarea',
+          autosize: { minRows: 6, maxRows: 16 },
+        } as SFTextareaWidgetSchema,
+      },
+    },
+  };
+
+  /**
+   * 选择增加已完成公式
+   * */
+  @ViewChild('sfCompletedSelectFomula', { static: true }) sfCompletedSelectFomula: SFComponent;
+  selectCompletedFomulaSchema: SFSchema = {
+    properties: {
+      fomulaName: {
+        type: 'string',
+        title: '已完成公式选择',
+        enum: [
+          { label: '光频稳定度平方公式', value: 'WAIT_BUYER_PAY', otherData: 1 },
+        ],
+        default: 'WAIT_BUYER_PAY',
+        ui: {
+          widget: 'select',
+          change: (value, orgData) => console.log(value, orgData),
+        } as SFSelectWidgetSchema,
+      },
+      remark: {
+        type: 'string',
+        title: '已添加公式',
+        ui: {
+          widget: 'textarea',
+          autosize: { minRows: 6, maxRows: 16 },
+        } as SFTextareaWidgetSchema,
+      },
+    },
+  };
+
+  private addUncompletedFormula(item: any) {
+    this.selectUncompletedFormulaIsVisiable = true;
+    this.complexId = item.id;
+  }
+
+  private addCompletedFormula(item: any) {
+    this.selectCompletedFormulaIsVisiable = true;
+    this.complexId = item.id;
+  }
+
+  selectUncompletedFormulaHandleCancel() {
+    this.selectUncompletedFormulaIsVisiable = false;
+    this.complexId = null;
+  }
+
+  selectCompletedFormulaHandleCancel() {
+    this.selectCompletedFormulaIsVisiable = false;
+    this.complexId = null;
   }
 }

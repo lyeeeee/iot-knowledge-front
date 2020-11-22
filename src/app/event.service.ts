@@ -4,7 +4,7 @@ import {Observable} from "rxjs";
 import {JsonResponse} from "./routes/knowledge/directory";
 import {
   KnowledgeComplexEvent,
-  KnowledgeComplexSubEvent, KnowledgeComplexTarget,
+  KnowledgeComplexSubEvent, KnowledgeComplexTarget, KnowledgeFomula,
   KnowledgeMetaEvent,
   MetaEventAttrRelation
 } from "./routes/event/event";
@@ -136,5 +136,25 @@ export class EventService {
 
   public stopDeduce(id: number): Observable<JsonResponse> {
     return this.http.get<JsonResponse>('api/complexevent/stopDeduce',{'complexEventId': id});
+  }
+
+  public getSelectedKnowledge(id: number): Observable<JsonResponse> {
+    return this.http.get<JsonResponse>('api/complexevent/getKnowledgeByComplexId',{'complexEventId': id});
+  }
+
+  public getKnowledgeBySparsql(sql: string):Observable<JsonResponse> {
+    return this.http.get<JsonResponse>('api/knowledge/getKnowledgeBySparql',{'sql': sql});
+  }
+
+  public saveKnowledgeForEvent(id: number, ids:number[]):Observable<JsonResponse> {
+    return this.http.get<JsonResponse>('api/complexevent/saveKnowledgeForEvent',{'complexEventId': id, 'selectedIds':ids});
+  }
+
+  public getAllKnowledge():Observable<JsonResponse> {
+    return this.http.get<JsonResponse>('api/knowledge/getAllKnowledgeKnowledge');
+  }
+
+  public addFolumaKnowledge(foluma:KnowledgeFomula):Observable<JsonResponse> {
+    return this.http.post<JsonResponse>('api/complexevent/addFolumaKnowledge', {'knowledgeFoluma': foluma});
   }
 }

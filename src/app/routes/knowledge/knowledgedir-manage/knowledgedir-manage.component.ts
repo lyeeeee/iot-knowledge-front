@@ -100,7 +100,7 @@ export class KnowledgeKnowledgedirManageComponent implements OnInit {
    * */
   selectDropdown(event: MouseEvent){
     this.option = event.target['innerText'];
-    if (this.option == '新建同级目录' || this.option == '新建子级目录') {
+    if (this.option == '新建同级目录' || this.option == '新建子级目录'|| this.option == '重命名') {
       this.visual = true;
     }
   }
@@ -126,7 +126,15 @@ export class KnowledgeKnowledgedirManageComponent implements OnInit {
       }
     } else if (this.option == '新建子级目录') {
       dirNode.parentId = Number.parseInt(this.activedNode.key);
+    } else if (this.option == '重命名') {
+      if (this.activedNode.getParentNode() == null) {
+        dirNode.parentId = 11;
+      } else {
+        dirNode.parentId = Number.parseInt(this.activedNode.getParentNode().key);
+      }
+      dirNode.id = Number.parseInt(this.activedNode.key);
     }
+    console.log(dirNode);
     this.directoryService.createNode(dirNode).subscribe(data=> {
       this.getDirectoryNodeData();
     });

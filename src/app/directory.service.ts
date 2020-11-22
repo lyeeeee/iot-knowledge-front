@@ -53,4 +53,12 @@ export class DirectoryService {
     return this.http.get<JsonResponse>('api/knowledge/getAllKnowledge',
       param,);
   }
+
+  public getAllModel(): Observable<JsonResponse> {
+    return this.http.get<JsonResponse>('api/knowledge/getAllModel');
+  }
+
+  public deleteModel(id: any): Observable<JsonResponse>  {
+    return this.http.delete<JsonResponse>('api/knowledge/deleteModel',{'fileId': id});
+  }
 }

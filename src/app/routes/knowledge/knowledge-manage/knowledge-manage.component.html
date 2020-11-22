@@ -1,6 +1,7 @@
 <page-header [action]="phActionTpl">
   <ng-template #phActionTpl>
     <button (click)="addNewKnowledge()" nz-button nzType="primary">导入新知识</button>
+    <button (click)="modelManage()" nz-button nzType="default">模型管理</button>
   </ng-template>
 </page-header>
 <nz-card>
@@ -23,6 +24,18 @@
   </div>
   <st #st [data]="list" [columns]="columns"></st>
 </nz-card>
+
+<nz-modal
+  nzWidth="1000"
+  [(nzVisible)]="modelManageVisiable"
+  nzTitle="模型管理"
+  (nzOnCancel)="handlModelManageCancel()"
+  nzFooter=" "
+>
+  <st #stModelManage [data]="modelManagelist" [columns]="modelManageColumns"></st>
+</nz-modal>
+
+
 <nz-modal
   [(nzVisible)]="uploadVisible"
   nzTitle="新增知识"
