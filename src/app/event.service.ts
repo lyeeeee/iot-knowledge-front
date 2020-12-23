@@ -167,7 +167,7 @@ export class EventService {
     });
   }
 
-  public saveKnowledgeByRange(field:string, department:string, metaDir:string, s:string, p:string, o:string ):Observable<JsonResponse> {
+  public saveKnowledgeByRange(complexId: number, field:string, department:string, metaDir:string, s:string, p:string, o:string ):Observable<JsonResponse> {
     let body = new Object();
     if (field != null) body['field'] = field;
     if (department != null) body['department'] = department;
@@ -175,10 +175,15 @@ export class EventService {
     if (s != null) body['s'] = s;
     if (p != null) body['p'] = p;
     if (o != null) body['o'] = o;
+    body['complexId'] = complexId;
     return this.http.post<JsonResponse>('api/complexevent/saveKnowledgeByRange',
       JSON.stringify(body), null, {
       headers: this.directoryService.headers,
       observe: 'response',
     });
+  }
+
+  public getFomulaByType(type:number):Observable<JsonResponse> {
+    return this.http.get<JsonResponse>('api/event/getFomulaByType', {'type':type});
   }
 }

@@ -280,7 +280,7 @@
 <!--选择知识弹出框-->
 <nz-modal
   [(nzVisible)]="selectKnowledgeIsVisible"
-  nzTitle="新增/修改原子事件"
+  nzTitle="选择知识"
   (nzOnCancel)="selectKnowledgeHandleCancel()"
   nzFooter=" "
   nzWidth="800px"
@@ -296,11 +296,13 @@
 <!--插入公式弹出框-->
 <nz-modal
   [(nzVisible)]="insertFormulaIsVisiable"
-  nzTitle="新增/修改原子事件"
+  nzTitle="插入公式知识"
   (nzOnCancel)="insertFormulaHandleCancel()"
   nzFooter=" "
-  nzWidth="800px"
+  nzWidth="1000px"
 >
+  <iframe src="http://www.imatheq.com/imatheq/com/imatheq/math-equation-editor.html" width="950px" height="500px" frameborder="1/0"  name="iframe名称" scrolling="yes/no/auto">
+  </iframe>
   <sf #sfinsertFormula [schema]="insertFormulaSchema" [button]="null">
     <button type="submit" nz-button [disabled]="!sfinsertFormula.valid" (click)="insertFormulaForComplexEvent($event)">提交</button>
     <button (click)="sfinsertFormula.reset()" type="button" nz-button>重置</button>

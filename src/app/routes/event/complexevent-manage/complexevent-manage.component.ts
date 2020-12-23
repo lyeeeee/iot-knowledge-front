@@ -316,7 +316,6 @@ export class EventComplexeventManageComponent implements OnInit {
           const propProperty = this.sfinsertFormula.getProperty('/props');
           propProperty.schema.enum = this.knowledgeProps;
           propProperty.widget.reset(this.knowledgeProps[0]);
-          console.log(this.knowledgeProps);
       });
   }
 
@@ -1342,7 +1341,7 @@ export class EventComplexeventManageComponent implements OnInit {
 
   appendKnowledgesRelation() {
     this.sfinsertFormula.setValue("/relation",
-      this.sfinsertFormula.getValue("/relation") + this.knowledgeIdNameMap.get(Number(this.sfinsertFormula.getValue("/knowledge"))));
+      this.sfinsertFormula.getValue("/relation") + this.sfinsertFormula.getValue("/props"));
   }
 
   private insertFormulaForComplexEvent(): void {
@@ -1355,6 +1354,8 @@ export class EventComplexeventManageComponent implements OnInit {
     this.eventService.addFolumaKnowledge(f).subscribe(data => {
 
     });
+    this.insertFormulaIsVisiable = false;
+    this.complexId = null;
   }
 
 
@@ -1382,7 +1383,7 @@ export class EventComplexeventManageComponent implements OnInit {
     let s:string = this.sfSelectedKnowledge.getValue("/s");
     let p:string = this.sfSelectedKnowledge.getValue("/p");
     let o:string = this.sfSelectedKnowledge.getValue("/o");
-    this.eventService.saveKnowledgeByRange(field, department, dir, s, p, o).subscribe(data => {
+    this.eventService.saveKnowledgeByRange(this.complexId, field, department, dir, s, p, o).subscribe(data => {
         console.log(data.data);
     });
   }
@@ -1477,6 +1478,15 @@ export class EventComplexeventManageComponent implements OnInit {
   private addCompletedFormula(item: any) {
     this.selectCompletedFormulaIsVisiable = true;
     this.complexId = item.id;
+    this.eventService.getFomulaByType(1).subscribe(data => {
+      let foluma:KnowledgeFomula[] = data.data;
+
+      this.insertFormulaSchema.properties.knowledge.enum = this.knowledgeShow;
+      this.sfinsertFormula.refreshSchema();
+      this.sfCompletedSelectFomula
+    });
+
+
   }
 
   selectUncompletedFormulaHandleCancel() {
