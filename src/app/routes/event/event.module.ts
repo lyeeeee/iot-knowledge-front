@@ -6,13 +6,15 @@ import { EventComplexEventListComponent } from './complex-event-list/complex-eve
 import { EventTestComponent } from './test/test.component';
 import { EventMetaeventManageComponent } from './metaevent-manage/metaevent-manage.component';
 import { EventComplexeventManageComponent } from './complexevent-manage/complexevent-manage.component';
+import {EventComplexeventAlarmComponent} from "./alarm-page/complexevent-alarm.component";
 
 const COMPONENTS = [
   EventMetaEventListComponent,
   EventComplexEventListComponent,
   EventTestComponent,
   EventMetaeventManageComponent,
-  EventComplexeventManageComponent];
+  EventComplexeventManageComponent,
+  EventComplexeventAlarmComponent];
 const COMPONENTS_NOROUNT = [];
 
 @NgModule({

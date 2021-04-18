@@ -76,3 +76,11 @@ export class KnowledgeFomula{
   foluma: string;
   relation: string;
 }
+
+export class KnowledgeSelectFormula {
+  id: number;
+  complexId: number;
+  formulaId: number;
+  attributeRelation: string;
+  relationValue: string;
+}

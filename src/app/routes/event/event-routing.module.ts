@@ -5,6 +5,7 @@ import { EventComplexEventListComponent } from './complex-event-list/complex-eve
 import { EventTestComponent } from './test/test.component';
 import { EventMetaeventManageComponent } from './metaevent-manage/metaevent-manage.component';
 import { EventComplexeventManageComponent } from './complexevent-manage/complexevent-manage.component';
+import {EventComplexeventAlarmComponent} from "./alarm-page/complexevent-alarm.component";
 
 const routes: Routes = [
 
@@ -12,7 +13,8 @@ const routes: Routes = [
   { path: 'complex-event-list', component: EventComplexEventListComponent },
   { path: 'test', component: EventTestComponent },
   { path: 'metaevent-manage', component: EventMetaeventManageComponent },
-  { path: 'complexevent-manage', component: EventComplexeventManageComponent }];
+  { path: 'complexevent-manage', component: EventComplexeventManageComponent },
+  { path: 'complexevent-alarm', component: EventComplexeventAlarmComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

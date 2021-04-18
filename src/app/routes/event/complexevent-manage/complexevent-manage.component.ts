@@ -15,7 +15,7 @@ import {
   KnowledgeComplexEvent,
   KnowledgeComplexSubEvent, KnowledgeComplexSubEventRelation,
   KnowledgeComplexTarget, KnowledgeComplexTargetRelation, KnowledgeFomula,
-  KnowledgeMetaEvent,
+  KnowledgeMetaEvent, KnowledgeSelectFormula,
   MetaEventAttrRelation
 } from "../event";
 import {EventService} from "../../../event.service";
@@ -230,6 +230,14 @@ export class EventComplexeventManageComponent implements OnInit {
       o: {
         type: 'string',
         title: '宾语',
+      },
+      remark2: {
+        type: 'string',
+        title: 'KNOWLEDGE',
+        ui: {
+          widget: 'textarea',
+          autosize: { minRows: 10, maxRows: 20 },
+        } as SFTextareaWidgetSchema,
       },
     },
   };
@@ -1302,6 +1310,7 @@ export class EventComplexeventManageComponent implements OnInit {
       let s: string = "";
       knowledges.forEach(k=>{s += k.knowledgeName + "(" + k.id+")" + "\n"});
       this.sfSparalSelectedKnowledge.setValue("/remark2", s);
+      this.sfSelectedKnowledge.setValue('/remark2', s);
     });
   }
 
@@ -1394,16 +1403,81 @@ export class EventComplexeventManageComponent implements OnInit {
   /**
    * 选择增加未完成公式
    * */
+  /**
+   * 插入公式的动态表单
+   * */
+  // @ViewChild('sfinsertFormula', { static: true }) sfinsertFormula: SFComponent;
+  // insertFormulaSchema: SFSchema = {
+  //   properties: {
+  //     name: {
+  //       type: 'string',
+  //       title: '公式名',
+  //     },
+  //     btn1: {
+  //       type: 'string',
+  //       title: '是否全局',
+  //       enum: [{label :'是', value:1}, {label:'否', value:0}],
+  //       ui: {
+  //         widget: 'radio',
+  //       } as SFRadioWidgetSchema,
+  //       default: 1,
+  //     },
+  //     btn2: {
+  //       type: 'string',
+  //       title: '是否完整定义',
+  //       enum: [{label :'是', value:1}, {label:'否', value:0}],
+  //       ui: {
+  //         widget: 'radio',
+  //       } as SFRadioWidgetSchema,
+  //       default: 1,
+  //     },
+  //     globalFormula: {
+  //       type: 'string',
+  //       title: '公式文本',
+  //       default: '',
+  //       ui: {
+  //         widget: 'textarea',
+  //         autosize: { minRows: 10, maxRows: 20 },
+  //       } as SFTextareaWidgetSchema,
+  //     },
+  //     relation: {
+  //       type: 'string',
+  //       title: '关联变量',
+  //       default: '',
+  //       ui: {
+  //         widget: 'textarea',
+  //         autosize: { minRows: 10, maxRows: 20 },
+  //       } as SFTextareaWidgetSchema,
+  //     },
+  //     knowledge: {
+  //       type: 'string',
+  //       title: '选取知识',
+  //       enum: [
+  //         { label: '待支付', value: 'WAIT_BUYER_PAY', otherData: 1 },
+  //       ],
+  //       ui: {
+  //         change: (value, orgData) => this.loadKnowledgeProp(value, orgData),
+  //         widget: 'select',
+  //       } as SFSelectWidgetSchema,
+  //     },
+  //     props: {
+  //       type: 'string',
+  //       title: '选取知识属性',
+  //       enum: [
+  //       ],
+  //       ui: {
+  //         widget: 'select',
+  //       } as SFSelectWidgetSchema,
+  //     },
+  //   },
+  // };
   @ViewChild('sfUncompletedSelectFomula', { static: true }) sfUncompletedSelectFomula: SFComponent;
   selectUncompletedFomulaSchema: SFSchema = {
     properties: {
       fomulaName: {
         type: 'string',
-        title: '已完成公式选择',
-        enum: [
-          { label: '光频稳定度平方公式', value: 'WAIT_BUYER_PAY', otherData: 1 },
-        ],
-        default: 'WAIT_BUYER_PAY',
+        title: '未完成公式选择',
+        enum: [],
         ui: {
           widget: 'select',
           change: (value, orgData) => console.log(value, orgData),
@@ -1451,7 +1525,7 @@ export class EventComplexeventManageComponent implements OnInit {
         type: 'string',
         title: '已完成公式选择',
         enum: [
-          { label: '光频稳定度平方公式', value: 'WAIT_BUYER_PAY', otherData: 1 },
+          // { label: '光频稳定度平方公式', value: 'WAIT_BUYER_PAY', otherData: 1 },
         ],
         default: 'WAIT_BUYER_PAY',
         ui: {
@@ -1470,9 +1544,44 @@ export class EventComplexeventManageComponent implements OnInit {
     },
   };
 
-  private addUncompletedFormula(item: any) {
+  // knowledgeShow: any = [];
+  // knowledgeIdNameMap: Map<number, string> = new Map<number, string>();
+  // private insertFormula(item): void {
+  //   this.insertFormulaIsVisiable = true;
+  //   this.complexId = item.id;
+  //   this.eventService.getAllKnowledge().subscribe(data => {
+  //     let knowledges:KnowledgeKnowledge[] = data.data;
+  //     knowledges.forEach(k => {
+  //       this.knowledgeShow.push({label:k.knowledgeUri, value:k.id});
+  //       this.knowledgeIdNameMap.set(k.id, k.knowledgeUri);
+  //     });
+  //     this.insertFormulaSchema.properties.knowledge.enum = this.knowledgeShow;
+  //     this.sfinsertFormula.refreshSchema();
+  //   });
+  // }
+  formulaShow: any = [];
+  private addUncompletedFormula(item) {
     this.selectUncompletedFormulaIsVisiable = true;
     this.complexId = item.id;
+    this.eventService.getFomulaByType(0).subscribe(data => {
+      let foluma:KnowledgeFomula[] = data.data;
+
+      foluma.forEach(f => {
+        this.formulaShow.push({label:f.fomulaName, value:f.id});
+      });
+
+      const formulaProp = this.sfUncompletedSelectFomula.getProperty('/fomulaName');
+      formulaProp.schema.enum = this.formulaShow;
+      formulaProp.widget.reset('');
+    });
+    this.eventService.getFomulaByComplexId(this.complexId).subscribe(data => {
+      let formulas:KnowledgeFomula[] = data.data;
+      let s:string = '';
+      formulas.forEach(f => {
+        s += f.fomulaName + '\n'
+      });
+      this.sfUncompletedSelectFomula.setValue('/remark', s)
+    });
   }
 
   private addCompletedFormula(item: any) {
@@ -1480,22 +1589,64 @@ export class EventComplexeventManageComponent implements OnInit {
     this.complexId = item.id;
     this.eventService.getFomulaByType(1).subscribe(data => {
       let foluma:KnowledgeFomula[] = data.data;
-
-      this.insertFormulaSchema.properties.knowledge.enum = this.knowledgeShow;
-      this.sfinsertFormula.refreshSchema();
-      this.sfCompletedSelectFomula
+      this.formulaShow = [];
+      foluma.forEach(f => {
+        this.formulaShow.push({label:f.fomulaName, value:f.id})
+      });
+      const formulaProp = this.sfCompletedSelectFomula.getProperty('/fomulaName');
+      formulaProp.schema.enum = this.formulaShow;
+      formulaProp.widget.reset('');
     });
-
+    this.eventService.getFomulaByComplexId(this.complexId).subscribe(data => {
+      let formulas:KnowledgeFomula[] = data.data;
+      let s:string = '';
+      formulas.forEach(f => {
+        s += f.fomulaName + '\n'
+      });
+      this.sfCompletedSelectFomula.setValue('/remark', s)
+    });
 
   }
 
   selectUncompletedFormulaHandleCancel() {
     this.selectUncompletedFormulaIsVisiable = false;
     this.complexId = null;
+    this.formulaShow = [];
   }
 
   selectCompletedFormulaHandleCancel() {
     this.selectCompletedFormulaIsVisiable = false;
     this.complexId = null;
+    this.formulaShow = [];
+  }
+
+  submitForSelectFormula() {
+    let f:KnowledgeSelectFormula = new KnowledgeSelectFormula();
+    f.complexId = this.complexId;
+    f.formulaId = this.sfCompletedSelectFomula.getValue('/fomulaName')
+    this.eventService.addSelectFormula(this.complexId, f).subscribe(data => {
+      let formulas:KnowledgeFomula[] = data.data;
+      let s:string = '';
+      formulas.forEach(f => {
+        s += f.fomulaName + '\n'
+      });
+      this.sfCompletedSelectFomula.setValue('/remark', s)
+    });
+  }
+
+  submitForUnSelectFormula() {
+    let f:KnowledgeSelectFormula = new KnowledgeSelectFormula();
+    f.complexId = this.complexId;
+    f.formulaId = this.sfUncompletedSelectFomula.getValue('/fomulaName')
+    f.attributeRelation = this.sfUncompletedSelectFomula.getValue('/relation')
+    f.relationValue = this.sfUncompletedSelectFomula.getValue('/value')
+    this.eventService.addSelectFormula(this.complexId, f).subscribe(data => {
+      let formulas:KnowledgeFomula[] = data.data;
+      let s:string = '';
+      formulas.forEach(f => {
+        s += f.fomulaName + '\n'
+      });
+      this.sfUncompletedSelectFomula.setValue('/remark', s)
+    });
   }
 }

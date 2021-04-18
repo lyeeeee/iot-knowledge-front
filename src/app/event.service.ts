@@ -5,7 +5,7 @@ import {JsonResponse} from "./routes/knowledge/directory";
 import {
   KnowledgeComplexEvent,
   KnowledgeComplexSubEvent, KnowledgeComplexTarget, KnowledgeFomula,
-  KnowledgeMetaEvent,
+  KnowledgeMetaEvent, KnowledgeSelectFormula,
   MetaEventAttrRelation
 } from "./routes/event/event";
 import {DirectoryService} from "./directory.service";
@@ -184,6 +184,21 @@ export class EventService {
   }
 
   public getFomulaByType(type:number):Observable<JsonResponse> {
-    return this.http.get<JsonResponse>('api/event/getFomulaByType', {'type':type});
+    return this.http.get<JsonResponse>('api/complexevent/getFomulaByType', {'type':type});
+  }
+
+  public getFomulaByComplexId(id:number):Observable<JsonResponse> {
+    return this.http.get<JsonResponse>('api/complexevent/getFomulaByComplexId', {'complexId':id});
+  }
+
+  public addSelectFormula(complexId: number, foluma:KnowledgeSelectFormula):Observable<JsonResponse> {
+    return this.http.post<JsonResponse>('api/complexevent/addSelectedFoluma', JSON.stringify(foluma), null, {
+      headers: this.directoryService.headers,
+      observe: 'response',
+    });
+  }
+
+  public getAllAlarm(): Observable<JsonResponse> {
+    return this.http.get<JsonResponse>('api/complexevent/getAllAlarm');
   }
 }

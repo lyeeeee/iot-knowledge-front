@@ -174,6 +174,10 @@ export class StartupService {
                 text: '复杂事件管理',
                 link: '/event/complexevent-manage',
               },
+              {
+                text: '复杂事件报警管理',
+                link: '/event/complexevent-alarm',
+              },
             ],
           },
         ],

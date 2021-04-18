@@ -155,7 +155,7 @@
   nzFooter=" "
   nzWidth="800px"
 >
-  <sf #sfUncompletedSelectFomula [schema]="selectUncompletedFomulaSchema" (formSubmit)="submitForSelectKnowledge($event)">
+  <sf #sfUncompletedSelectFomula [schema]="selectUncompletedFomulaSchema" (formSubmit)="submitForUnSelectFormula($event)">
   </sf>
 </nz-modal>
 
@@ -167,7 +167,7 @@
   nzFooter=" "
   nzWidth="800px"
 >
-  <sf #sfCompletedSelectFomula [schema]="selectCompletedFomulaSchema" (formSubmit)="submitForSelectKnowledge($event)">
+  <sf #sfCompletedSelectFomula [schema]="selectCompletedFomulaSchema" (formSubmit)="submitForSelectFormula($event)">
   </sf>
 </nz-modal>
 
@@ -289,6 +289,7 @@
     <button type="submit" nz-button [disabled]="!sfSelectedKnowledge.valid" (click)="submitForSelectKnowledge($event)">添加范围内知识</button>
     <button (click)="sfSelectedKnowledge.reset()" type="button" nz-button>重置</button>
     <button (click)="deleteKnowledges()" type="button" nz-button>删除已有知识</button>
+    <button (click)="getAllSelectedKnowledge($event)" type="button" nz-button>已选知识</button>
   </sf>
 </nz-modal>
 
