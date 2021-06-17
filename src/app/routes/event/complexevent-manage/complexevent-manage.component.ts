@@ -981,6 +981,7 @@ export class EventComplexeventManageComponent implements OnInit {
   }
 
 //--------------------------------------
+  eventsAppear: Set<string> = new Set<string>()
   warn(complexId : number) {
     // setInterval()
     if (this.timerMap.has(complexId)) return;
@@ -1004,17 +1005,20 @@ export class EventComplexeventManageComponent implements OnInit {
         //   this.stopTimer = false;
         // }
         complexEvents.forEach(e => {
-          this.notification.create(
-            //error，warning,info
-            "error",
-            '站点报警',//标题
-            '<table border="1"><tr><td>系统</td><td>复杂事件</td><td>复杂事件说明</td><td>站点</td></tr>' +
-            '<tr bgcolor="87cefa"><td>授时系统</td><td>'+ e.name+'</td><td>'+e.synopsis+'</td><td>西安站</td></tr></table>',//在这里写表格内容
-            {
-              nzStyle: {width: '800px', marginLeft: '-400px'},//弹出框的样式，分别是宽度，左距离，颜色
-              nzDuration: 20000,//显示时间，单位是毫秒，0为一直显示，不自动关闭
-            }
-          );
+          if (!this.eventsAppear.has(e.name)) {
+            this.eventsAppear.add(e.name);
+            this.notification.create(
+              //error，warning,info
+              "error",
+              '站点报警',//标题
+              '<table border="1"><tr><td>系统</td><td>复杂事件</td><td>复杂事件说明</td><td>站点</td></tr>' +
+              '<tr bgcolor="87cefa"><td>授时系统</td><td>'+ e.name+'</td><td>'+e.synopsis+'</td><td>西安站</td></tr></table>',//在这里写表格内容
+              {
+                nzStyle: {width: '800px', marginLeft: '-400px'},//弹出框的样式，分别是宽度，左距离，颜色
+                nzDuration: 0,//显示时间，单位是毫秒，0为一直显示，不自动关闭
+              }
+            );
+          }
         });
       });
     }, 5000);

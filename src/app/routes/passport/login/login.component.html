@@ -22,6 +22,11 @@
           </nz-form-explain>
         </nz-form-control>
       </nz-form-item>
+      <nz-form-item>
+        <nz-upload [(nzFileList)]="fileList" [nzBeforeUpload]="beforeUpload">
+          <button nz-button><i nz-icon nzType="upload"></i><span>点击选择</span></button>
+        </nz-upload>
+      </nz-form-item>
     </nz-tab>
     <!--<nz-tab [nzTitle]="'app.login.tab-login-mobile' | translate">-->
       <!--<nz-metaEventForm-item>-->
